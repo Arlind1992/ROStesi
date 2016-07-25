@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>rtt_planning</name>
+  <version>1.0.0</version>
+  <description>Some RTT-based planners</description>
+
+  <maintainer email="davide.tateo@polimi.it">Davide Tateo</maintainer>
+
+  <license>GPLv3</license>
+
+  <author email="alessandro.riva@polimi.it">Alessandro Riva</author>
+  <author email="davide.tateo@polimi.it">Davide Tateo</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>
