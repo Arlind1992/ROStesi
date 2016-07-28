@@ -21,25 +21,23 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # ------------------------ BUILD -------------------------------
 
-#Bfile(GLOB_RECURSE SOURCE_FILES
-#B     src/*.cpp)
-#B
-#Badd_executable(rtt_planning ${SOURCE_FILES})
+
+add_library(rtt_planner src/RTTPlanner.cpp)
 
 # ------------------------ INSTALLATION ------------------------
 
 # Mark executables and/or libraries for installation
-#install(TARGETS rele
-#        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-#        )
+install(TARGETS rtt_planner
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+        )
 
 # Install headers
-#install(DIRECTORY include/rele
-#        DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
-#        PATTERN ".svn" EXCLUDE
-#        )
+install(DIRECTORY include
+        DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
+        PATTERN ".svn" EXCLUDE
+        )
 
 
 # ------------------------ DOCUMENTATION ------------------------
