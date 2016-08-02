@@ -14,13 +14,21 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.base.1649395014" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactName="${ProjName}" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.base.1649395014" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.base.1649395014.464456778" name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.base.1166230415" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.GNU_ELF" id="cdt.managedbuild.target.gnu.platform.base.168828771" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
 							<builder buildPath="${workspace_loc}/" cleanBuildTarget="clean --pkg rtt_planning" command="catkin_make" id="cdt.managedbuild.target.gnu.builder.base.1548476037" incrementalBuildTarget="--pkg rtt_planning" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.559966947" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1005457321" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
+								<option id="gnu.cpp.compiler.option.include.paths.1360321663" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/dave/ros-extra/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/ReLe/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/CognitiveSlam/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/ROAMFREE/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/ros/install_isolated/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/eigen3"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1901357953" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.975218018" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
@@ -46,13 +54,20 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="rtt_planning.null.370050535" name="rtt_planning"/>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
 			<resource resourceType="PROJECT" workspacePath="/rtt_planning"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1649395014;cdt.managedbuild.toolchain.gnu.base.1649395014.464456778;cdt.managedbuild.tool.gnu.cpp.compiler.base.1005457321;cdt.managedbuild.tool.gnu.cpp.compiler.input.1901357953">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1649395014;cdt.managedbuild.toolchain.gnu.base.1649395014.464456778;cdt.managedbuild.tool.gnu.c.compiler.base.975218018;cdt.managedbuild.tool.gnu.c.compiler.input.236006880">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

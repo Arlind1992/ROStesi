@@ -11,6 +11,12 @@ include_directories(include)
 
 # ----------------------- LIBRARIES ---------------------------
 
+find_package(Eigen3 REQUIRED)
+find_package(Boost 1.53 REQUIRED)
+
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+
 
 # ----------------------- GCC FLAGS ----------------------------
 
@@ -22,7 +28,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # ------------------------ BUILD -------------------------------
 
 
-add_library(rtt_planner src/RTTPlanner.cpp)
+add_library(rtt_planner src/RTTPlanner.cpp
+                        src/kinematics_models/DifferentialDrive.cpp)
 
 # ------------------------ INSTALLATION ------------------------
 

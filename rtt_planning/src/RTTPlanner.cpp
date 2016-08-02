@@ -22,7 +22,7 @@
  */
 
 #include <pluginlib/class_list_macros.h>
-#include "RTTPlanner.h"
+#include "rtt_planning/RTTPlanner.h"
 
 //register this planner as a BaseGlobalPlanner plugin
 PLUGINLIB_EXPORT_CLASS(rtt_planning::RTTPlanner, nav_core::BaseGlobalPlanner)
