@@ -30,6 +30,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_library(rtt_planner src/RTTPlanner.cpp
                         src/kinematics_models/DifferentialDrive.cpp)
+                        
+                        
+# ------------------------ TESTS -------------------------------  
+add_subdirectory(test)                      
 
 # ------------------------ INSTALLATION ------------------------
 

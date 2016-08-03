@@ -21,29 +21,22 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_
-#define INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_
+#include <iostream>
 
-#include <Eigen/Dense>
+#include "rtt_planning/kinematics_models/DifferentialDrive.h"
 
-class KinematicModel
+int main(int argc, char *argv[])
 {
-public:
-    typedef Eigen::VectorXd state_type;
 
-    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) = 0;
+	Eigen::VectorXd x0(3);
+	x0 << 0, 0, 0;
 
-    virtual ~KinematicModel()
-    {
+	Eigen::VectorXd u(2);
+	u << 1.0, 0.01;
 
-    }
+	DifferentialDrive model;
 
-protected:
-    const double dt = 1e-3;
+	Eigen::VectorXd xf = model.compute(x0, u, 5.0);
+	std::cout << xf << std::endl;
 
-
-
-};
-
-
-#endif /* INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_ */
+}

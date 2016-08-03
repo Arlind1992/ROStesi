@@ -28,23 +28,22 @@
 using namespace Eigen;
 using namespace boost::numeric::odeint;
 
-Eigen::VectorXd DifferentialDrive::operator()(const VectorXd& x, const VectorXd& u)
+Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u, double delta)
 {
 	this->u = u;
 
 	runge_kutta4<state_type,double,state_type,double,vector_space_algebra> stepper;
-	double t0 = 0;
-	double t1 = 1.0;
-	double dt = 1e-3;
-	VectorXd x0 = x;
-	integrate_const(stepper, *this, x0, t0, t1, dt);
+	VectorXd x = x0;
+	integrate_const(stepper, *this, x, 0.0, delta, dt);
+
+	return x;
 }
 
 
 void DifferentialDrive::operator()(const state_type& x, state_type& dx,
 	                        const double /* t */)
 {
-	Matrix<double, 3, 3> A;
+	Matrix<double, 3, 2> A;
 
 	double theta = x(2);
 

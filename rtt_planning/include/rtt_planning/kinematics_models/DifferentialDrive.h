@@ -29,14 +29,14 @@
 class DifferentialDrive : public KinematicModel
 {
 public:
-    virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x, const Eigen::VectorXd& u) override;
+    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) override;
 
 
     void operator()(const state_type& x, state_type& dx,
                     const double /* t */);
 
 private:
-    Eigen::VectorXd& u;
+    Eigen::VectorXd u;
 };
 
 
