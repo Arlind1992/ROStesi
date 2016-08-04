@@ -35,7 +35,7 @@ namespace rtt_planning
 
 RTTPlanner::RTTPlanner ()
 {
-
+	costmap = nullptr;
 }
 
 RTTPlanner::RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
@@ -46,7 +46,10 @@ RTTPlanner::RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 
 void RTTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
+	this->costmap = costmap_ros;
 
+	//Get parameters from ros parameter server
+	ros::NodeHandle private_nh("~/" + name);
 }
 
 bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,  std::vector<geometry_msgs::PoseStamped>& plan )

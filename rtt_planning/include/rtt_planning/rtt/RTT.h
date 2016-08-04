@@ -21,35 +21,26 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rtt_planning/kinematics_models/DifferentialDrive.h"
-#include <boost/numeric/odeint.hpp>
+#ifndef INCLUDE_RTT_PLANNING_RTT_RTT_H_
+#define INCLUDE_RTT_PLANNING_RTT_RTT_H_
 
-using namespace Eigen;
-using namespace boost::numeric::odeint;
+#include "rtt_planning/rtt/RTTNode.h"
+#include "rtt_planning/distance/Distance.h"
 
-Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u, double delta)
+class RTT
 {
-	this->u = u;
+public:
+	RTT(Distance& distance, Eigen::VectorXd& x0);
 
-	runge_kutta4<state_type,double,state_type,double,vector_space_algebra> stepper;
-	VectorXd x = x0;
-	integrate_const(stepper, *this, x, 0.0, delta, dt);
-
-	return x;
-}
+	RTTNode* searchNearestNode(Eigen::VectorXd& x);
+	void addNode(RTTNode* parent, Eigen::VectorXd& xNew);
 
 
-void DifferentialDrive::operator()(const state_type& x, state_type& dx,
-	                        const double /* t */)
-{
-	Matrix<double, 3, 2> A;
+private:
+	RTTNode* root;
+	std::vector<RTTNode*> nodes;
+	Distance& distance;
+};
 
-	double theta = x(2);
 
-	A << sin(theta), 0,
-	     cos(theta), 0,
-		          0, 1;
-
-	dx = A*u;
-
-}
+#endif /* INCLUDE_RTT_PLANNING_RTT_RTT_H_ */

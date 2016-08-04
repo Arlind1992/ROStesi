@@ -21,35 +21,28 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rtt_planning/kinematics_models/DifferentialDrive.h"
-#include <boost/numeric/odeint.hpp>
+#ifndef INCLUDE_RTT_PLANNING_DISTANCE_DISTANCE_H_
+#define INCLUDE_RTT_PLANNING_DISTANCE_DISTANCE_H_
 
-using namespace Eigen;
-using namespace boost::numeric::odeint;
-
-Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u, double delta)
+class Distance
 {
-	this->u = u;
+public:
+	virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2) = 0;
+	virtual ~Distance()
+	{
 
-	runge_kutta4<state_type,double,state_type,double,vector_space_algebra> stepper;
-	VectorXd x = x0;
-	integrate_const(stepper, *this, x, 0.0, delta, dt);
+	}
+};
 
-	return x;
-}
-
-
-void DifferentialDrive::operator()(const state_type& x, state_type& dx,
-	                        const double /* t */)
+class L2Distance : public Distance
 {
-	Matrix<double, 3, 2> A;
+public:
+	virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
+	{
+		return (x1-x2).norm();
+	}
 
-	double theta = x(2);
+};
 
-	A << sin(theta), 0,
-	     cos(theta), 0,
-		          0, 1;
 
-	dx = A*u;
-
-}
+#endif /* INCLUDE_RTT_PLANNING_DISTANCE_DISTANCE_H_ */
