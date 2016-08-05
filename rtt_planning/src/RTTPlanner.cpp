@@ -24,6 +24,11 @@
 #include <pluginlib/class_list_macros.h>
 #include "rtt_planning/RTTPlanner.h"
 
+#include "rtt_planning/rtt/RTT.h"
+#include "rtt_planning/kinematics_models/DifferentialDrive.h"
+
+using namespace Eigen;
+
 //register this planner as a BaseGlobalPlanner plugin
 PLUGINLIB_EXPORT_CLASS(rtt_planning::RTTPlanner, nav_core::BaseGlobalPlanner)
 
@@ -35,7 +40,13 @@ namespace rtt_planning
 
 RTTPlanner::RTTPlanner ()
 {
-	costmap = nullptr;
+    costmap = nullptr;
+
+    K = 0;
+    maxX = 0;
+    maxY = 0;
+    minX = 0;
+    minY = 0;
 }
 
 RTTPlanner::RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
@@ -46,32 +57,85 @@ RTTPlanner::RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 
 void RTTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-	this->costmap = costmap_ros;
+    this->costmap = costmap_ros;
 
-	//Get parameters from ros parameter server
-	ros::NodeHandle private_nh("~/" + name);
+    //Get parameters from ros parameter server
+    ros::NodeHandle private_nh("~/" + name);
+
+    private_nh.param("iterations", K, 2000);
+
+    private_nh.param("maxX", maxX, 50.0);
+    private_nh.param("maxY", maxY, 50.0);
+    private_nh.param("minX", minX, -50.0);
+    private_nh.param("minY", minY, -50.0);
 }
 
-bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,  std::vector<geometry_msgs::PoseStamped>& plan )
+bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
+                          const geometry_msgs::PoseStamped& goal,
+                          std::vector<geometry_msgs::PoseStamped>& plan)
+{
+	auto& q_ros = start.pose.orientation;
+	auto& t_ros = start.pose.position;
+
+	Quaterniond q(q_ros.w, q_ros.x, q_ros.y, q_ros.z);
+
+	Vector3d theta = q.matrix().eulerAngles(0, 1, 2);
+
+    VectorXd x0(3);
+    x0 << t_ros.x, t_ros.y, theta(3);
+
+    L2Distance distance;
+    RTT rtt(distance, x0);
+
+    DifferentialDrive kinematicModel;
+
+    for(unsigned int i = 0; i < K; i++)
+    {
+    	auto&& xRand = randomState();
+
+    	auto* node = rtt.searchNearestNode(xRand);
+
+    	VectorXd xNew;
+
+    	if(newState(xRand, node->x, xNew))
+    	{
+    		rtt.addNode(node, xNew);
+    	}
+
+    }
+
+
+    return false;
+
+}
+
+VectorXd RTTPlanner::randomState()
+{
+	VectorXd xRand;
+	xRand.setRandom(3);
+
+	xRand += VectorXd::Ones(3);
+	xRand /= 2;
+
+	xRand(0) *= maxX - minX;
+	xRand(1) *= maxY - minY;
+	xRand(2) *= 2*M_PI;
+
+	xRand(0) += minX;
+	xRand(1) += minY;
+	xRand(2) += -M_PI;
+
+	return xRand;
+}
+
+bool RTTPlanner::newState(const VectorXd& xNear,
+    			 const VectorXd& xNew,
+				 VectorXd& u)
 {
 
-    plan.push_back(start);
-    for (int i=0; i<20; i++)
-    {
-        geometry_msgs::PoseStamped new_goal = goal;
-        tf::Quaternion goal_quat = tf::createQuaternionFromYaw(1.54);
 
-        new_goal.pose.position.x = -2.5+(0.05*i);
-        new_goal.pose.position.y = -3.5+(0.05*i);
-
-        new_goal.pose.orientation.x = goal_quat.x();
-        new_goal.pose.orientation.y = goal_quat.y();
-        new_goal.pose.orientation.z = goal_quat.z();
-        new_goal.pose.orientation.w = goal_quat.w();
-
-        plan.push_back(new_goal);
-    }
-    plan.push_back(goal);
-    return true;
+	return true;
 }
+
+
 };

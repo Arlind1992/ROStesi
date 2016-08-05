@@ -25,21 +25,15 @@
 #define INCLUDE_RTT_PLANNING_RTT_RTTNODE_H_
 
 #include <Eigen/Dense>
+#include <vector>
 
 struct RTTNode
 {
-	RTTNode()
-	{
+    RTTNode();
+    RTTNode(Eigen::VectorXd& x);
 
-	}
-
-	RTTNode(Eigen::VectorXd& x)
-	{
-		this->x = x;
-	}
-
-	Eigen::VectorXd x;
-	std::vector<RTTNode*> childs;
+    Eigen::VectorXd x;
+    std::vector<RTTNode*> childs;
 };
 
 

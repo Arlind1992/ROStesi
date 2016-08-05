@@ -27,9 +27,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # ------------------------ BUILD -------------------------------
 
-
 add_library(rtt_planner src/RTTPlanner.cpp
-                        src/kinematics_models/DifferentialDrive.cpp)
+                        src/kinematics_models/DifferentialDrive.cpp
+                        src/rtt/RTTNode.cpp
+                        src/rtt/RTT.cpp)
                         
                         
 # ------------------------ TESTS -------------------------------  
@@ -43,12 +44,37 @@ install(TARGETS rtt_planner
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
         )
-
+        
 # Install headers
 install(DIRECTORY include
         DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
         PATTERN ".svn" EXCLUDE
         )
+
+# Install plugin files
+install(DIRECTORY plugins
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN ".svn" EXCLUDE
+        )
+
+
+# Install launch files
+install(DIRECTORY launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN ".svn" EXCLUDE
+        )
+
+# install maps files        
+install(DIRECTORY maps
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN ".svn" EXCLUDE
+        )        
+
+# install rviz files        
+install(DIRECTORY rviz_config
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN ".svn" EXCLUDE
+        )  
 
 
 # ------------------------ DOCUMENTATION ------------------------

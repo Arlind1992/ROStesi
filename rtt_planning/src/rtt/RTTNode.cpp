@@ -21,26 +21,14 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RTT_PLANNING_RTT_RTT_H_
-#define INCLUDE_RTT_PLANNING_RTT_RTT_H_
-
 #include "rtt_planning/rtt/RTTNode.h"
-#include "rtt_planning/distance/Distance.h"
 
-class RTT
+RTTNode::RTTNode()
 {
-public:
-    RTT(Distance& distance, Eigen::VectorXd& x0);
 
-    RTTNode* searchNearestNode(Eigen::VectorXd& x);
-    void addNode(RTTNode* parent, Eigen::VectorXd& xNew);
+}
 
-
-private:
-    RTTNode* root;
-    std::vector<RTTNode*> nodes;
-    Distance& distance;
-};
-
-
-#endif /* INCLUDE_RTT_PLANNING_RTT_RTT_H_ */
+RTTNode::RTTNode(Eigen::VectorXd& x)
+{
+    this->x = x;
+}

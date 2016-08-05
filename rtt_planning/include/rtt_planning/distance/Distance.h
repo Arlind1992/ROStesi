@@ -27,20 +27,20 @@
 class Distance
 {
 public:
-	virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2) = 0;
-	virtual ~Distance()
-	{
+    virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2) = 0;
+    virtual ~Distance()
+    {
 
-	}
+    }
 };
 
 class L2Distance : public Distance
 {
 public:
-	virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
-	{
-		return (x1-x2).norm();
-	}
+    virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
+    {
+        return (x1-x2).norm();
+    }
 
 };
 

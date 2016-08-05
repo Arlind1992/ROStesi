@@ -24,34 +24,34 @@
 #include "rtt_planning/rtt/RTT.h"
 
 
-RTT::RTT(Distance& distance, Eigen::VectorXd& x0)
+RTT::RTT(Distance& distance, Eigen::VectorXd& x0) : distance(distance)
 {
-	root = new RTTNode(x0);
-	nodes.push_back(root);
+    root = new RTTNode(x0);
+    nodes.push_back(root);
 }
 
 RTTNode* RTT::searchNearestNode(Eigen::VectorXd& x)
 {
-	RTTNode* nearest = root;
-	double dMin = distance(root, x);
+    RTTNode* nearest = root;
+    double dMin = distance(root->x, x);
 
-	for(auto* node : nodes)
-	{
-		double newDist = distance(node->x, x);
+    for(auto* node : nodes)
+    {
+        double newDist = distance(node->x, x);
 
-		if(newDist < dMin)
-		{
-			dMin = newDist;
-			nearest = node;
-		}
-	}
+        if(newDist < dMin)
+        {
+            dMin = newDist;
+            nearest = node;
+        }
+    }
 
-	return nearest;
+    return nearest;
 }
 
 void RTT::addNode(RTTNode* parent, Eigen::VectorXd& xNew)
 {
-	RTTNode* child = new RTTNode(xNew);
-	parent->childs.push_back(child);
+    RTTNode* child = new RTTNode(xNew);
+    parent->childs.push_back(child);
 }
 

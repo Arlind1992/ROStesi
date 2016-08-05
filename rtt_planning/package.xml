@@ -18,7 +18,7 @@
   <depend>geometry_msgs</depend>
   
   <export>
-  	<nav_core plugin="${prefix}/rtt_planner_plugin.xml" />
+  	<nav_core plugin="${prefix}/plugins/rtt_planner_plugin.xml" />
   </export>
 
 </package>
