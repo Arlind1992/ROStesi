@@ -21,7 +21,7 @@
 							<builder buildPath="${workspace_loc}/" cleanBuildTarget="clean --pkg rtt_planning" command="catkin_make" id="cdt.managedbuild.target.gnu.builder.base.1548476037" incrementalBuildTarget="--pkg rtt_planning" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.559966947" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1005457321" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
-								<option id="gnu.cpp.compiler.option.include.paths.1360321663" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.1360321663" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/dave/ros-extra/devel/include"/>
 									<listOptionValue builtIn="false" value="/home/dave/ReLe/devel/include"/>
 									<listOptionValue builtIn="false" value="/home/dave/CognitiveSlam/devel/include"/>

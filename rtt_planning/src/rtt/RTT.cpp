@@ -53,5 +53,6 @@ void RTT::addNode(RTTNode* parent, Eigen::VectorXd& xNew)
 {
     RTTNode* child = new RTTNode(xNew);
     parent->childs.push_back(child);
+    nodes.push_back(child);
 }
 

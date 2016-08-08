@@ -47,6 +47,19 @@ RTTPlanner::RTTPlanner ()
     maxY = 0;
     minX = 0;
     minY = 0;
+
+    deltaT = 0;
+    deltaX = 0;
+
+    //TODO move elsewhere
+    maxU1 = 0;
+    maxU2 = 0;
+    minU1 = 0;
+    minU2 = 0;
+    discretization = 0;
+
+    kinematicModel = nullptr;
+    distance = nullptr;
 }
 
 RTTPlanner::RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
@@ -68,73 +81,146 @@ void RTTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     private_nh.param("maxY", maxY, 50.0);
     private_nh.param("minX", minX, -50.0);
     private_nh.param("minY", minY, -50.0);
+
+    private_nh.param("deltaT", deltaT, 0.5);
+    private_nh.param("deltaX", deltaX, 0.1);
+
+
+    //TODO move elsewhere
+    private_nh.param("maxU1", maxU1, 5.0);
+    private_nh.param("maxU2", maxU2, 1.0);
+    private_nh.param("minU1", minU1, -5.0);
+    private_nh.param("minU2", minU2, -1.0);
+    private_nh.param("discretization", discretization, 3);
+
+
+    //TODO select from parameter
+    kinematicModel = new DifferentialDrive();
+    distance = new L2Distance();
 }
 
 bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                           const geometry_msgs::PoseStamped& goal,
                           std::vector<geometry_msgs::PoseStamped>& plan)
 {
-	auto& q_ros = start.pose.orientation;
-	auto& t_ros = start.pose.position;
+    Distance& distance = *this->distance;
 
-	Quaterniond q(q_ros.w, q_ros.x, q_ros.y, q_ros.z);
+    VectorXd&& x0 = convertPose(start);
+    VectorXd&& xGoal = convertPose(goal);
 
-	Vector3d theta = q.matrix().eulerAngles(0, 1, 2);
-
-    VectorXd x0(3);
-    x0 << t_ros.x, t_ros.y, theta(3);
-
-    L2Distance distance;
     RTT rtt(distance, x0);
 
-    DifferentialDrive kinematicModel;
+    ROS_INFO("Planner started");
 
     for(unsigned int i = 0; i < K; i++)
     {
-    	auto&& xRand = randomState();
+        auto&& xRand = randomState();
 
-    	auto* node = rtt.searchNearestNode(xRand);
+        cerr << "sampled Random state " << xRand.transpose() << endl;
+        auto* node = rtt.searchNearestNode(xRand);
 
-    	VectorXd xNew;
+        cerr << "Found NN " << node->x.transpose() << endl;
 
-    	if(newState(xRand, node->x, xNew))
-    	{
-    		rtt.addNode(node, xNew);
-    	}
+        VectorXd xNew;
+
+        if(newState(xRand, node->x, xNew))
+        {
+
+        	cerr << "Computed new state " << xNew.transpose() << endl;
+
+            rtt.addNode(node, xNew);
+
+            cerr << "goal distance " << distance(xNew, xGoal) << endl;
+
+            if(distance(xNew, xGoal) < deltaX)
+            {
+                cout << "Plan found" << endl;
+                return true;
+            }
+        }
+
+        cerr << "point " << i << endl;
 
     }
 
-
+    cerr << "Failed to found a plan"<< endl;
     return false;
 
 }
 
 VectorXd RTTPlanner::randomState()
 {
-	VectorXd xRand;
-	xRand.setRandom(3);
+    VectorXd xRand;
+    xRand.setRandom(3);
 
-	xRand += VectorXd::Ones(3);
-	xRand /= 2;
+    xRand += VectorXd::Ones(3);
+    xRand /= 2;
 
-	xRand(0) *= maxX - minX;
-	xRand(1) *= maxY - minY;
-	xRand(2) *= 2*M_PI;
+    xRand(0) *= maxX - minX;
+    xRand(1) *= maxY - minY;
+    xRand(2) *= 2*M_PI;
 
-	xRand(0) += minX;
-	xRand(1) += minY;
-	xRand(2) += -M_PI;
+    xRand(0) += minX;
+    xRand(1) += minY;
+    xRand(2) += -M_PI;
 
-	return xRand;
+    return xRand;
 }
 
-bool RTTPlanner::newState(const VectorXd& xNear,
-    			 const VectorXd& xNew,
-				 VectorXd& u)
+bool RTTPlanner::newState(const VectorXd& xRand,
+                          const VectorXd& xNear,
+                          VectorXd& xNew)
 {
+    VectorXd uc(2);
+    VectorXd x;
+
+    double deltaU1 = (maxU1 - minU1) / (discretization-1.0);
+    double deltaU2 = (maxU2 - minU2) / (discretization-1.0);
+
+    double minDistance = std::numeric_limits<double>::infinity();
+    Distance& distance = *this->distance;
+
+    uc(0) = minU1;
+
+    for(unsigned int i = 0; i < discretization; i++)
+    {
+        uc(1) = minU2;
+
+        for(unsigned int j = 0; j < discretization; j++)
+        {
+            x = kinematicModel->compute(xNear, uc, deltaT);
+            double currentDist = distance(xRand, x);
+
+            if(currentDist < minDistance)
+            {
+                xNew = x;
+                minDistance = currentDist;
+            }
 
 
-	return true;
+            uc(1) += deltaU2;
+        }
+
+        uc(0) += deltaU1;
+
+    }
+
+    return true;
+}
+
+VectorXd RTTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
+{
+    auto& q_ros = msg.pose.orientation;
+    auto& t_ros = msg.pose.position;
+
+    Quaterniond q(q_ros.w, q_ros.x, q_ros.y, q_ros.z);
+
+    Vector3d theta = q.matrix().eulerAngles(0, 1, 2);
+
+    VectorXd x(3);
+    x << t_ros.x, t_ros.y, theta(2);
+
+    return x;
 }
 
 

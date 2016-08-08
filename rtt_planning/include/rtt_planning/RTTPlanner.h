@@ -33,7 +33,8 @@
 #include <geometry_msgs/PoseStamped.h>
 
 #include <Eigen/Dense>
-
+#include "rtt_planning/kinematics_models/KinematicModel.h"
+#include "rtt_planning/distance/Distance.h"
 
 namespace rtt_planning
 {
@@ -45,7 +46,6 @@ public:
     RTTPlanner();
     RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
 
-    /** overridden classes from interface nav_core::BaseGlobalPlanner **/
     void initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros) override;
     bool makePlan(const geometry_msgs::PoseStamped& start,
                   const geometry_msgs::PoseStamped& goal,
@@ -58,6 +58,8 @@ private:
                   const Eigen::VectorXd& xNear,
                   Eigen::VectorXd& xNew);
 
+    Eigen::VectorXd convertPose(const geometry_msgs::PoseStamped& pose);
+
 
 private:
     costmap_2d::Costmap2DROS* costmap;
@@ -67,6 +69,18 @@ private:
     double maxY;
     double minX;
     double minY;
+    double deltaT;
+    double deltaX;
+
+    KinematicModel* kinematicModel;
+    Distance* distance;
+
+    //TODO move elsewhere
+    double maxU1;
+    double maxU2;
+    double minU1;
+    double minU2;
+    int discretization;
 };
 };
 
