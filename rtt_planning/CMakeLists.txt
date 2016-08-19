@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-find_package(catkin)
+find_package(catkin REQUIRED COMPONENTS pluginlib)
 project(rtt_planning)
 
 catkin_package()
 
 # ----------------------- INCLUDES ----------------------------
 
-include_directories(include)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 # ----------------------- LIBRARIES ---------------------------
 
@@ -34,7 +34,7 @@ add_library(rtt_planner src/RTTPlanner.cpp
                         
                         
 # ------------------------ TESTS -------------------------------  
-add_subdirectory(test)                      
+#add_subdirectory(test)                      
 
 # ------------------------ INSTALLATION ------------------------
 
