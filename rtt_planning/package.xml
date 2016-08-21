@@ -19,6 +19,7 @@
   
   <export>
   	<nav_core plugin="${prefix}/plugins/rtt_planner_plugin.xml" />
+  	<nav_core plugin="${prefix}/plugins/theta_star_planner_plugin.xml" />
   </export>
 
 </package>

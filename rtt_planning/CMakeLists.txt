@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-find_package(catkin REQUIRED COMPONENTS pluginlib)
+find_package(catkin REQUIRED COMPONENTS pluginlib costmap_2d)
 project(rtt_planning)
 
 catkin_package()
@@ -30,7 +30,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_library(rtt_planner src/RTTPlanner.cpp
                         src/kinematics_models/DifferentialDrive.cpp
                         src/rtt/RTTNode.cpp
-                        src/rtt/RTT.cpp)
+                        src/rtt/RTT.cpp
+                        src/ThetaStarPlanner.cpp)
                         
                         
 # ------------------------ TESTS -------------------------------  
