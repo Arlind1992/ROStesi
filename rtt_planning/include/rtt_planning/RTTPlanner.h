@@ -60,6 +60,8 @@ private:
 
     Eigen::VectorXd convertPose(const geometry_msgs::PoseStamped& pose);
 
+    void publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd);
+
 
 private:
     costmap_2d::Costmap2DROS* costmap;
@@ -74,6 +76,9 @@ private:
 
     KinematicModel* kinematicModel;
     Distance* distance;
+
+    //Visualization of rtt
+    ros::Publisher vis_pub;
 
     //TODO move elsewhere
     double maxU1;

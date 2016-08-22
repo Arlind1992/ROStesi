@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /TF1/Frames1
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 615
   - Class: rviz/Selection
@@ -91,6 +92,14 @@ Visualization Manager:
         Y: 0
         Z: 0
       Topic: /move_base/TrajectoryPlannerROS/global_plan
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /move_base/RTTPlanner/visualization_marker
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:

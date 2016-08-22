@@ -22,6 +22,8 @@
  */
 
 #include <pluginlib/class_list_macros.h>
+#include <visualization_msgs/Marker.h>
+
 #include "rtt_planning/RTTPlanner.h"
 
 #include "rtt_planning/rtt/RTT.h"
@@ -97,6 +99,8 @@ void RTTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     //TODO select from parameter
     kinematicModel = new DifferentialDrive();
     distance = new L2Distance();
+
+    vis_pub = private_nh.advertise<visualization_msgs::Marker>("visualization_marker", 0);
 }
 
 bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
@@ -129,6 +133,8 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         	cerr << "Computed new state " << xNew.transpose() << endl;
 
             rtt.addNode(node, xNew);
+
+            publishSegment(node->x, xNew);
 
             cerr << "goal distance " << distance(xNew, xGoal) << endl;
 
@@ -223,5 +229,50 @@ VectorXd RTTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
     return x;
 }
 
+void RTTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd)
+{
+	static int id = 0;
+
+	visualization_msgs::Marker marker;
+	marker.header.frame_id = "map";
+	marker.header.stamp = ros::Time();
+	marker.ns = "rtt";
+	marker.id = id++;
+	marker.type = visualization_msgs::Marker::LINE_STRIP;
+	marker.action = visualization_msgs::Marker::ADD;
+	marker.pose.position.x = 0;
+	marker.pose.position.y = 0;
+	marker.pose.position.z = 0;
+	marker.pose.orientation.x = 0.0;
+	marker.pose.orientation.y = 0.0;
+	marker.pose.orientation.z = 0.0;
+	marker.pose.orientation.w = 1.0;
+	marker.scale.x = 0.1;
+	marker.scale.y = 0;
+	marker.scale.z = 0;
+	marker.color.a = 1.0; // Don't forget to set the alpha!
+	marker.color.r = 0.0;
+	marker.color.g = 1.0;
+	marker.color.b = 0.0;
+
+	geometry_msgs::Point p1;
+	geometry_msgs::Point p2;
+
+	p1.x = xStart(0);
+	p1.y = xStart(1);
+	p1.z = xStart(2);
+
+	p2.x = xEnd(0);
+	p2.y = xEnd(1);
+	p2.z = xEnd(2);
+
+	marker.points.push_back(p1);
+	marker.points.push_back(p2);
+
+	vis_pub.publish(marker);
+
+}
+
 
 };
+
