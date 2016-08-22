@@ -27,7 +27,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # ------------------------ BUILD -------------------------------
 
-add_library(rtt_planner src/RTTPlanner.cpp
+add_library(rtt_planner src/utils/RandomGenerator.cpp
+                        src/RTTPlanner.cpp
                         src/kinematics_models/DifferentialDrive.cpp
                         src/rtt/RTTNode.cpp
                         src/rtt/RTT.cpp

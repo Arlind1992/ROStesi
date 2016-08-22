@@ -28,6 +28,7 @@
 
 #include "rtt_planning/rtt/RTT.h"
 #include "rtt_planning/kinematics_models/DifferentialDrive.h"
+#include "rtt_planning/utils/RandomGenerator.h"
 
 using namespace Eigen;
 
@@ -52,6 +53,8 @@ RTTPlanner::RTTPlanner ()
 
     deltaT = 0;
     deltaX = 0;
+
+    greedy = 0;
 
     //TODO move elsewhere
     maxU1 = 0;
@@ -84,8 +87,10 @@ void RTTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     private_nh.param("minX", minX, -50.0);
     private_nh.param("minY", minY, -50.0);
 
-    private_nh.param("deltaT", deltaT, 0.5);
-    private_nh.param("deltaX", deltaX, 0.1);
+    private_nh.param("deltaT", deltaT, 0.1);
+    private_nh.param("deltaX", deltaX, 0.5);
+
+    private_nh.param("greedy", greedy, 0.5);
 
 
     //TODO move elsewhere
@@ -118,19 +123,31 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
     for(unsigned int i = 0; i < K; i++)
     {
-        auto&& xRand = randomState();
 
-        cerr << "sampled Random state " << xRand.transpose() << endl;
+        VectorXd xRand;
+
+        if(RandomGenerator::sampleEvent(greedy))
+        {
+        	xRand = xGoal;
+        	//cerr << "sampled Goal state " << xRand.transpose() << endl;
+        }
+        else
+        {
+        	xRand = randomState();
+        	//cerr << "sampled Random state " << xRand.transpose() << endl;
+        }
+
+
         auto* node = rtt.searchNearestNode(xRand);
 
-        cerr << "Found NN " << node->x.transpose() << endl;
+        //cerr << "Found NN " << node->x.transpose() << endl;
 
         VectorXd xNew;
 
         if(newState(xRand, node->x, xNew))
         {
 
-        	cerr << "Computed new state " << xNew.transpose() << endl;
+        	//cerr << "Computed new state " << xNew.transpose() << endl;
 
             rtt.addNode(node, xNew);
 
@@ -140,7 +157,7 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
             if(distance(xNew, xGoal) < deltaX)
             {
-                cout << "Plan found" << endl;
+            	ROS_INFO("Plan found");
                 return true;
             }
         }
@@ -149,7 +166,7 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
     }
 
-    cerr << "Failed to found a plan"<< endl;
+    //cerr << "Failed to found a plan"<< endl;
     return false;
 
 }
@@ -250,7 +267,7 @@ void RTTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::Vect
 	marker.scale.x = 0.1;
 	marker.scale.y = 0;
 	marker.scale.z = 0;
-	marker.color.a = 1.0; // Don't forget to set the alpha!
+	marker.color.a = 1.0;
 	marker.color.r = 0.0;
 	marker.color.g = 1.0;
 	marker.color.b = 0.0;

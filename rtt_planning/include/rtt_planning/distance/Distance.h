@@ -39,7 +39,7 @@ class L2Distance : public Distance
 public:
     virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
     {
-        return (x1-x2).norm();
+        return (x1.head(2)-x2.head(2)).norm();
     }
 
 };

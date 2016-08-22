@@ -73,6 +73,7 @@ private:
     double minY;
     double deltaT;
     double deltaX;
+    double greedy;
 
     KinematicModel* kinematicModel;
     Distance* distance;

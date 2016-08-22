@@ -21,29 +21,25 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_
-#define INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_
+#ifndef INCLUDE_RTT_PLANNING_UTILS_RANDOMGENERATOR_H_
+#define INCLUDE_RTT_PLANNING_UTILS_RANDOMGENERATOR_H_
 
-#include <Eigen/Dense>
+#include <random>
 
-class KinematicModel
+namespace rtt_planning
+{
+
+class RandomGenerator
 {
 public:
-    typedef Eigen::VectorXd state_type;
-
-    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) = 0;
-
-    virtual ~KinematicModel()
-    {
-
-    }
-
-protected:
-    const double dt = 1e-3;
+	static bool sampleEvent(double p);
 
 
-
+private:
+	static std::random_device rd;
+	static std::mt19937 gen;
 };
 
+}
 
-#endif /* INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_ */
+#endif /* INCLUDE_RTT_PLANNING_UTILS_RANDOMGENERATOR_H_ */
