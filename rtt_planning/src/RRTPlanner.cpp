@@ -88,7 +88,7 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     private_nh.param("minY", minY, -50.0);
 
     private_nh.param("deltaT", deltaT, 0.1);
-    private_nh.param("deltaX", deltaX, 0.5);
+    private_nh.param("deltaX", deltaX, 1.0);
 
     private_nh.param("greedy", greedy, 0.5);
 
