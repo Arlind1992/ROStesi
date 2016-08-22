@@ -1,5 +1,0 @@
-<library path="lib/librtt_planner">
-	<class name="rtt_planning/RTTPlanner" type="rtt_planning::RTTPlanner" base_class_type="nav_core::BaseGlobalPlanner">
-		<description>This is a global planner plugin that uses rtt planning algorithm</description>
-	</class>
-</library>

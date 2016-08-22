@@ -1,47 +1,47 @@
 /*
- * rtt_planning,
+ * rrt_planning,
  *
  *
  * Copyright (C) 2016 Davide Tateo
  * Versione 1.0
  *
- * This file is part of rtt_planning.
+ * This file is part of rrt_planning.
  *
- * rtt_planning is free software: you can redistribute it and/or modify
+ * rrt_planning is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * rtt_planning is distributed in the hope that it will be useful,
+ * rrt_planning is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <pluginlib/class_list_macros.h>
 #include <visualization_msgs/Marker.h>
 
-#include "rtt_planning/RTTPlanner.h"
+#include "rrt_planning/RRTPlanner.h"
 
-#include "rtt_planning/rtt/RTT.h"
-#include "rtt_planning/kinematics_models/DifferentialDrive.h"
-#include "rtt_planning/utils/RandomGenerator.h"
+#include "rrt_planning/kinematics_models/DifferentialDrive.h"
+#include "rrt_planning/utils/RandomGenerator.h"
+#include "rrt_planning/rrt/RRT.h"
 
 using namespace Eigen;
 
 //register this planner as a BaseGlobalPlanner plugin
-PLUGINLIB_EXPORT_CLASS(rtt_planning::RTTPlanner, nav_core::BaseGlobalPlanner)
+PLUGINLIB_EXPORT_CLASS(rrt_planning::RRTPlanner, nav_core::BaseGlobalPlanner)
 
 using namespace std;
 
 //Default Constructor
-namespace rtt_planning
+namespace rrt_planning
 {
 
-RTTPlanner::RTTPlanner ()
+RRTPlanner::RRTPlanner ()
 {
     costmap = nullptr;
 
@@ -67,13 +67,13 @@ RTTPlanner::RTTPlanner ()
     distance = nullptr;
 }
 
-RTTPlanner::RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
+RRTPlanner::RRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
     initialize(name, costmap_ros);
 }
 
 
-void RTTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
+void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
     this->costmap = costmap_ros;
 
@@ -108,7 +108,7 @@ void RTTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     vis_pub = private_nh.advertise<visualization_msgs::Marker>("visualization_marker", 0);
 }
 
-bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
+bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                           const geometry_msgs::PoseStamped& goal,
                           std::vector<geometry_msgs::PoseStamped>& plan)
 {
@@ -117,7 +117,7 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     VectorXd&& x0 = convertPose(start);
     VectorXd&& xGoal = convertPose(goal);
 
-    RTT rtt(distance, x0);
+    RRT rrt(distance, x0);
 
     ROS_INFO("Planner started");
 
@@ -138,7 +138,7 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         }
 
 
-        auto* node = rtt.searchNearestNode(xRand);
+        auto* node = rrt.searchNearestNode(xRand);
 
         //cerr << "Found NN " << node->x.transpose() << endl;
 
@@ -149,7 +149,7 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
         	//cerr << "Computed new state " << xNew.transpose() << endl;
 
-            rtt.addNode(node, xNew);
+            rrt.addNode(node, xNew);
 
             publishSegment(node->x, xNew);
 
@@ -171,7 +171,7 @@ bool RTTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
 }
 
-VectorXd RTTPlanner::randomState()
+VectorXd RRTPlanner::randomState()
 {
     VectorXd xRand;
     xRand.setRandom(3);
@@ -190,7 +190,7 @@ VectorXd RTTPlanner::randomState()
     return xRand;
 }
 
-bool RTTPlanner::newState(const VectorXd& xRand,
+bool RRTPlanner::newState(const VectorXd& xRand,
                           const VectorXd& xNear,
                           VectorXd& xNew)
 {
@@ -231,7 +231,7 @@ bool RTTPlanner::newState(const VectorXd& xRand,
     return true;
 }
 
-VectorXd RTTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
+VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
 {
     auto& q_ros = msg.pose.orientation;
     auto& t_ros = msg.pose.position;
@@ -246,14 +246,14 @@ VectorXd RTTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
     return x;
 }
 
-void RTTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd)
+void RRTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd)
 {
 	static int id = 0;
 
 	visualization_msgs::Marker marker;
 	marker.header.frame_id = "map";
 	marker.header.stamp = ros::Time();
-	marker.ns = "rtt";
+	marker.ns = "rrt";
 	marker.id = id++;
 	marker.type = visualization_msgs::Marker::LINE_STRIP;
 	marker.action = visualization_msgs::Marker::ADD;

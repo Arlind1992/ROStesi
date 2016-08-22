@@ -96,10 +96,10 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /move_base/RTTPlanner/visualization_marker
+      Marker Topic: /move_base/RRTPlanner/visualization_marker
       Name: Marker
       Namespaces:
-        rtt: true
+        {}
       Queue Size: 100
       Value: true
     - Alpha: 1

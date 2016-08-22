@@ -21,9 +21,9 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rtt_planning/utils/RandomGenerator.h"
+#include "rrt_planning/utils/RandomGenerator.h"
 
-namespace rtt_planning
+namespace rrt_planning
 {
 
 std::random_device RandomGenerator::rd;

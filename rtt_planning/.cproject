@@ -18,10 +18,10 @@
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.base.1991146389.1073279538" name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.base.1088308625" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.GNU_ELF" id="cdt.managedbuild.target.gnu.platform.base.404593678" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<builder buildPath="${workspace_loc}/" cleanBuildTarget="clean --pkg rtt_planning" command="catkin_make" enabledIncrementalBuild="true" id="cdt.managedbuild.target.gnu.builder.base.1810320751" incrementalBuildTarget="--pkg rtt_planning" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+							<builder buildPath="${workspace_loc}/" cleanBuildTarget="clean --pkg rrt_planning" command="catkin_make" enabledIncrementalBuild="true" id="cdt.managedbuild.target.gnu.builder.base.1810320751" incrementalBuildTarget="--pkg rrt_planning" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.961737092" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.196616067" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
-								<option id="gnu.cpp.compiler.option.include.paths.1821954207" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.1821954207" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/dave/ros-extra/devel/include"/>
 									<listOptionValue builtIn="false" value="/home/dave/ReLe/devel/include"/>
 									<listOptionValue builtIn="false" value="/home/dave/CognitiveSlam/devel/include"/>
@@ -75,4 +75,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

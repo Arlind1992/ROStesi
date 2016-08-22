@@ -21,28 +21,24 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RTT_PLANNING_DISTANCE_DISTANCE_H_
-#define INCLUDE_RTT_PLANNING_DISTANCE_DISTANCE_H_
+#ifndef INCLUDE_RRT_PLANNING_RRT_RRTNODE_H_
+#define INCLUDE_RRT_PLANNING_RRT_RRTNODE_H_
 
-class Distance
+#include <Eigen/Dense>
+#include <vector>
+
+namespace rrt_planning
 {
-public:
-    virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2) = 0;
-    virtual ~Distance()
-    {
 
-    }
+struct RRTNode
+{
+    RRTNode();
+    RRTNode(Eigen::VectorXd& x);
+
+    Eigen::VectorXd x;
+    std::vector<RRTNode*> childs;
 };
 
-class L2Distance : public Distance
-{
-public:
-    virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
-    {
-        return (x1.head(2)-x2.head(2)).norm();
-    }
+}
 
-};
-
-
-#endif /* INCLUDE_RTT_PLANNING_DISTANCE_DISTANCE_H_ */
+#endif /* INCLUDE_RRT_PLANNING_RRT_RRTNODE_H_ */

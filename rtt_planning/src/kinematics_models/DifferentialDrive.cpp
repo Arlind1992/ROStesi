@@ -21,7 +21,7 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rtt_planning/kinematics_models/DifferentialDrive.h"
+#include "rrt_planning/kinematics_models/DifferentialDrive.h"
 #include <boost/numeric/odeint.hpp>
 
 using namespace Eigen;

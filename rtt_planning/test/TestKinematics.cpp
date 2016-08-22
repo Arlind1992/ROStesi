@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-#include "rtt_planning/kinematics_models/DifferentialDrive.h"
+#include "rrt_planning/kinematics_models/DifferentialDrive.h"
 
 int main(int argc, char *argv[])
 {

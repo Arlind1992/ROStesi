@@ -21,25 +21,30 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RTT_PLANNING_UTILS_RANDOMGENERATOR_H_
-#define INCLUDE_RTT_PLANNING_UTILS_RANDOMGENERATOR_H_
+#ifndef INCLUDE_RRT_PLANNING_RRT_RRT_H_
+#define INCLUDE_RRT_PLANNING_RRT_RRT_H_
 
-#include <random>
+#include "rrt_planning/distance/Distance.h"
+#include "rrt_planning/rrt/RRTNode.h"
 
-namespace rtt_planning
+namespace rrt_planning
 {
 
-class RandomGenerator
+class RRT
 {
 public:
-	static bool sampleEvent(double p);
+    RRT(Distance& distance, Eigen::VectorXd& x0);
+
+    RRTNode* searchNearestNode(Eigen::VectorXd& x);
+    void addNode(RRTNode* parent, Eigen::VectorXd& xNew);
 
 
 private:
-	static std::random_device rd;
-	static std::mt19937 gen;
+    RRTNode* root;
+    std::vector<RRTNode*> nodes;
+    Distance& distance;
 };
 
 }
 
-#endif /* INCLUDE_RTT_PLANNING_UTILS_RANDOMGENERATOR_H_ */
+#endif /* INCLUDE_RRT_PLANNING_RRT_RRT_H_ */

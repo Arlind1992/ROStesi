@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rtt_planning</name>
+  <name>rrt_planning</name>
   <version>2.0.0</version>
-  <description>Some RTT-based planners</description>
+  <description>Some RRT-based planners</description>
 
   <maintainer email="davide.tateo@polimi.it">Davide Tateo</maintainer>
 
@@ -18,7 +18,7 @@
   <depend>geometry_msgs</depend>
   
   <export>
-  	<nav_core plugin="${prefix}/plugins/rtt_planner_plugin.xml" />
+  	<nav_core plugin="${prefix}/plugins/rrt_planner_plugin.xml" />
   	<nav_core plugin="${prefix}/plugins/theta_star_planner_plugin.xml" />
   </export>
 

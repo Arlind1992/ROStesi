@@ -1,12 +1,12 @@
 <launch>
 	<!-- arguments -->
-	<arg name="map_file" default="$(find rtt_planning)/maps/map.yaml"/>
+	<arg name="map_file" default="$(find rrt_planning)/maps/map.yaml"/>
 	
 	<!-- Nodes -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 	
 	<node name="rviz" pkg="rviz" type="rviz" respawn="true"
-	args="-d $(find rtt_planning)/rviz_config/rviz.rviz" />
+	args="-d $(find rrt_planning)/rviz_config/rviz.rviz" />
 	
 	
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -16,7 +16,7 @@
 		<param name="local_costmap/global_frame" value="odom"/>
 		<param name="local_costmap/robot_base_frame" value="base_footprint"/>
 		<param name="DWAPlannerROS/global_frame_id" value="odom"/>
-		<param name="base_global_planner" value="rtt_planning/RTTPlanner"/>
+		<param name="base_global_planner" value="rrt_planning/RRTPlanner"/>
 	</node>
 	
 	<!-- node pkg="amcl" type="amcl" name="amcl">

@@ -1,5 +1,5 @@
-<library path="lib/librtt_planner">
-	<class name="rtt_planning/ThetaStarPlanner" type="rtt_planning::ThetaStarPlanner" base_class_type="nav_core::BaseGlobalPlanner">
+<library path="lib/librrt_planner">
+	<class name="rrt_planning/ThetaStarPlanner" type="rrt_planning::ThetaStarPlanner" base_class_type="nav_core::BaseGlobalPlanner">
 		<description>This is a global planner plugin that uses theta star planning algorithm</description>
 	</class>
 </library>

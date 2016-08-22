@@ -21,26 +21,23 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RTT_PLANNING_RTT_RTT_H_
-#define INCLUDE_RTT_PLANNING_RTT_RTT_H_
+#ifndef INCLUDE_KINEMATICS_MODELS_DIFFERENTIALDRIVE_H_
+#define INCLUDE_KINEMATICS_MODELS_DIFFERENTIALDRIVE_H_
 
-#include "rtt_planning/rtt/RTTNode.h"
-#include "rtt_planning/distance/Distance.h"
+#include "rrt_planning/kinematics_models/KinematicModel.h"
 
-class RTT
+class DifferentialDrive : public KinematicModel
 {
 public:
-    RTT(Distance& distance, Eigen::VectorXd& x0);
+    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) override;
 
-    RTTNode* searchNearestNode(Eigen::VectorXd& x);
-    void addNode(RTTNode* parent, Eigen::VectorXd& xNew);
 
+    void operator()(const state_type& x, state_type& dx,
+                    const double /* t */);
 
 private:
-    RTTNode* root;
-    std::vector<RTTNode*> nodes;
-    Distance& distance;
+    Eigen::VectorXd u;
 };
 
 
-#endif /* INCLUDE_RTT_PLANNING_RTT_RTT_H_ */
+#endif /* INCLUDE_KINEMATICS_MODELS_DIFFERENTIALDRIVE_H_ */

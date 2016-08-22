@@ -21,18 +21,19 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "rrt_planning/ThetaStarPlanner.h"
+
 #include <pluginlib/class_list_macros.h>
-#include "rtt_planning/ThetaStarPlanner.h"
 
 using namespace Eigen;
 
 //register this planner as a BaseGlobalPlanner plugin
-PLUGINLIB_EXPORT_CLASS(rtt_planning::ThetaStarPlanner, nav_core::BaseGlobalPlanner)
+PLUGINLIB_EXPORT_CLASS(rrt_planning::ThetaStarPlanner, nav_core::BaseGlobalPlanner)
 
 using namespace std;
 
 //Default Constructor
-namespace rtt_planning
+namespace rrt_planning
 {
 
 ThetaStarPlanner::ThetaStarPlanner ()

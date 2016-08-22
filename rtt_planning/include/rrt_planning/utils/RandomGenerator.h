@@ -21,21 +21,25 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RTT_PLANNING_RTT_RTTNODE_H_
-#define INCLUDE_RTT_PLANNING_RTT_RTTNODE_H_
+#ifndef INCLUDE_RRT_PLANNING_UTILS_RANDOMGENERATOR_H_
+#define INCLUDE_RRT_PLANNING_UTILS_RANDOMGENERATOR_H_
 
-#include <Eigen/Dense>
-#include <vector>
+#include <random>
 
-struct RTTNode
+namespace rrt_planning
 {
-    RTTNode();
-    RTTNode(Eigen::VectorXd& x);
 
-    Eigen::VectorXd x;
-    std::vector<RTTNode*> childs;
+class RandomGenerator
+{
+public:
+	static bool sampleEvent(double p);
+
+
+private:
+	static std::random_device rd;
+	static std::mt19937 gen;
 };
 
+}
 
-
-#endif /* INCLUDE_RTT_PLANNING_RTT_RTTNODE_H_ */
+#endif /* INCLUDE_RRT_PLANNING_UTILS_RANDOMGENERATOR_H_ */

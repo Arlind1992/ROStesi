@@ -21,23 +21,34 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_KINEMATICS_MODELS_DIFFERENTIALDRIVE_H_
-#define INCLUDE_KINEMATICS_MODELS_DIFFERENTIALDRIVE_H_
+#ifndef INCLUDE_RRT_PLANNING_DISTANCE_DISTANCE_H_
+#define INCLUDE_RRT_PLANNING_DISTANCE_DISTANCE_H_
 
-#include "rtt_planning/kinematics_models/KinematicModel.h"
+#include <Eigen/Dense>
 
-class DifferentialDrive : public KinematicModel
+namespace rrt_planning
+{
+
+class Distance
 {
 public:
-    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) override;
+    virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2) = 0;
+    virtual ~Distance()
+    {
 
-
-    void operator()(const state_type& x, state_type& dx,
-                    const double /* t */);
-
-private:
-    Eigen::VectorXd u;
+    }
 };
 
+class L2Distance : public Distance
+{
+public:
+    virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
+    {
+        return (x1.head(2)-x2.head(2)).norm();
+    }
 
-#endif /* INCLUDE_KINEMATICS_MODELS_DIFFERENTIALDRIVE_H_ */
+};
+
+}
+
+#endif /* INCLUDE_RRT_PLANNING_DISTANCE_DISTANCE_H_ */

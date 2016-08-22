@@ -33,18 +33,19 @@
 #include <geometry_msgs/PoseStamped.h>
 
 #include <Eigen/Dense>
-#include "rtt_planning/kinematics_models/KinematicModel.h"
-#include "rtt_planning/distance/Distance.h"
 
-namespace rtt_planning
+#include "rrt_planning/distance/Distance.h"
+#include "rrt_planning/kinematics_models/KinematicModel.h"
+
+namespace rrt_planning
 {
 
-class RTTPlanner : public nav_core::BaseGlobalPlanner
+class RRTPlanner : public nav_core::BaseGlobalPlanner
 {
 public:
 
-    RTTPlanner();
-    RTTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
+    RRTPlanner();
+    RRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
 
     void initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros) override;
     bool makePlan(const geometry_msgs::PoseStamped& start,

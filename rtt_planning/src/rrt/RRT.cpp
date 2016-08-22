@@ -21,14 +21,41 @@
  *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rtt_planning/rtt/RTTNode.h"
+#include "rrt_planning/rrt/RRT.h"
 
-RTTNode::RTTNode()
+namespace rrt_planning
 {
 
+RRT::RRT(Distance& distance, Eigen::VectorXd& x0) : distance(distance)
+{
+    root = new RRTNode(x0);
+    nodes.push_back(root);
 }
 
-RTTNode::RTTNode(Eigen::VectorXd& x)
+RRTNode* RRT::searchNearestNode(Eigen::VectorXd& x)
 {
-    this->x = x;
+    RRTNode* nearest = root;
+    double dMin = distance(root->x, x);
+
+    for(auto* node : nodes)
+    {
+        double newDist = distance(node->x, x);
+
+        if(newDist < dMin)
+        {
+            dMin = newDist;
+            nearest = node;
+        }
+    }
+
+    return nearest;
+}
+
+void RRT::addNode(RRTNode* parent, Eigen::VectorXd& xNew)
+{
+    RRTNode* child = new RRTNode(xNew);
+    parent->childs.push_back(child);
+    nodes.push_back(child);
+}
+
 }
