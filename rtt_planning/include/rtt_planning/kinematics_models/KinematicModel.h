@@ -39,7 +39,7 @@ public:
     }
 
 protected:
-    const double dt = 1e-1;
+    const double dt = 1e-2;
 
 
 

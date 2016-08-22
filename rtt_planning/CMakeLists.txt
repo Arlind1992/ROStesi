@@ -35,7 +35,7 @@ add_library(rtt_planner src/RTTPlanner.cpp
                         
                         
 # ------------------------ TESTS -------------------------------  
-#add_subdirectory(test)                      
+add_subdirectory(test)                      
 
 # ------------------------ INSTALLATION ------------------------
 
