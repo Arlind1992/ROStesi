@@ -65,7 +65,7 @@ private:
 
 
 private:
-    costmap_2d::Costmap2DROS* costmap;
+    Map* map;
 
     int K;
     double maxX;

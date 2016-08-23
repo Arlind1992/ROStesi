@@ -26,9 +26,14 @@
 
 #include "rrt_planning/kinematics_models/KinematicModel.h"
 
+namespace rrt_planning
+{
+
 class DifferentialDrive : public KinematicModel
 {
 public:
+
+    DifferentialDrive(Map& map);
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) override;
 
 
@@ -39,5 +44,6 @@ private:
     Eigen::VectorXd u;
 };
 
+}
 
 #endif /* INCLUDE_KINEMATICS_MODELS_DIFFERENTIALDRIVE_H_ */

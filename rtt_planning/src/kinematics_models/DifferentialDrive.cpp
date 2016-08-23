@@ -27,6 +27,14 @@
 using namespace Eigen;
 using namespace boost::numeric::odeint;
 
+namespace rrt_planning
+{
+
+DifferentialDrive::DifferentialDrive(Map& map) : KinematicModel(map)
+{
+
+}
+
 Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u, double delta)
 {
     this->u = u;
@@ -35,7 +43,13 @@ Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u
     VectorXd x = x0;
     integrate_const(stepper, *this, x, 0.0, delta, dt);
 
-    return x;
+    if(map.isFree(x))
+        return x;
+    else
+    {
+    	std::cerr << "Not free" << std::endl;
+        throw std::exception();
+    }
 }
 
 
@@ -51,5 +65,7 @@ void DifferentialDrive::operator()(const state_type& x, state_type& dx,
     0, 1;
 
     dx = A*u;
+
+}
 
 }

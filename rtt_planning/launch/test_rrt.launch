@@ -9,7 +9,7 @@
 	args="-d $(find rrt_planning)/rviz_config/rviz.rviz" />
 	
 	
-	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" launch-prefix="xterm -e gdb --args">
 		<!-- reset frame_id parameters using user input data -->
 		<param name="global_costmap/global_frame" value="map"/>
 		<param name="global_costmap/robot_base_frame" value="base_footprint"/>

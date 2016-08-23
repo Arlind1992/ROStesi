@@ -32,12 +32,12 @@ namespace rrt_planning
 class RandomGenerator
 {
 public:
-	static bool sampleEvent(double p);
+    static bool sampleEvent(double p);
 
 
 private:
-	static std::random_device rd;
-	static std::mt19937 gen;
+    static std::random_device rd;
+    static std::mt19937 gen;
 };
 
 }

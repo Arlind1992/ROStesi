@@ -26,9 +26,22 @@
 
 #include <Eigen/Dense>
 
+#include <costmap_2d/costmap_2d_ros.h>
+#include <costmap_2d/cost_values.h>
+
+#include "rrt_planning/map/Map.h"
+
+namespace rrt_planning
+{
+
 class KinematicModel
 {
 public:
+    KinematicModel(Map& map) : map(map)
+    {
+
+    }
+
     typedef Eigen::VectorXd state_type;
 
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) = 0;
@@ -38,12 +51,13 @@ public:
 
     }
 
+
 protected:
     const double dt = 1e-3;
-
-
+    Map& map;
 
 };
 
+}
 
 #endif /* INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_ */

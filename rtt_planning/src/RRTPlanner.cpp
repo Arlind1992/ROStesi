@@ -43,7 +43,7 @@ namespace rrt_planning
 
 RRTPlanner::RRTPlanner ()
 {
-    costmap = nullptr;
+    map = nullptr;
 
     K = 0;
     maxX = 0;
@@ -75,7 +75,7 @@ RRTPlanner::RRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 
 void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-    this->costmap = costmap_ros;
+    //map = costmap_ros; TODO fixare
 
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
@@ -102,7 +102,8 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
 
 
     //TODO select from parameter
-    kinematicModel = new DifferentialDrive();
+    std::cerr << "creating kinematic model" << std::endl;
+    kinematicModel = new DifferentialDrive(*map);
     distance = new L2Distance();
 
     vis_pub = private_nh.advertise<visualization_msgs::Marker>("visualization_marker", 0);
@@ -211,14 +212,21 @@ bool RRTPlanner::newState(const VectorXd& xRand,
 
         for(unsigned int j = 0; j < discretization; j++)
         {
-            x = kinematicModel->compute(xNear, uc, deltaT);
-            double currentDist = distance(xRand, x);
+        	try
+        	{
+				x = kinematicModel->compute(xNear, uc, deltaT);
+				double currentDist = distance(xRand, x);
 
-            if(currentDist < minDistance)
-            {
-                xNew = x;
-                minDistance = currentDist;
-            }
+				if(currentDist < minDistance)
+				{
+					xNew = x;
+					minDistance = currentDist;
+				}
+        	}
+        	catch(...) //TODO catch specific exception
+        	{
+
+        	}
 
 
             uc(1) += deltaU2;
@@ -228,7 +236,7 @@ bool RRTPlanner::newState(const VectorXd& xRand,
 
     }
 
-    return true;
+    return minDistance < std::numeric_limits<double>::infinity();
 }
 
 VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)

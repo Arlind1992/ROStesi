@@ -40,8 +40,8 @@ class ThetaStarPlanner : public nav_core::BaseGlobalPlanner
 {
 public:
 
-	ThetaStarPlanner();
-	ThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
+    ThetaStarPlanner();
+    ThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
 
     void initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros) override;
     bool makePlan(const geometry_msgs::PoseStamped& start,
