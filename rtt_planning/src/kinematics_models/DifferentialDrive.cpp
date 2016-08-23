@@ -46,10 +46,7 @@ Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u
     if(map.isFree(x))
         return x;
     else
-    {
-    	std::cerr << "Not free" << std::endl;
         throw std::exception();
-    }
 }
 
 

@@ -35,7 +35,7 @@
 	<node pkg="tf" 
 	type="static_transform_publisher" 
 	name="false_odom" 
-	args="0 0 0 0 0 0 1 odom base_footprint 100" />
+	args="2 2 0 0 0 0 1 odom base_footprint 100" />
 	
 	<node pkg="tf" 
 	type="static_transform_publisher" 
