@@ -26,6 +26,7 @@
 
 #include "rrt_planning/RRTPlanner.h"
 
+#include "rrt_planning/map/ROSMap.h"
 #include "rrt_planning/kinematics_models/DifferentialDrive.h"
 #include "rrt_planning/utils/RandomGenerator.h"
 #include "rrt_planning/rrt/RRT.h"
@@ -75,7 +76,7 @@ RRTPlanner::RRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 
 void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-    //map = costmap_ros; TODO fixare
+    map = new ROSMap(costmap_ros);
 
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
@@ -88,7 +89,7 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     private_nh.param("minY", minY, -50.0);
 
     private_nh.param("deltaT", deltaT, 0.1);
-    private_nh.param("deltaX", deltaX, 1.0);
+    private_nh.param("deltaX", deltaX, 0.1);
 
     private_nh.param("greedy", greedy, 0.5);
 
@@ -154,7 +155,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
             publishSegment(node->x, xNew);
 
-            cerr << "goal distance " << distance(xNew, xGoal) << endl;
+            //cerr << "goal distance " << distance(xNew, xGoal) << endl;
 
             if(distance(xNew, xGoal) < deltaX)
             {
@@ -163,7 +164,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
             }
         }
 
-        cerr << "point " << i << endl;
+        //cerr << "point " << i << endl;
 
     }
 

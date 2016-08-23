@@ -25,6 +25,8 @@
 #define INCLUDE_RRT_PLANNING_MAP_ROSMAP_H_
 
 #include "rrt_planning/map/Map.h"
+#include "costmap_2d/costmap_2d_ros.h"
+#include "costmap_2d/costmap_2d.h"
 
 namespace rrt_planning
 {
@@ -32,12 +34,17 @@ namespace rrt_planning
 class ROSMap : public Map
 {
 public:
-	ROSMap();
+	ROSMap(costmap_2d::Costmap2DROS* costmap_ros);
 
 	virtual bool isFree(const Eigen::VectorXd& p);
 	virtual unsigned char getCost(const Eigen::VectorXd& p);
 
 	virtual ~ROSMap();
+
+
+private:
+	costmap_2d::Costmap2DROS* costmap_ros;
+	costmap_2d::Costmap2D* costmap;
 
 };
 

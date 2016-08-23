@@ -8,14 +8,18 @@
 	<node name="rviz" pkg="rviz" type="rviz" respawn="true"
 	args="-d $(find rrt_planning)/rviz_config/rviz.rviz" />
 	
-	
-	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" launch-prefix="xterm -e gdb --args">
+	<!-- launch-prefix="xterm -e gdb - -args" -->
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" >
 		<!-- reset frame_id parameters using user input data -->
-		<param name="global_costmap/global_frame" value="map"/>
+		<param name="global_costmap/global_frame" value="/map"/>
 		<param name="global_costmap/robot_base_frame" value="base_footprint"/>
+		<param name="global_costmap/static_map" value="true"/> 
+		<param name="global_costmap/update_frequency" value="5.0"/> 
+		
 		<param name="local_costmap/global_frame" value="odom"/>
 		<param name="local_costmap/robot_base_frame" value="base_footprint"/>
 		<param name="DWAPlannerROS/global_frame_id" value="odom"/>
+		
 		<param name="base_global_planner" value="rrt_planning/RRTPlanner"/>
 	</node>
 	

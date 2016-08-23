@@ -27,12 +27,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # ------------------------ BUILD -------------------------------
 
-add_library(rrt_planner src/utils/RandomGenerator.cpp
-                        src/RRTPlanner.cpp
-                        src/kinematics_models/DifferentialDrive.cpp
-                        src/rrt/RRTNode.cpp
-                        src/rrt/RRT.cpp
-                        src/ThetaStarPlanner.cpp)
+file(GLOB_RECURSE rrt_SOURCE src/*.cpp)
+
+add_library(rrt_planner ${rrt_SOURCE})
+                        
+target_link_libraries(rrt_planner ${catkin_LIBRARIES})                        
                         
                         
 # ------------------------ TESTS -------------------------------  

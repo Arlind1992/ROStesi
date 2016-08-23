@@ -23,22 +23,53 @@
 
 #include "rrt_planning/map/ROSMap.h"
 
+#include <costmap_2d/cost_values.h>
+
 namespace rrt_planning
 {
 
-ROSMap::ROSMap()
+ROSMap::ROSMap(costmap_2d::Costmap2DROS* costmap_ros) : costmap_ros(costmap_ros),
+			costmap(costmap_ros->getCostmap())
 {
+	std::cerr << "costmap ros recieved" << std::endl;
+	std::cerr << costmap_ros->getBaseFrameID() << std::endl;
+	std::cerr << costmap_ros->getGlobalFrameID() << std::endl;
+	std::cerr << costmap_ros->getLayeredCostmap()->isCurrent() << std::endl;
+	std::cerr << costmap_ros->getLayeredCostmap()->isInitialized() << std::endl;
+
+	std::cerr << "costmap recieved" << std::endl;
+	std::cerr << costmap->getSizeInMetersX() << std::endl;
+	std::cerr << costmap->getSizeInMetersY() << std::endl;
+	std::cerr << costmap->getResolution() << std::endl;
+	std::cerr << costmap->getOriginX() << std::endl;
+	std::cerr << costmap->getOriginY() << std::endl;
+	std::cerr << costmap->getSizeInCellsX() << std::endl;
+	std::cerr << costmap->getSizeInCellsY() << std::endl;
+	//std::cerr << costmap->get << std::endl;
 
 }
 
 bool ROSMap::isFree(const Eigen::VectorXd& p)
 {
-	return true;
+	return getCost(p) <= costmap_2d::FREE_SPACE;
 }
 
 unsigned char ROSMap::getCost(const Eigen::VectorXd& p)
 {
-	return 0;
+	double wx = p(0);
+	double wy = p(1);
+
+	unsigned int mx;
+	unsigned int my;
+
+	if(costmap->worldToMap(wx, wy, mx, my))
+		return costmap->getCost(mx, my);
+	else
+	{
+		std::cerr << "out of map" << std::endl;
+		return costmap_2d::NO_INFORMATION;
+	}
+
 }
 
 ROSMap::~ROSMap()

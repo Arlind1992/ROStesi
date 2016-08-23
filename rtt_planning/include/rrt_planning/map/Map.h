@@ -24,6 +24,8 @@
 #ifndef INCLUDE_RRT_PLANNING_MAP_MAP_H_
 #define INCLUDE_RRT_PLANNING_MAP_MAP_H_
 
+#include <Eigen/Dense>
+
 namespace rrt_planning
 {
 
