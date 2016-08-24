@@ -81,25 +81,25 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
 
-    private_nh.param("iterations", K, 2000);
+    private_nh.param("iterations", K, 5000);
 
     private_nh.param("maxX", maxX, 50.0);
     private_nh.param("maxY", maxY, 50.0);
     private_nh.param("minX", minX, -50.0);
     private_nh.param("minY", minY, -50.0);
 
-    private_nh.param("deltaT", deltaT, 0.1);
-    private_nh.param("deltaX", deltaX, 0.1);
+    private_nh.param("deltaT", deltaT, 0.5);
+    private_nh.param("deltaX", deltaX, 0.3);
 
     private_nh.param("greedy", greedy, 0.1);
 
 
     //TODO move elsewhere
     private_nh.param("maxU1", maxU1, 1.0);
-    private_nh.param("maxU2", maxU2, 1.0);
-    private_nh.param("minU1", minU1, -5.0);
-    private_nh.param("minU2", minU2, -1.0);
-    private_nh.param("discretization", discretization, 3);
+    private_nh.param("maxU2", maxU2, M_PI/2);
+    private_nh.param("minU1", minU1, 0.0);
+    private_nh.param("minU2", minU2, -M_PI/2);
+    private_nh.param("discretization", discretization, 4);
 
 
     //TODO select from parameter
@@ -122,6 +122,8 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     RRT rrt(distance, x0);
 
     ROS_INFO("Planner started");
+
+    cleanSegments();
 
     for(unsigned int i = 0; i < K; i++)
     {
@@ -253,6 +255,17 @@ VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
     x << t_ros.x, t_ros.y, theta(2);
 
     return x;
+}
+
+void RRTPlanner::cleanSegments()
+{
+	visualization_msgs::Marker marker;
+	marker.header.frame_id = "map";
+	marker.header.stamp = ros::Time();
+	marker.ns = "rrt";
+	marker.action = visualization_msgs::Marker::DELETEALL;
+
+	vis_pub.publish(marker);
 }
 
 void RRTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd)
