@@ -32,12 +32,12 @@ namespace rrt_planning
 class DebugMap : public Map
 {
 public:
-	DebugMap();
+    DebugMap();
 
-	virtual bool isFree(const Eigen::VectorXd& p);
-	virtual unsigned char getCost(const Eigen::VectorXd& p);
+    virtual bool isFree(const Eigen::VectorXd& p);
+    virtual unsigned char getCost(const Eigen::VectorXd& p);
 
-	virtual ~DebugMap();
+    virtual ~DebugMap();
 
 private:
 

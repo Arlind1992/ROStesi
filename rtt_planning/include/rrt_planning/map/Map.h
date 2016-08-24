@@ -32,12 +32,12 @@ namespace rrt_planning
 class Map
 {
 public:
-	virtual bool isFree(const Eigen::VectorXd& p) = 0;
-	virtual unsigned char getCost(const Eigen::VectorXd& p) = 0;
+    virtual bool isFree(const Eigen::VectorXd& p) = 0;
+    virtual unsigned char getCost(const Eigen::VectorXd& p) = 0;
 
-	virtual ~Map()
-	{
-	}
+    virtual ~Map()
+    {
+    }
 
 };
 

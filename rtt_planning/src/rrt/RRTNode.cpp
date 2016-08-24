@@ -28,11 +28,12 @@ namespace rrt_planning
 
 RRTNode::RRTNode()
 {
-
+    father = nullptr;
 }
 
-RRTNode::RRTNode(Eigen::VectorXd& x)
+RRTNode::RRTNode(RRTNode* father, Eigen::VectorXd& x)
 {
+    this->father = father;
     this->x = x;
 }
 

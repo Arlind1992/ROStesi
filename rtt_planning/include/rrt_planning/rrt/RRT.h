@@ -38,6 +38,8 @@ public:
     RRTNode* searchNearestNode(Eigen::VectorXd& x);
     void addNode(RRTNode* parent, Eigen::VectorXd& xNew);
 
+    std::vector<Eigen::VectorXd> getPathToLastNode();
+
 
 private:
     RRTNode* root;

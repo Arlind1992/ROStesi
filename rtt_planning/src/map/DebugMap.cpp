@@ -33,12 +33,12 @@ DebugMap::DebugMap()
 
 bool DebugMap::isFree(const Eigen::VectorXd& p)
 {
-	return true;
+    return true;
 }
 
 unsigned char DebugMap::getCost(const Eigen::VectorXd& p)
 {
-	return 0;
+    return 0;
 }
 
 DebugMap::~DebugMap()

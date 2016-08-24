@@ -131,46 +131,35 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         VectorXd xRand;
 
         if(RandomGenerator::sampleEvent(greedy))
-        {
         	xRand = xGoal;
-        	//cerr << "sampled Goal state " << xRand.transpose() << endl;
-        }
         else
-        {
         	xRand = randomState();
-        	//cerr << "sampled Random state " << xRand.transpose() << endl;
-        }
 
 
         auto* node = rrt.searchNearestNode(xRand);
-
-        //cerr << "Found NN " << node->x.transpose() << endl;
 
         VectorXd xNew;
 
         if(newState(xRand, node->x, xNew))
         {
-
-        	//cerr << "Computed new state " << xNew.transpose() << endl;
-
             rrt.addNode(node, xNew);
 
             publishSegment(node->x, xNew);
 
-            //cerr << "goal distance " << distance(xNew, xGoal) << endl;
-
             if(distance(xNew, xGoal) < deltaX)
             {
+            	auto&& path = rrt.getPathToLastNode();
+            	publishPlan(path, plan, start.header.stamp);
+
             	ROS_INFO("Plan found");
+
                 return true;
             }
         }
 
-        //cerr << "point " << i << endl;
-
     }
 
-    //cerr << "Failed to found a plan"<< endl;
+    ROS_WARN_STREAM("Failed to found a plan in " << K << " RRT iterations");
     return false;
 
 }
@@ -257,6 +246,36 @@ VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
     return x;
 }
 
+void RRTPlanner::publishPlan(std::vector<Eigen::VectorXd>& path,
+			std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
+{
+	for(auto x : path)
+	{
+		geometry_msgs::PoseStamped msg;
+
+		msg.header.stamp = stamp;
+		msg.header.frame_id = "map";
+
+		msg.pose.position.x = x(0);
+		msg.pose.position.y = x(1);
+		msg.pose.position.z = 0;
+
+		Matrix3d m;
+		m = AngleAxisd(x(2), Vector3d::UnitZ())
+					* AngleAxisd(0, Vector3d::UnitY())
+					* AngleAxisd(0, Vector3d::UnitX());
+
+		Quaterniond q(m);
+
+		msg.pose.orientation.x = q.x();
+		msg.pose.orientation.y = q.y();
+		msg.pose.orientation.z = q.z();
+		msg.pose.orientation.w = q.w();
+
+		plan.push_back(msg);
+	}
+}
+
 void RRTPlanner::cleanSegments()
 {
 	visualization_msgs::Marker marker;
@@ -286,13 +305,13 @@ void RRTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::Vect
 	marker.pose.orientation.y = 0.0;
 	marker.pose.orientation.z = 0.0;
 	marker.pose.orientation.w = 1.0;
-	marker.scale.x = 0.1;
+	marker.scale.x = 0.01;
 	marker.scale.y = 0;
 	marker.scale.z = 0;
 	marker.color.a = 1.0;
-	marker.color.r = 0.0;
-	marker.color.g = 1.0;
-	marker.color.b = 0.0;
+	marker.color.r = 1.0;
+	marker.color.g = 0.0;
+	marker.color.b = 1.0;
 
 	geometry_msgs::Point p1;
 	geometry_msgs::Point p2;

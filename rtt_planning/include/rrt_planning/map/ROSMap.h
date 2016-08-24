@@ -34,17 +34,17 @@ namespace rrt_planning
 class ROSMap : public Map
 {
 public:
-	ROSMap(costmap_2d::Costmap2DROS* costmap_ros);
+    ROSMap(costmap_2d::Costmap2DROS* costmap_ros);
 
-	virtual bool isFree(const Eigen::VectorXd& p);
-	virtual unsigned char getCost(const Eigen::VectorXd& p);
+    virtual bool isFree(const Eigen::VectorXd& p);
+    virtual unsigned char getCost(const Eigen::VectorXd& p);
 
-	virtual ~ROSMap();
+    virtual ~ROSMap();
 
 
 private:
-	costmap_2d::Costmap2DROS* costmap_ros;
-	costmap_2d::Costmap2D* costmap;
+    costmap_2d::Costmap2DROS* costmap_ros;
+    costmap_2d::Costmap2D* costmap;
 
 };
 

@@ -61,6 +61,9 @@ private:
 
     Eigen::VectorXd convertPose(const geometry_msgs::PoseStamped& pose);
 
+    void publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
+    			const ros::Time& stamp);
+
     void cleanSegments();
     void publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd);
 
