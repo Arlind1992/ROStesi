@@ -8,7 +8,6 @@
 	<node name="rviz" pkg="rviz" type="rviz" respawn="true"
 	args="-d $(find rrt_planning)/rviz_config/rviz.rviz" />
 	
-	<!-- launch-prefix="xterm -e gdb - -args" -->
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 		<!-- reset frame_id parameters using user input data -->
 		<param name="global_costmap/global_frame" value="/map"/>
