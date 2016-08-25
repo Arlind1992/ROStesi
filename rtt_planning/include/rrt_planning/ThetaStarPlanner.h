@@ -31,6 +31,7 @@
 #include <geometry_msgs/PoseStamped.h>
 
 #include <Eigen/Dense>
+#include <vector>
 
 
 namespace rrt_planning
@@ -48,6 +49,18 @@ public:
                   const geometry_msgs::PoseStamped& goal,
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
 
+private:
+
+private:
+	Map* map;
+
+	double gridResolution;	// Cell edges in meters
+	vector< vector<unsigned char> > grid;
+
+	std::map<Vector2i, double> g;
+	std::map<Vector2i, double> parent;
+	std::priority_queue<Vector2i*, double> open;
+	std::set<Vector2i*> closed;
 };
 
 }
