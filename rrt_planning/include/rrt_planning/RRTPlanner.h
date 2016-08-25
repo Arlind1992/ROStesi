@@ -54,8 +54,6 @@ public:
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
 
 private:
-    Eigen::VectorXd randomState();
-
     bool newState(const Eigen::VectorXd& xRand,
                   const Eigen::VectorXd& xNear,
                   Eigen::VectorXd& xNew);

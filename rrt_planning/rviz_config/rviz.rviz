@@ -5,8 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /TF1/Frames1
-        - /Marker1
-        - /CurrentGoal1
       Splitter Ratio: 0.5
     Tree Height: 615
   - Class: rviz/Selection
@@ -80,6 +78,14 @@ Visualization Manager:
       Name: Map
       Topic: /map
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /move_base/RRTPlanner/visualization_marker
+      Name: Marker
+      Namespaces:
+        rrt: true
+      Queue Size: 5000
+      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
@@ -93,14 +99,6 @@ Visualization Manager:
         Y: 0
         Z: 0
       Topic: /move_base/TrajectoryPlannerROS/global_plan
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /move_base/RRTPlanner/visualization_marker
-      Name: Marker
-      Namespaces:
-        rrt: true
-      Queue Size: 5000
       Value: true
     - Alpha: 1
       Axes Length: 1
@@ -148,11 +146,11 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 12.544
+      Scale: 10.8798
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 3.9
-      Y: 4.9
+      X: 3.48772
+      Y: 5.8366
     Saved: ~
 Window Geometry:
   Displays:

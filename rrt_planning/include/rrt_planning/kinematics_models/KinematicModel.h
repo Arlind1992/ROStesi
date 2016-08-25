@@ -42,6 +42,7 @@ public:
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) = 0;
     virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) = 0;
     virtual Eigen::VectorXd getInitialState() = 0;
+    virtual Eigen::VectorXd getRandomState(double minX, double maxX, double minY, double maxY) = 0;
 
 
     inline unsigned int getStateSize()

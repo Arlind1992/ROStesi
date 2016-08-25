@@ -119,7 +119,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         if(RandomGenerator::sampleEvent(greedy))
         	xRand = xGoal;
         else
-        	xRand = randomState();
+        	xRand = kinematicModel->getRandomState(minX, maxX, minY, maxY);
 
 
         auto* node = rrt.searchNearestNode(xRand);
@@ -150,24 +150,6 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
 }
 
-VectorXd RRTPlanner::randomState()
-{
-    VectorXd xRand;
-    xRand.setRandom(3);
-
-    xRand += VectorXd::Ones(3);
-    xRand /= 2;
-
-    xRand(0) *= maxX - minX;
-    xRand(1) *= maxY - minY;
-    xRand(2) *= 2*M_PI;
-
-    xRand(0) += minX;
-    xRand(1) += minY;
-    xRand(2) += -M_PI;
-
-    return xRand;
-}
 
 bool RRTPlanner::newState(const VectorXd& xRand,
                           const VectorXd& xNear,
@@ -191,7 +173,7 @@ VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
     return x;
 }
 
-void RRTPlanner::publishPlan(std::vector<Eigen::VectorXd>& path,
+void RRTPlanner::publishPlan(std::vector<VectorXd>& path,
 			std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
 {
 	for(auto x : path)
@@ -232,7 +214,7 @@ void RRTPlanner::cleanSegments()
 	vis_pub.publish(marker);
 }
 
-void RRTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd)
+void RRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
 {
 	static int id = 0;
 

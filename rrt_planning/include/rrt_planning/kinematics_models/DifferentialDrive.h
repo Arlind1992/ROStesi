@@ -36,6 +36,7 @@ public:
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) override;
     virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) override;
     virtual Eigen::VectorXd getInitialState() override;
+    virtual Eigen::VectorXd getRandomState(double minX, double maxX, double minY, double maxY) override;
 
 
     void operator()(const state_type& x, state_type& dx,

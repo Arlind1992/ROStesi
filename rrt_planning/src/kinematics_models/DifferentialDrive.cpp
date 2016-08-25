@@ -65,6 +65,25 @@ Eigen::VectorXd DifferentialDrive::getInitialState()
 	return VectorXd::Zero(3);
 }
 
+Eigen::VectorXd DifferentialDrive::getRandomState(double minX, double maxX, double minY, double maxY)
+{
+    VectorXd xRand;
+    xRand.setRandom(3);
+
+    xRand += VectorXd::Ones(3);
+    xRand /= 2;
+
+    xRand(0) *= maxX - minX;
+    xRand(1) *= maxY - minY;
+    xRand(2) *= 2*M_PI;
+
+    xRand(0) += minX;
+    xRand(1) += minY;
+    xRand(2) += -M_PI;
+
+    return xRand;
+}
+
 
 void DifferentialDrive::operator()(const state_type& x, state_type& dx,
                                    const double /* t */)
