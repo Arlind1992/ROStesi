@@ -30,9 +30,10 @@ using namespace boost::numeric::odeint;
 namespace rrt_planning
 {
 
-DifferentialDrive::DifferentialDrive(Map& map) : KinematicModel(map)
+DifferentialDrive::DifferentialDrive()
 {
-
+	stateSize = 3;
+	actionSize = 2;
 }
 
 Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u, double delta)
@@ -43,10 +44,19 @@ Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u
     VectorXd x = x0;
     integrate_const(stepper, *this, x, 0.0, delta, dt);
 
-    if(map.isFree(x))
-        return x;
-    else
-        throw std::exception();
+    return x;
+}
+
+VectorXd DifferentialDrive::applyTransform(const VectorXd& x0, const VectorXd& T)
+{
+	VectorXd xf = x0 +T;
+
+	return xf;
+}
+
+Eigen::VectorXd DifferentialDrive::getInitialState()
+{
+	return VectorXd::Zero(3);
 }
 
 

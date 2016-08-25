@@ -36,6 +36,7 @@
 
 #include "rrt_planning/distance/Distance.h"
 #include "rrt_planning/kinematics_models/KinematicModel.h"
+#include "rrt_planning/local_planner/LocalPlanner.h"
 
 namespace rrt_planning
 {
@@ -82,18 +83,14 @@ private:
 
     KinematicModel* kinematicModel;
     Distance* distance;
+    LocalPlanner* localPlanner;
 
     //Visualization of rtt
     ros::Publisher vis_pub;
 
-    //TODO move elsewhere
-    double maxU1;
-    double maxU2;
-    double minU1;
-    double minU2;
-    int discretization;
 };
-};
+
+}
 
 
 

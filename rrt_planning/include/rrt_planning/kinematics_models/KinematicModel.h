@@ -37,14 +37,22 @@ namespace rrt_planning
 class KinematicModel
 {
 public:
-    KinematicModel(Map& map) : map(map)
-    {
-
-    }
-
     typedef Eigen::VectorXd state_type;
 
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) = 0;
+    virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) = 0;
+    virtual Eigen::VectorXd getInitialState() = 0;
+
+
+    inline unsigned int getStateSize()
+    {
+    	return stateSize;
+    }
+
+    inline unsigned int getActionSize()
+    {
+       	return actionSize;
+    }
 
     virtual ~KinematicModel()
     {
@@ -53,8 +61,10 @@ public:
 
 
 protected:
+    unsigned int stateSize;
+    unsigned int actionSize;
+
     const double dt = 1e-3;
-    Map& map;
 
 };
 

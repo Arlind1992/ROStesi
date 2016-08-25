@@ -28,6 +28,7 @@
 
 #include "rrt_planning/map/ROSMap.h"
 #include "rrt_planning/kinematics_models/DifferentialDrive.h"
+#include "rrt_planning/local_planner/MotionPrimitivesPlanner.h"
 #include "rrt_planning/utils/RandomGenerator.h"
 #include "rrt_planning/rrt/RRT.h"
 
@@ -44,28 +45,20 @@ namespace rrt_planning
 
 RRTPlanner::RRTPlanner ()
 {
-    map = nullptr;
-
     K = 0;
     maxX = 0;
     maxY = 0;
     minX = 0;
     minY = 0;
 
-    deltaT = 0;
     deltaX = 0;
 
     greedy = 0;
 
-    //TODO move elsewhere
-    maxU1 = 0;
-    maxU2 = 0;
-    minU1 = 0;
-    minU2 = 0;
-    discretization = 0;
-
+    map = nullptr;
     kinematicModel = nullptr;
     distance = nullptr;
+    localPlanner = nullptr;
 }
 
 RRTPlanner::RRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
@@ -93,19 +86,13 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
 
     private_nh.param("greedy", greedy, 0.1);
 
-
-    //TODO move elsewhere
-    private_nh.param("maxU1", maxU1, 1.0);
-    private_nh.param("maxU2", maxU2, M_PI/2);
-    private_nh.param("minU1", minU1, 0.0);
-    private_nh.param("minU2", minU2, -M_PI/2);
-    private_nh.param("discretization", discretization, 4);
-
-
     //TODO select from parameter
     std::cerr << "creating kinematic model" << std::endl;
-    kinematicModel = new DifferentialDrive(*map);
+    kinematicModel = new DifferentialDrive();
     distance = new L2Distance();
+    localPlanner = new MotionPrimitivesPlanner(*map, *distance, *kinematicModel);
+
+    localPlanner->initialize(private_nh);
 
     vis_pub = private_nh.advertise<visualization_msgs::Marker>("visualization_marker", 0);
 }
@@ -114,7 +101,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                           const geometry_msgs::PoseStamped& goal,
                           std::vector<geometry_msgs::PoseStamped>& plan)
 {
-    Distance& distance = *this->distance;
+	Distance& distance = *this->distance;
 
     VectorXd&& x0 = convertPose(start);
     VectorXd&& xGoal = convertPose(goal);
@@ -187,48 +174,7 @@ bool RRTPlanner::newState(const VectorXd& xRand,
                           const VectorXd& xNear,
                           VectorXd& xNew)
 {
-    VectorXd uc(2);
-    VectorXd x;
-
-    double deltaU1 = (maxU1 - minU1) / (discretization-1.0);
-    double deltaU2 = (maxU2 - minU2) / (discretization-1.0);
-
-    double minDistance = std::numeric_limits<double>::infinity();
-    Distance& distance = *this->distance;
-
-    uc(0) = minU1;
-
-    for(unsigned int i = 0; i < discretization; i++)
-    {
-        uc(1) = minU2;
-
-        for(unsigned int j = 0; j < discretization; j++)
-        {
-        	try
-        	{
-				x = kinematicModel->compute(xNear, uc, deltaT);
-				double currentDist = distance(xRand, x);
-
-				if(currentDist < minDistance)
-				{
-					xNew = x;
-					minDistance = currentDist;
-				}
-        	}
-        	catch(...) //TODO catch specific exception
-        	{
-
-        	}
-
-
-            uc(1) += deltaU2;
-        }
-
-        uc(0) += deltaU1;
-
-    }
-
-    return minDistance < std::numeric_limits<double>::infinity();
+    return localPlanner->compute(xNear, xRand, xNew);
 }
 
 VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
