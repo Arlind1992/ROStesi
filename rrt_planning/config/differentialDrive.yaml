@@ -1,3 +1,5 @@
 # Configuration for differential drive kinematic planning
-minU: [0, -0.78539816339]
-maxU: [1, 0.78539816339] 
+motion_primitives:
+  minU: [0, -0.78539816339]
+  maxU: [1, 0.78539816339]
+  discretization: 5 

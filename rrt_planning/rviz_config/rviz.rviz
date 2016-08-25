@@ -99,8 +99,8 @@ Visualization Manager:
       Marker Topic: /move_base/RRTPlanner/visualization_marker
       Name: Marker
       Namespaces:
-        {}
-      Queue Size: 100
+        rrt: true
+      Queue Size: 5000
       Value: true
     - Alpha: 1
       Axes Length: 1
@@ -139,7 +139,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -2.6077e-07
+      Angle: 0
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
@@ -148,11 +148,11 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 10.2764
+      Scale: 12.544
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 3.87561
-      Y: 5.62316
+      X: 3.9
+      Y: 4.9
     Saved: ~
 Window Geometry:
   Displays:

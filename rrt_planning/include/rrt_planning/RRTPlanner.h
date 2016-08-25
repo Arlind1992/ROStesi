@@ -77,7 +77,6 @@ private:
     double maxY;
     double minX;
     double minY;
-    double deltaT;
     double deltaX;
     double greedy;
 

@@ -49,7 +49,13 @@ Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u
 
 VectorXd DifferentialDrive::applyTransform(const VectorXd& x0, const VectorXd& T)
 {
-	VectorXd xf = x0 +T;
+	VectorXd xf = x0;
+
+	double theta = x0(2);
+
+	xf(0) += cos(theta)*T(0) - sin(theta)*T(1);
+	xf(1) += sin(theta)*T(0) + cos(theta)*T(1);
+	xf(2) += T(2);
 
 	return xf;
 }

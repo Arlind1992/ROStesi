@@ -1,6 +1,7 @@
 # local planner config
 local_costmap:
-	global_frame: /map
-	robot_base_frame: base_footprint
+  global_frame: /map
+  robot_base_frame: base_footprint
+
 DWAPlannerROS:
-	global_frame_id: odom
+  global_frame_id: odom

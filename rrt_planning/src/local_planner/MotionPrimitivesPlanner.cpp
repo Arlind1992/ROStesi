@@ -60,14 +60,14 @@ bool MotionPrimitivesPlanner::compute(const VectorXd& x0, const VectorXd& xRand,
 
 void MotionPrimitivesPlanner::initialize(ros::NodeHandle& nh)
 {
-	nh.param("discretization", discretization, 5);
 	nh.param("deltaT", deltaT, 0.5);
+	nh.param("motion_primitives/discretization", discretization, 5);
 
 	std::vector<double> minU_vec;
 	std::vector<double> maxU_vec;
 
-	nh.getParam("minU", minU_vec);
-	nh.getParam("maxU", maxU_vec);
+	bool test1 = nh.getParam("motion_primitives/minU", minU_vec);
+	bool test2 = nh.getParam("motion_primitives/maxU", maxU_vec);
 
 	if(minU_vec.size() != model.getActionSize() ||
 				maxU_vec.size() != model.getActionSize())
@@ -94,6 +94,8 @@ void MotionPrimitivesPlanner::generateMotionPrimitive(const Eigen::VectorXd& u, 
 	if(index == model.getActionSize())
 	{
 		VectorXd&& mp = model.compute(model.getInitialState(), u, deltaT);
+		std::cerr << "u: " << u.transpose() << std::endl;
+		std::cerr << "x: " << mp.transpose() << std::endl;
 		motionPrimitives.push_back(mp);
 	}
 	else

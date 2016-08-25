@@ -81,7 +81,6 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     private_nh.param("minX", minX, -50.0);
     private_nh.param("minY", minY, -50.0);
 
-    private_nh.param("deltaT", deltaT, 0.5);
     private_nh.param("deltaX", deltaX, 0.3);
 
     private_nh.param("greedy", greedy, 0.1);
@@ -251,7 +250,7 @@ void RRTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::Vect
 	marker.pose.orientation.y = 0.0;
 	marker.pose.orientation.z = 0.0;
 	marker.pose.orientation.w = 1.0;
-	marker.scale.x = 0.01;
+	marker.scale.x = 0.05;
 	marker.scale.y = 0;
 	marker.scale.z = 0;
 	marker.color.a = 1.0;
@@ -275,6 +274,7 @@ void RRTPlanner::publishSegment(const Eigen::VectorXd& xStart, const Eigen::Vect
 
 	vis_pub.publish(marker);
 
+	ros::Duration(0.1).sleep();
 }
 
 
