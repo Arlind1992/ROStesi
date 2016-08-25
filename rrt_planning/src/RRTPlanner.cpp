@@ -74,21 +74,21 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
 
-    private_nh.param("iterations", K, 5000);
+    private_nh.param("iterations", K, 30000);
 
     private_nh.param("maxX", maxX, 50.0);
     private_nh.param("maxY", maxY, 50.0);
     private_nh.param("minX", minX, -50.0);
     private_nh.param("minY", minY, -50.0);
 
-    private_nh.param("deltaX", deltaX, 0.3);
+    private_nh.param("deltaX", deltaX, 0.5);
 
     private_nh.param("greedy", greedy, 0.1);
 
     //TODO select from parameter
     std::cerr << "creating kinematic model" << std::endl;
     kinematicModel = new DifferentialDrive();
-    distance = new L2Distance();
+    distance = new L2ThetaDistance();
     localPlanner = new MotionPrimitivesPlanner(*map, *distance, *kinematicModel);
 
     localPlanner->initialize(private_nh);
@@ -256,7 +256,7 @@ void RRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
 
 	vis_pub.publish(marker);
 
-	ros::Duration(0.1).sleep();
+	//ros::Duration(0.1).sleep();
 }
 
 

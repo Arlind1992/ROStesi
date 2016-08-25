@@ -42,10 +42,34 @@ public:
 class L2Distance : public Distance
 {
 public:
-    virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
+    inline virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
     {
         return (x1.head(2)-x2.head(2)).norm();
     }
+
+};
+
+
+class L2ThetaDistance : public Distance
+{
+public:
+	L2ThetaDistance(double wt = 1.0, double wr = 1.0) : wt(wt), wr(wr)
+	{
+
+	}
+
+    inline virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2)
+    {
+    	double poseDistance = (x1.head(2)-x2.head(2)).norm();
+
+    	double angleDistance = std::pow(1 - std::cos(x1(2) - x2(2)), 2);
+
+    	return wt*poseDistance + wr*angleDistance;
+    }
+
+private:
+    const double wt;
+    const double wr;
 
 };
 
