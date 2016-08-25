@@ -30,7 +30,7 @@
 #include <nav_core/base_global_planner.h>
 #include <geometry_msgs/PoseStamped.h>
 
-#include <Eigen/Dense>
+#include "rrt_planning/grid/Grid.h"
 
 
 namespace rrt_planning
@@ -38,6 +38,7 @@ namespace rrt_planning
 
 class ThetaStarPlanner : public nav_core::BaseGlobalPlanner
 {
+
 public:
 
     ThetaStarPlanner();
@@ -47,6 +48,42 @@ public:
     bool makePlan(const geometry_msgs::PoseStamped& start,
                   const geometry_msgs::PoseStamped& goal,
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
+
+private:
+	void updateVertex(std::pair<int, int> s, std::pair<int, int> s_next);
+	void computeCost(std::pair<int, int> s, std::pair<int, int> s_next);
+
+private:
+
+	template<typename T, typename priority_t>
+	struct PriorityQueue {
+	  typedef std::pair<priority_t, T> PQElement;
+	  std::priority_queue<PQElement, std::vector<PQElement>, 
+		             std::greater<PQElement>> elements;
+
+	  inline bool empty() const { return elements.empty(); }
+
+	  inline void put(T item, priority_t priority) {
+		elements.emplace(priority, item);
+	  }
+
+	  inline T get() {
+		T best_item = elements.top().second;
+		elements.pop();
+		return best_item;
+	  }
+    };
+
+
+	Grid* grid;
+
+	std::pair<int, int> s_start;
+	std::pair<int, int> s_goal;
+
+	std::map<std::pair<int, int>, double> g;
+	std::map<std::pair<int, int>, std::pair<int, int>> parent;
+	PriorityQueue<std::pair<int, int>, double> open;
+	std::set<std::pair<int, int>> closed;
 
 };
 
