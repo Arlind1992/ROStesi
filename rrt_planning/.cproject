@@ -21,6 +21,14 @@
 							<builder buildPath="${workspace_loc}/" cleanBuildTarget="clean --pkg rrt_planning" command="catkin_make" id="cdt.managedbuild.target.gnu.builder.base.555498898" incrementalBuildTarget="--pkg rrt_planning" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.1936241626" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1542249168" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
+								<option id="gnu.cpp.compiler.option.include.paths.635505455" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/dave/ros-extra/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/ReLe/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/CognitiveSlam/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/ROAMFREE/devel/include"/>
+									<listOptionValue builtIn="false" value="/home/dave/ros/install_isolated/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/eigen3"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.562710970" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1964917155" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
@@ -43,21 +51,6 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1649395014;cdt.managedbuild.toolchain.gnu.base.1649395014.464456778;cdt.managedbuild.tool.gnu.cpp.compiler.base.1005457321;cdt.managedbuild.tool.gnu.cpp.compiler.input.1901357953">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1649395014;cdt.managedbuild.toolchain.gnu.base.1649395014.464456778;cdt.managedbuild.tool.gnu.c.compiler.base.975218018;cdt.managedbuild.tool.gnu.c.compiler.input.236006880">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1991146389;cdt.managedbuild.toolchain.gnu.base.1991146389.1073279538;cdt.managedbuild.tool.gnu.c.compiler.base.2110394064;cdt.managedbuild.tool.gnu.c.compiler.input.1170576021">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1991146389;cdt.managedbuild.toolchain.gnu.base.1991146389.1073279538;cdt.managedbuild.tool.gnu.cpp.compiler.base.196616067;cdt.managedbuild.tool.gnu.cpp.compiler.input.32068900">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="rrt_planning.null.554894439" name="rrt_planning"/>
 	</storageModule>
@@ -66,5 +59,26 @@
 		<configuration configurationName="Default">
 			<resource resourceType="PROJECT" workspacePath="/rrt_planning"/>
 		</configuration>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1991146389;cdt.managedbuild.toolchain.gnu.base.1991146389.1073279538;cdt.managedbuild.tool.gnu.c.compiler.base.2110394064;cdt.managedbuild.tool.gnu.c.compiler.input.1170576021">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1649395014;cdt.managedbuild.toolchain.gnu.base.1649395014.464456778;cdt.managedbuild.tool.gnu.cpp.compiler.base.1005457321;cdt.managedbuild.tool.gnu.cpp.compiler.input.1901357953">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.203912432;cdt.managedbuild.toolchain.gnu.base.203912432.914506705;cdt.managedbuild.tool.gnu.c.compiler.base.1964917155;cdt.managedbuild.tool.gnu.c.compiler.input.837323760">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1649395014;cdt.managedbuild.toolchain.gnu.base.1649395014.464456778;cdt.managedbuild.tool.gnu.c.compiler.base.975218018;cdt.managedbuild.tool.gnu.c.compiler.input.236006880">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.1991146389;cdt.managedbuild.toolchain.gnu.base.1991146389.1073279538;cdt.managedbuild.tool.gnu.cpp.compiler.base.196616067;cdt.managedbuild.tool.gnu.cpp.compiler.input.32068900">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.base.203912432;cdt.managedbuild.toolchain.gnu.base.203912432.914506705;cdt.managedbuild.tool.gnu.cpp.compiler.base.1542249168;cdt.managedbuild.tool.gnu.cpp.compiler.input.562710970">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 	</storageModule>
 </cproject>
