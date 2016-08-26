@@ -22,7 +22,8 @@
  */
 
 #include "rrt_planning/grid/Grid.h"
-#include <math>
+#include <cmath>
+#include <Eigen/Dense>
 
 using namespace std;
 
@@ -41,7 +42,7 @@ Grid::Grid(ROSMap* map, double gridResolution): map(map),
 	int NX = ceil( (bounds.maxX - bounds.minX) / gridResolution );
 	int NY = ceil( (bounds.maxY - bounds.minY) / gridResolution );
 
-	VectorXd cpoint;
+	Eigen::VectorXd cpoint;
 
 	for(int i = 0; i < NX; i++)
 	{
@@ -54,7 +55,7 @@ Grid::Grid(ROSMap* map, double gridResolution): map(map),
 
 			grid.push_back(row);
 
-			grid[i][j] = (this.map)->isFree(cpoint) ? 1 : 0;			
+			grid[i][j] = (this->map)->isFree(cpoint) ? 1 : 0;			
 		}
 	}
 }
@@ -119,8 +120,10 @@ std::pair<int, int> Grid::convertPose(const geometry_msgs::PoseStamped& msg)
 {
     auto& t_ros = msg.pose.position;
 
+	Bounds bounds = map->getBounds();
+
 	int X_index = floor( (t_ros.x - bounds.minX) / gridResolution );
-	int Y_index = floor( (t_ros.Y - bounds.minY) / gridResolution );
+	int Y_index = floor( (t_ros.y - bounds.minY) / gridResolution );
 
     return make_pair(X_index, Y_index);
 }

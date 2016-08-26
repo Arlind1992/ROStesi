@@ -38,7 +38,7 @@ class Grid
 {
 public:
     Grid();
-	Grid(ROSMap* map);
+	Grid(ROSMap* map, double gridResolution);
 	double cost(std::pair<int, int> s, std::pair<int, int> s_next);
 	double heuristic(std::pair<int, int> s, std::pair<int, int> s_next);
 	bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);

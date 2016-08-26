@@ -49,7 +49,7 @@ ThetaStarPlanner::ThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* c
 void ThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
     ROSMap* map = new ROSMap(costmap_ros);
-    grid = new Grid(map);
+    grid = new Grid(map, 0.1);
 
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
