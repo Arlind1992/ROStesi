@@ -38,16 +38,23 @@ class Grid
 {
 public:
     Grid();
-    Grid(ROSMap* map);
-    double cost(std::pair<int, int> s, std::pair<int, int> s_next);
-    double heuristic(std::pair<int, int> s, std::pair<int, int> s_next);
-    bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);
-    std::vector<std::pair<int, int>> getNeighbors(std::pair<int, int> s);
-    std::pair<int, int> convertPose(const geometry_msgs::PoseStamped& msg);
+	Grid(ROSMap* map);
+	double cost(std::pair<int, int> s, std::pair<int, int> s_next);
+	double heuristic(std::pair<int, int> s, std::pair<int, int> s_next);
+	bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);
+	std::vector<std::pair<int, int>> getNeighbors(std::pair<int, int> s);
+	std::pair<int, int> convertPose(const geometry_msgs::PoseStamped& msg);
 
 private:
-    double gridResolution;	// Cell edges in meters
-    std::vector< std::vector<unsigned char> > grid;
+	Map* map;
+	std::vector< std::vector<unsigned char> > grid;
+	
+	double gridResolution;	// Cell edges in meters
+
+	double minX;
+	double minY;
+	double maxX;
+	double maxY;
 };
 
 }
