@@ -45,7 +45,6 @@ public:
 private:
     costmap_2d::Costmap2DROS* costmap_ros;
     costmap_2d::Costmap2D* costmap;
-    Bounds bounds;
 };
 
 }

@@ -46,7 +46,7 @@ public:
     {
     }
 
-private:
+protected:
     Bounds bounds;
 
 };
