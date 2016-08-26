@@ -79,12 +79,12 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         closed.insert(s);
 
         for(auto s_next: grid->getNeighbors(s))
-            if(true)//closed.find(s_next) == closed.end())
+            if(closed.find(s_next) == closed.end())
             {
                 if(true)//open.find(s_next) == open.end())
                 {
                     g[s_next] = std::numeric_limits<double>::infinity();
-                    //parent[s_next] = nullptr; //unnecessary?
+                    //parent[s_next] = nullptr; // not necessary?
                 }
                 updateVertex(s, s_next);
             }

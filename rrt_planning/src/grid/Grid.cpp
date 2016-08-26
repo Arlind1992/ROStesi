@@ -86,13 +86,13 @@ vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 
 double Grid::cost(pair<int, int> s, pair<int, int> s_next)
 {
-	//TODO no obstacles?
+	//TODO no obstacles (8-connected)?
 
-	int X1 = std::get<0>(s);
-	int Y1 = std::get<1>(s);
+	int X1 = s.first;
+	int Y1 = s.second;
 
-	int X2 = std::get<0>(s_next);
-	int Y2 = std::get<1>(s_next);
+	int X2 = s_next.first;
+	int Y2 = s_next.second;
 
 	return sqrt( (X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) );
 }
@@ -100,11 +100,11 @@ double Grid::cost(pair<int, int> s, pair<int, int> s_next)
 
 double Grid::heuristic(pair<int, int> s, pair<int, int> s_next)
 {
-	int X1 = std::get<0>(s);
-	int Y1 = std::get<1>(s);
+	int X1 = s.first;
+	int Y1 = s.second;
 
-	int X2 = std::get<0>(s_next);
-	int Y2 = std::get<1>(s_next);
+	int X2 = s_next.first;
+	int Y2 = s_next.second;
 
 	return sqrt( (X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) );
 }
@@ -112,7 +112,59 @@ double Grid::heuristic(pair<int, int> s, pair<int, int> s_next)
 
 bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 {
-	//TODO
+	int X1 = s.first;
+	int Y1 = s.second;
+
+	int X2 = s_next.first;
+	int Y2 = s_next.second;
+
+	//Determine how steep the line is
+	bool is_steep = abs(Y2-Y1) > abs(X2-X1);
+
+	//Possibly rotate the line
+	if(is_steep)
+	{
+		swap(X1, Y1);
+		swap(X2, Y2);
+	}
+
+	// Possibly swap start and end
+	bool swapped = false;
+
+	if(X1 > X2)
+	{
+		swap(X1, X2);
+		swap(Y1, Y2);
+	}
+
+	int error = floor((X2-X1) / 2);
+	int ystep = Y1 < Y2 ? 1 : -1;
+
+	int y = Y1;
+
+	//Check for obstalces through the line
+	for(int x = X1; x <= X2; x++)
+	{
+		int cord1 = y;
+		int cord2 = x;
+
+		if(is_steep)
+		{
+			cord1 = x;
+			cord2 = y;
+		}
+
+		if(grid[cord1][cord2] == 0) return false;
+
+		error -= Y2-Y1;
+		if(error < 0)
+		{
+			y += ystep;
+			error += X2-X1;
+		}
+	}
+
+	return true;
 }
 
 
