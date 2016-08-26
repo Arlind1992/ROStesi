@@ -9,11 +9,14 @@
 	args="-d $(find rrt_planning)/rviz_config/rviz.rviz" />
 	
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<!-- default configuration -->
 		<rosparam file="$(find rrt_planning)/config/global_planner.yaml" command="load" />
 		<rosparam file="$(find rrt_planning)/config/local_planner.yaml" command="load" />
 		
-		<rosparam file="$(find rrt_planning)/config/differentialDrive.yaml" command="load" ns="RRTPlanner"/>
-		<param name="base_global_planner" value="rrt_planning/RRTPlanner"/>		
+		<!-- RRT configuration -->
+		<param name="base_global_planner" value="rrt_planning/RRTPlanner"/>	
+		<rosparam file="$(find rrt_planning)/config/rrt.yaml" command="load" ns="RRTPlanner"/>
+		<rosparam file="$(find rrt_planning)/config/differentialDrive.yaml" command="load" ns="RRTPlanner"/>			
 	</node>
 	
 	<!-- node pkg="amcl" type="amcl" name="amcl">

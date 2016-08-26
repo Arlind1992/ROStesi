@@ -36,11 +36,9 @@ int main(int argc, char *argv[])
 	Eigen::VectorXd u(2);
 	u << 1.0, 0.01;
 
-	/*costmap_2d::Costmap2DROS map;
-
-	DifferentialDrive model(map);
+	DifferentialDrive model;
 
 	Eigen::VectorXd xf = model.compute(x0, u, 5.0);
-	std::cout << xf << std::endl;*/
+	std::cout << xf << std::endl;
 
 }

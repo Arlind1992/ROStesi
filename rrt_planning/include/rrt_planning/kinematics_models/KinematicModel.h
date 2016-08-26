@@ -29,7 +29,7 @@
 #include <costmap_2d/costmap_2d_ros.h>
 #include <costmap_2d/cost_values.h>
 
-#include "rrt_planning/map/Map.h"
+#include "rrt_planning/map/Bounds.h"
 
 namespace rrt_planning
 {
@@ -42,17 +42,17 @@ public:
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) = 0;
     virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) = 0;
     virtual Eigen::VectorXd getInitialState() = 0;
-    virtual Eigen::VectorXd getRandomState(double minX, double maxX, double minY, double maxY) = 0;
+    virtual Eigen::VectorXd getRandomState(const Bounds& bounds) = 0;
 
 
     inline unsigned int getStateSize()
     {
-    	return stateSize;
+        return stateSize;
     }
 
     inline unsigned int getActionSize()
     {
-       	return actionSize;
+        return actionSize;
     }
 
     virtual ~KinematicModel()

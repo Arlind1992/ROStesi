@@ -29,84 +29,82 @@ namespace rrt_planning
 {
 
 MotionPrimitivesPlanner::MotionPrimitivesPlanner(Map& map, Distance& distance, KinematicModel& model)
-	: LocalPlanner(map, distance), model(model), minU(model.getActionSize()), maxU(model.getActionSize())
+    : LocalPlanner(map, distance), model(model), minU(model.getActionSize()), maxU(model.getActionSize())
 {
-	deltaT = 0;
-	discretization = 0;
+    deltaT = 0;
+    discretization = 0;
 }
 
 bool MotionPrimitivesPlanner::compute(const VectorXd& x0, const VectorXd& xRand, VectorXd& xNew)
 {
-	double minDistance = std::numeric_limits<double>::infinity();
+    double minDistance = std::numeric_limits<double>::infinity();
 
-	for(auto& mp : motionPrimitives)
-	{
-		VectorXd x = model.applyTransform(x0, mp);
+    for(auto& mp : motionPrimitives)
+    {
+        VectorXd x = model.applyTransform(x0, mp);
 
-		if(map.isFree(x))
-		{
-			double currentDist = distance(xRand, x);
+        if(map.isFree(x))
+        {
+            double currentDist = distance(xRand, x);
 
-			if(currentDist < minDistance)
-			{
-				xNew = x;
-				minDistance = currentDist;
-			}
-		}
-	}
+            if(currentDist < minDistance)
+            {
+                xNew = x;
+                minDistance = currentDist;
+            }
+        }
+    }
 
-	return minDistance < std::numeric_limits<double>::infinity();
+    return minDistance < std::numeric_limits<double>::infinity();
 }
 
 void MotionPrimitivesPlanner::initialize(ros::NodeHandle& nh)
 {
-	nh.param("deltaT", deltaT, 0.5);
-	nh.param("motion_primitives/discretization", discretization, 5);
+    nh.param("deltaT", deltaT, 0.5);
+    nh.param("motion_primitives/discretization", discretization, 5);
 
-	std::vector<double> minU_vec;
-	std::vector<double> maxU_vec;
+    std::vector<double> minU_vec;
+    std::vector<double> maxU_vec;
 
-	bool test1 = nh.getParam("motion_primitives/minU", minU_vec);
-	bool test2 = nh.getParam("motion_primitives/maxU", maxU_vec);
+    bool test1 = nh.getParam("motion_primitives/minU", minU_vec);
+    bool test2 = nh.getParam("motion_primitives/maxU", maxU_vec);
 
-	if(minU_vec.size() != model.getActionSize() ||
-				maxU_vec.size() != model.getActionSize())
-		throw std::runtime_error("Wrong discretization parameters specified. minU and maxU should have the correct size");
+    if(minU_vec.size() != model.getActionSize() ||
+            maxU_vec.size() != model.getActionSize())
+        throw std::runtime_error("Wrong discretization parameters specified. minU and maxU should have the correct size");
 
-	for(unsigned int i = 0; i < minU_vec.size(); i++)
-	{
-		minU(i) = minU_vec[i];
-		maxU(i) = maxU_vec[i];
-	}
+    for(unsigned int i = 0; i < minU_vec.size(); i++)
+    {
+        minU(i) = minU_vec[i];
+        maxU(i) = maxU_vec[i];
+    }
 
-	generateMotionPrimitives();
+    generateMotionPrimitives();
 }
 
 void MotionPrimitivesPlanner::generateMotionPrimitives()
 {
-	VectorXd dU = (maxU - minU) / (discretization-1.0);
+    VectorXd dU = (maxU - minU) / (discretization-1.0);
 
-	generateMotionPrimitive(minU, dU, 0);
+    generateMotionPrimitive(minU, dU, 0);
 }
 
 void MotionPrimitivesPlanner::generateMotionPrimitive(const Eigen::VectorXd& u, const Eigen::VectorXd& du, unsigned int index)
 {
-	if(index == model.getActionSize())
-	{
-		VectorXd&& mp = model.compute(model.getInitialState(), u, deltaT);
-		std::cerr << "u: " << u.transpose() << std::endl;
-		std::cerr << "x: " << mp.transpose() << std::endl;
-		motionPrimitives.push_back(mp);
-	}
-	else
-	{
-		Eigen::VectorXd uc = u;
-		for(unsigned int n = 0; n < discretization; n++)
-		{
-			generateMotionPrimitive(uc, du, index+1);
-			uc(index) += du(index);
-		}
-	}
+    if(index == model.getActionSize())
+    {
+        VectorXd&& mp = model.compute(model.getInitialState(), u, deltaT);
+        motionPrimitives.push_back(mp);
+    }
+    else
+    {
+        Eigen::VectorXd uc = u;
+        for(unsigned int n = 0; n < discretization; n++)
+        {
+            generateMotionPrimitive(uc, du, index+1);
+            uc(index) += du(index);
+        }
+    }
 }
 
 

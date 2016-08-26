@@ -31,22 +31,13 @@ namespace rrt_planning
 ROSMap::ROSMap(costmap_2d::Costmap2DROS* costmap_ros) : costmap_ros(costmap_ros),
     costmap(costmap_ros->getCostmap())
 {
-    std::cerr << "costmap ros recieved" << std::endl;
-    std::cerr << costmap_ros->getBaseFrameID() << std::endl;
-    std::cerr << costmap_ros->getGlobalFrameID() << std::endl;
-    std::cerr << costmap_ros->getLayeredCostmap()->isCurrent() << std::endl;
-    std::cerr << costmap_ros->getLayeredCostmap()->isInitialized() << std::endl;
+    bounds.minX = costmap->getOriginX();
+    bounds.minY = costmap->getOriginY();
+    bounds.maxX = bounds.minX + costmap->getSizeInMetersX();
+    bounds.maxY = bounds.minY + costmap->getSizeInMetersY();
 
-    std::cerr << "costmap recieved" << std::endl;
-    std::cerr << costmap->getSizeInMetersX() << std::endl;
-    std::cerr << costmap->getSizeInMetersY() << std::endl;
-    std::cerr << costmap->getResolution() << std::endl;
-    std::cerr << costmap->getOriginX() << std::endl;
-    std::cerr << costmap->getOriginY() << std::endl;
-    std::cerr << costmap->getSizeInCellsX() << std::endl;
-    std::cerr << costmap->getSizeInCellsY() << std::endl;
-    //std::cerr << costmap->get << std::endl;
-
+    bounds.minZ = 0;
+    bounds.maxZ = 0;
 }
 
 bool ROSMap::isFree(const Eigen::VectorXd& p)

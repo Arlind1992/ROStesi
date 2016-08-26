@@ -35,22 +35,22 @@ namespace rrt_planning
 class LocalPlanner
 {
 public:
-	LocalPlanner(Map& map, Distance& distance) : map(map), distance(distance)
-	{
+    LocalPlanner(Map& map, Distance& distance) : map(map), distance(distance)
+    {
 
-	}
+    }
 
-	virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) = 0;
-	virtual void initialize(ros::NodeHandle& nh) = 0;
+    virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) = 0;
+    virtual void initialize(ros::NodeHandle& nh) = 0;
 
-	virtual ~LocalPlanner()
-	{
+    virtual ~LocalPlanner()
+    {
 
-	}
+    }
 
 protected:
-	Map& map;
-	Distance& distance;
+    Map& map;
+    Distance& distance;
 };
 
 

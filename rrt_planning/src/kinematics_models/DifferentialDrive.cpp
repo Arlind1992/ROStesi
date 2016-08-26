@@ -32,8 +32,8 @@ namespace rrt_planning
 
 DifferentialDrive::DifferentialDrive()
 {
-	stateSize = 3;
-	actionSize = 2;
+    stateSize = 3;
+    actionSize = 2;
 }
 
 Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u, double delta)
@@ -49,23 +49,23 @@ Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u
 
 VectorXd DifferentialDrive::applyTransform(const VectorXd& x0, const VectorXd& T)
 {
-	VectorXd xf = x0;
+    VectorXd xf = x0;
 
-	double theta = x0(2);
+    double theta = x0(2);
 
-	xf(0) += cos(theta)*T(0) - sin(theta)*T(1);
-	xf(1) += sin(theta)*T(0) + cos(theta)*T(1);
-	xf(2) += T(2);
+    xf(0) += cos(theta)*T(0) - sin(theta)*T(1);
+    xf(1) += sin(theta)*T(0) + cos(theta)*T(1);
+    xf(2) += T(2);
 
-	return xf;
+    return xf;
 }
 
 Eigen::VectorXd DifferentialDrive::getInitialState()
 {
-	return VectorXd::Zero(3);
+    return VectorXd::Zero(3);
 }
 
-Eigen::VectorXd DifferentialDrive::getRandomState(double minX, double maxX, double minY, double maxY)
+Eigen::VectorXd DifferentialDrive::getRandomState(const Bounds& bounds)
 {
     VectorXd xRand;
     xRand.setRandom(3);
@@ -73,12 +73,12 @@ Eigen::VectorXd DifferentialDrive::getRandomState(double minX, double maxX, doub
     xRand += VectorXd::Ones(3);
     xRand /= 2;
 
-    xRand(0) *= maxX - minX;
-    xRand(1) *= maxY - minY;
+    xRand(0) *= bounds.maxX - bounds.minX;
+    xRand(1) *= bounds.maxY - bounds.minY;
     xRand(2) *= 2*M_PI;
 
-    xRand(0) += minX;
-    xRand(1) += minY;
+    xRand(0) += bounds.minX;
+    xRand(1) += bounds.minY;
     xRand(2) += -M_PI;
 
     return xRand;

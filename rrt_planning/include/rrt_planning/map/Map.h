@@ -25,19 +25,29 @@
 #define INCLUDE_RRT_PLANNING_MAP_MAP_H_
 
 #include <Eigen/Dense>
+#include "rrt_planning/map/Bounds.h"
 
 namespace rrt_planning
 {
 
 class Map
 {
+
 public:
     virtual bool isFree(const Eigen::VectorXd& p) = 0;
     virtual unsigned char getCost(const Eigen::VectorXd& p) = 0;
 
+    inline Bounds getBounds()
+    {
+        return bounds;
+    }
+
     virtual ~Map()
     {
     }
+
+private:
+    Bounds bounds;
 
 };
 

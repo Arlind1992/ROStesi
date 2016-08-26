@@ -37,60 +37,60 @@ namespace rrt_planning
 
 ThetaStarPlanner::ThetaStarPlanner()
 {
-	grid = nullptr;	
+    grid = nullptr;
 }
 
 ThetaStarPlanner::ThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-	initialize(name, costmap_ros);
+    initialize(name, costmap_ros);
 }
 
 
 void ThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-	ROSMap* map = new ROSMap(costmap_ros);
-	grid = new Grid(map);
+    ROSMap* map = new ROSMap(costmap_ros);
+    grid = new Grid(map);
 
-	//Get parameters from ros parameter server
-	ros::NodeHandle private_nh("~/" + name);
+    //Get parameters from ros parameter server
+    ros::NodeHandle private_nh("~/" + name);
 }
 
 bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                                 const geometry_msgs::PoseStamped& goal,
                                 std::vector<geometry_msgs::PoseStamped>& plan)
 {
-	s_start = grid->convertPose(start);
-	s_goal = grid->convertPose(goal);
+    s_start = grid->convertPose(start);
+    s_goal = grid->convertPose(goal);
 
-	//Init variables
-	g[s_start] = 0.0;
-	parent[s_start] = s_start;
-	open.put(s_start, 0.0);
-	closed.clear();
+    //Init variables
+    g[s_start] = 0.0;
+    parent[s_start] = s_start;
+    open.put(s_start, 0.0);
+    closed.clear();
 
-	ROS_INFO("Planner started");
+    ROS_INFO("Planner started");
 
-	while(!open.empty())
-	{
-		auto s = open.get();
-		if(s == s_goal)
-			break;
+    while(!open.empty())
+    {
+        auto s = open.get();
+        if(s == s_goal)
+            break;
 
-		closed.insert(s);
+        closed.insert(s);
 
-		for(auto s_next: grid->getNeighbors(s))
-			if(true)//closed.find(s_next) == closed.end())
-			{
-				if(true)//open.find(s_next) == open.end())
-				{
-					g[s_next] = std::numeric_limits<double>::infinity();
-					//parent[s_next] = nullptr; //unnecessary?
-				}
-				updateVertex(s, s_next);
-			}
-	}
+        for(auto s_next: grid->getNeighbors(s))
+            if(true)//closed.find(s_next) == closed.end())
+            {
+                if(true)//open.find(s_next) == open.end())
+                {
+                    g[s_next] = std::numeric_limits<double>::infinity();
+                    //parent[s_next] = nullptr; //unnecessary?
+                }
+                updateVertex(s, s_next);
+            }
+    }
 
-	//TODO convert plan and publish
+    //TODO convert plan and publish
 
     return false;
 }
@@ -98,35 +98,35 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
 void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
 {
-	auto g_old = g[s_next];
+    auto g_old = g[s_next];
 
-	computeCost(s, s_next);
+    computeCost(s, s_next);
 
-	if(g[s_next] < g_old)
-	{
-		//if(open.find(s_next) != open.end()) open.remove(s_next);
-		
-		open.put(s_next, g[s_next] + grid->heuristic(s_next, s_goal));
-	}
+    if(g[s_next] < g_old)
+    {
+        //if(open.find(s_next) != open.end()) open.remove(s_next);
+
+        open.put(s_next, g[s_next] + grid->heuristic(s_next, s_goal));
+    }
 }
 
 
 void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
 {
-	if(grid->lineOfSight(parent[s], s_next))
-		/* Path 2 */
-		if(g[parent[s]] + grid->cost(parent[s], s_next) < g[s_next])
-		{
-			g[s_next] = g[parent[s]] + grid->cost(parent[s], s_next);
-			parent[s_next] = parent[s];
-		}
-	else
-		/* Path 1 */
-		if(g[s] + grid->cost(s, s_next) < g[s_next])
-		{
-			g[s_next] = g[s] + grid->cost(s, s_next);
-			parent[s_next] = s;
-		}
+    if(grid->lineOfSight(parent[s], s_next))
+        /* Path 2 */
+        if(g[parent[s]] + grid->cost(parent[s], s_next) < g[s_next])
+        {
+            g[s_next] = g[parent[s]] + grid->cost(parent[s], s_next);
+            parent[s_next] = parent[s];
+        }
+        else
+            /* Path 1 */
+            if(g[s] + grid->cost(s, s_next) < g[s_next])
+            {
+                g[s_next] = g[s] + grid->cost(s, s_next);
+                parent[s_next] = s;
+            }
 }
 
 };

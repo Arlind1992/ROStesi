@@ -21,33 +21,18 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRT_PLANNING_MAP_ROSMAP_H_
-#define INCLUDE_RRT_PLANNING_MAP_ROSMAP_H_
+#ifndef INCLUDE_RRT_PLANNING_MAP_BOUNDS_H_
+#define INCLUDE_RRT_PLANNING_MAP_BOUNDS_H_
 
-#include "rrt_planning/map/Map.h"
-#include "costmap_2d/costmap_2d_ros.h"
-#include "costmap_2d/costmap_2d.h"
-
-namespace rrt_planning
+struct Bounds
 {
-
-class ROSMap : public Map
-{
-public:
-    ROSMap(costmap_2d::Costmap2DROS* costmap_ros);
-
-    virtual bool isFree(const Eigen::VectorXd& p) override;
-    virtual unsigned char getCost(const Eigen::VectorXd& p) override;
-
-    virtual ~ROSMap();
-
-
-private:
-    costmap_2d::Costmap2DROS* costmap_ros;
-    costmap_2d::Costmap2D* costmap;
-    Bounds bounds;
+    double minX;
+    double maxX;
+    double minY;
+    double maxY;
+    double minZ;
+    double maxZ;
 };
 
-}
 
-#endif /* INCLUDE_RRT_PLANNING_MAP_ROSMAP_H_ */
+#endif /* INCLUDE_RRT_PLANNING_MAP_BOUNDS_H_ */

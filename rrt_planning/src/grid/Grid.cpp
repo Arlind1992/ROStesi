@@ -34,31 +34,31 @@ Grid::Grid()
 
 Grid::Grid(ROSMap* map)
 {
-	//TODO
+    //TODO
 }
 
 
 vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 {
-	//TODO
+    //TODO
 }
 
 
 double Grid::cost(pair<int, int> s, pair<int, int> s_next)
 {
-	//TODO
+    //TODO
 }
 
 
 double Grid::heuristic(pair<int, int> s, pair<int, int> s_next)
 {
-	//TODO
+    //TODO
 }
 
 
 bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 {
-	//TODO
+    //TODO
 }
 
 
@@ -66,7 +66,7 @@ std::pair<int, int> Grid::convertPose(const geometry_msgs::PoseStamped& msg)
 {
     auto& t_ros = msg.pose.position;
 
-	//TODO convert to grid indices
+    //TODO convert to grid indices
 
     return make_pair(t_ros.x, t_ros.y);
 }

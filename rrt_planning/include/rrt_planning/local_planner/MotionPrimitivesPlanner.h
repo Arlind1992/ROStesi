@@ -30,19 +30,19 @@ namespace rrt_planning
 class MotionPrimitivesPlanner : public LocalPlanner
 {
 public:
-	MotionPrimitivesPlanner(Map& map, Distance& distance, KinematicModel& model);
+    MotionPrimitivesPlanner(Map& map, Distance& distance, KinematicModel& model);
 
-	virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew);
-	virtual void initialize(ros::NodeHandle& nh);
+    virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
+    virtual void initialize(ros::NodeHandle& nh) override;
 
-
-private:
-	void generateMotionPrimitives();
-	void generateMotionPrimitive(const Eigen::VectorXd& u, const Eigen::VectorXd& du, unsigned int index);
 
 private:
-	std::vector<Eigen::VectorXd> motionPrimitives;
-	KinematicModel& model;
+    void generateMotionPrimitives();
+    void generateMotionPrimitive(const Eigen::VectorXd& u, const Eigen::VectorXd& du, unsigned int index);
+
+private:
+    std::vector<Eigen::VectorXd> motionPrimitives;
+    KinematicModel& model;
 
     Eigen::VectorXd maxU;
     Eigen::VectorXd minU;

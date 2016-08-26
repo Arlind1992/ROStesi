@@ -34,8 +34,8 @@ class DebugMap : public Map
 public:
     DebugMap();
 
-    virtual bool isFree(const Eigen::VectorXd& p);
-    virtual unsigned char getCost(const Eigen::VectorXd& p);
+    virtual bool isFree(const Eigen::VectorXd& p) override;
+    virtual unsigned char getCost(const Eigen::VectorXd& p) override;
 
     virtual ~DebugMap();
 

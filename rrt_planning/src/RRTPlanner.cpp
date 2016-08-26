@@ -46,13 +46,7 @@ namespace rrt_planning
 RRTPlanner::RRTPlanner ()
 {
     K = 0;
-    maxX = 0;
-    maxY = 0;
-    minX = 0;
-    minY = 0;
-
     deltaX = 0;
-
     greedy = 0;
 
     map = nullptr;
@@ -75,24 +69,18 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     ros::NodeHandle private_nh("~/" + name);
 
     private_nh.param("iterations", K, 30000);
-
-    private_nh.param("maxX", maxX, 50.0);
-    private_nh.param("maxY", maxY, 50.0);
-    private_nh.param("minX", minX, -50.0);
-    private_nh.param("minY", minY, -50.0);
-
     private_nh.param("deltaX", deltaX, 0.5);
-
     private_nh.param("greedy", greedy, 0.1);
 
-    //TODO select from parameter
-    std::cerr << "creating kinematic model" << std::endl;
+    // create kinematic, distance and local planner //TODO select from parameters
     kinematicModel = new DifferentialDrive();
     distance = new L2ThetaDistance();
     localPlanner = new MotionPrimitivesPlanner(*map, *distance, *kinematicModel);
 
+
     localPlanner->initialize(private_nh);
 
+    // Advertise the visualizer
     vis_pub = private_nh.advertise<visualization_msgs::Marker>("visualization_marker", 0);
 }
 
@@ -100,7 +88,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                           const geometry_msgs::PoseStamped& goal,
                           std::vector<geometry_msgs::PoseStamped>& plan)
 {
-	Distance& distance = *this->distance;
+    Distance& distance = *this->distance;
 
     VectorXd&& x0 = convertPose(start);
     VectorXd&& xGoal = convertPose(goal);
@@ -117,9 +105,9 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         VectorXd xRand;
 
         if(RandomGenerator::sampleEvent(greedy))
-        	xRand = xGoal;
+            xRand = xGoal;
         else
-        	xRand = kinematicModel->getRandomState(minX, maxX, minY, maxY);
+            xRand = kinematicModel->getRandomState(map->getBounds());
 
 
         auto* node = rrt.searchNearestNode(xRand);
@@ -134,10 +122,10 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
             if(distance(xNew, xGoal) < deltaX)
             {
-            	auto&& path = rrt.getPathToLastNode();
-            	publishPlan(path, plan, start.header.stamp);
+                auto&& path = rrt.getPathToLastNode();
+                publishPlan(path, plan, start.header.stamp);
 
-            	ROS_INFO("Plan found");
+                ROS_INFO("Plan found");
 
                 return true;
             }
@@ -174,89 +162,89 @@ VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
 }
 
 void RRTPlanner::publishPlan(std::vector<VectorXd>& path,
-			std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
+                             std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
 {
-	for(auto x : path)
-	{
-		geometry_msgs::PoseStamped msg;
+    for(auto x : path)
+    {
+        geometry_msgs::PoseStamped msg;
 
-		msg.header.stamp = stamp;
-		msg.header.frame_id = "map";
+        msg.header.stamp = stamp;
+        msg.header.frame_id = "map";
 
-		msg.pose.position.x = x(0);
-		msg.pose.position.y = x(1);
-		msg.pose.position.z = 0;
+        msg.pose.position.x = x(0);
+        msg.pose.position.y = x(1);
+        msg.pose.position.z = 0;
 
-		Matrix3d m;
-		m = AngleAxisd(x(2), Vector3d::UnitZ())
-					* AngleAxisd(0, Vector3d::UnitY())
-					* AngleAxisd(0, Vector3d::UnitX());
+        Matrix3d m;
+        m = AngleAxisd(x(2), Vector3d::UnitZ())
+            * AngleAxisd(0, Vector3d::UnitY())
+            * AngleAxisd(0, Vector3d::UnitX());
 
-		Quaterniond q(m);
+        Quaterniond q(m);
 
-		msg.pose.orientation.x = q.x();
-		msg.pose.orientation.y = q.y();
-		msg.pose.orientation.z = q.z();
-		msg.pose.orientation.w = q.w();
+        msg.pose.orientation.x = q.x();
+        msg.pose.orientation.y = q.y();
+        msg.pose.orientation.z = q.z();
+        msg.pose.orientation.w = q.w();
 
-		plan.push_back(msg);
-	}
+        plan.push_back(msg);
+    }
 }
 
 void RRTPlanner::cleanSegments()
 {
-	visualization_msgs::Marker marker;
-	marker.header.frame_id = "map";
-	marker.header.stamp = ros::Time();
-	marker.ns = "rrt";
-	marker.action = visualization_msgs::Marker::DELETEALL;
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time();
+    marker.ns = "rrt";
+    marker.action = visualization_msgs::Marker::DELETEALL;
 
-	vis_pub.publish(marker);
+    vis_pub.publish(marker);
 }
 
 void RRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
 {
-	static int id = 0;
+    static int id = 0;
 
-	visualization_msgs::Marker marker;
-	marker.header.frame_id = "map";
-	marker.header.stamp = ros::Time();
-	marker.ns = "rrt";
-	marker.id = id++;
-	marker.type = visualization_msgs::Marker::LINE_STRIP;
-	marker.action = visualization_msgs::Marker::ADD;
-	marker.pose.position.x = 0;
-	marker.pose.position.y = 0;
-	marker.pose.position.z = 0;
-	marker.pose.orientation.x = 0.0;
-	marker.pose.orientation.y = 0.0;
-	marker.pose.orientation.z = 0.0;
-	marker.pose.orientation.w = 1.0;
-	marker.scale.x = 0.05;
-	marker.scale.y = 0;
-	marker.scale.z = 0;
-	marker.color.a = 1.0;
-	marker.color.r = 1.0;
-	marker.color.g = 0.0;
-	marker.color.b = 1.0;
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time();
+    marker.ns = "rrt";
+    marker.id = id++;
+    marker.type = visualization_msgs::Marker::LINE_STRIP;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    marker.scale.x = 0.05;
+    marker.scale.y = 0;
+    marker.scale.z = 0;
+    marker.color.a = 1.0;
+    marker.color.r = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 1.0;
 
-	geometry_msgs::Point p1;
-	geometry_msgs::Point p2;
+    geometry_msgs::Point p1;
+    geometry_msgs::Point p2;
 
-	p1.x = xStart(0);
-	p1.y = xStart(1);
-	p1.z = xStart(2);
+    p1.x = xStart(0);
+    p1.y = xStart(1);
+    p1.z = xStart(2);
 
-	p2.x = xEnd(0);
-	p2.y = xEnd(1);
-	p2.z = xEnd(2);
+    p2.x = xEnd(0);
+    p2.y = xEnd(1);
+    p2.z = xEnd(2);
 
-	marker.points.push_back(p1);
-	marker.points.push_back(p2);
+    marker.points.push_back(p1);
+    marker.points.push_back(p2);
 
-	vis_pub.publish(marker);
+    vis_pub.publish(marker);
 
-	//ros::Duration(0.1).sleep();
+    //ros::Duration(0.1).sleep();
 }
 
 

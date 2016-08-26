@@ -50,40 +50,46 @@ public:
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
 
 private:
-	void updateVertex(std::pair<int, int> s, std::pair<int, int> s_next);
-	void computeCost(std::pair<int, int> s, std::pair<int, int> s_next);
+    void updateVertex(std::pair<int, int> s, std::pair<int, int> s_next);
+    void computeCost(std::pair<int, int> s, std::pair<int, int> s_next);
 
 private:
 
-	template<typename T, typename priority_t>
-	struct PriorityQueue {
-	  typedef std::pair<priority_t, T> PQElement;
-	  std::priority_queue<PQElement, std::vector<PQElement>, 
-		             std::greater<PQElement>> elements;
+    template<typename T, typename priority_t>
+    struct PriorityQueue
+    {
+        typedef std::pair<priority_t, T> PQElement;
+        std::priority_queue<PQElement, std::vector<PQElement>,
+            std::greater<PQElement>> elements;
 
-	  inline bool empty() const { return elements.empty(); }
+        inline bool empty() const
+        {
+            return elements.empty();
+        }
 
-	  inline void put(T item, priority_t priority) {
-		elements.emplace(priority, item);
-	  }
+        inline void put(T item, priority_t priority)
+        {
+            elements.emplace(priority, item);
+        }
 
-	  inline T get() {
-		T best_item = elements.top().second;
-		elements.pop();
-		return best_item;
-	  }
+        inline T get()
+        {
+            T best_item = elements.top().second;
+            elements.pop();
+            return best_item;
+        }
     };
 
 
-	Grid* grid;
+    Grid* grid;
 
-	std::pair<int, int> s_start;
-	std::pair<int, int> s_goal;
+    std::pair<int, int> s_start;
+    std::pair<int, int> s_goal;
 
-	std::map<std::pair<int, int>, double> g;
-	std::map<std::pair<int, int>, std::pair<int, int>> parent;
-	PriorityQueue<std::pair<int, int>, double> open;
-	std::set<std::pair<int, int>> closed;
+    std::map<std::pair<int, int>, double> g;
+    std::map<std::pair<int, int>, std::pair<int, int>> parent;
+    PriorityQueue<std::pair<int, int>, double> open;
+    std::set<std::pair<int, int>> closed;
 
 };
 
