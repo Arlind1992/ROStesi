@@ -74,4 +74,12 @@ std::vector<Eigen::VectorXd> RRT::getPathToLastNode()
     return path;
 }
 
+RRT::~RRT()
+{
+	for(auto node : nodes)
+	{
+		delete node;
+	}
+}
+
 }

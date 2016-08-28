@@ -247,6 +247,22 @@ void RRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
     //ros::Duration(0.1).sleep();
 }
 
+RRTPlanner::~RRTPlanner()
+{
+	if(kinematicModel)
+		delete kinematicModel;
+
+	if(distance)
+		delete distance;
+
+	if(localPlanner)
+		delete localPlanner;
+
+	if(map)
+		delete map;
+
+}
+
 
 };
 

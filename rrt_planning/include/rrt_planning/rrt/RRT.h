@@ -40,6 +40,8 @@ public:
 
     std::vector<Eigen::VectorXd> getPathToLastNode();
 
+    ~RRT();
+
 
 private:
     RRTNode* root;
