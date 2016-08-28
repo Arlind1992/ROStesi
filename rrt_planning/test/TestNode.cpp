@@ -33,8 +33,6 @@ using namespace Eigen;
 
 Affine3d T;
 
-
-
 void initialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
 	T.setIdentity();
@@ -51,19 +49,42 @@ void initialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPt
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "test_node");
+
 	ros::NodeHandle n;
+
+	if(argc < 4)
+	{
+		ROS_ERROR("You must specify parent farme, child frame and publisher frequency");
+
+		return -1;
+	}
+
+
 	tf2_ros::TransformBroadcaster tfBroadcaster;
+
+
+	std::string parentFrame = argv[1];
+	std::string childFrame = argv[2];
+	double frequency = std::stod(argv[3]);
+
+
+	T.setIdentity();
 
 	ros::Subscriber sub = n.subscribe("/initialpose", 10, initialPoseCallback);
 	//n.subscribe("/cmd_vel", 1, velocityCallback);
 
-	ros::Rate rate(100);
+	ros::Rate rate(frequency);
 
 	while(ros::ok())
 	{
 		auto tf_msg = tf2::eigenToTransform(T);
+		tf_msg.header.stamp = ros::Time::now();
+		tf_msg.header.frame_id = parentFrame;
+		tf_msg.child_frame_id = childFrame;
+
 		tfBroadcaster.sendTransform(tf_msg);
 		ros::spinOnce();
+		rate.sleep();
 	}
 
 
