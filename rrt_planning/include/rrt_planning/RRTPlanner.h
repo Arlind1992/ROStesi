@@ -53,6 +53,7 @@ public:
                   const geometry_msgs::PoseStamped& goal,
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
 
+    virtual ~RRTPlanner();
 private:
     bool newState(const Eigen::VectorXd& xRand,
                   const Eigen::VectorXd& xNear,
