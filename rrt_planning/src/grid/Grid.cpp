@@ -29,20 +29,17 @@ using namespace std;
 
 namespace rrt_planning
 {
-Grid::Grid()
-{
-}
 
 
-Grid::Grid(ROSMap* map, double gridResolution): map(map),
+Grid::Grid(Map& map, double gridResolution): map(map),
 	gridResolution(gridResolution)
 {
-	Bounds bounds = map->getBounds();
+	/*Bounds bounds = map.getBounds();
 
 	int NX = ceil( (bounds.maxX - bounds.minX) / gridResolution );
 	int NY = ceil( (bounds.maxY - bounds.minY) / gridResolution );
 
-	Eigen::VectorXd cpoint;
+	Eigen::VectorXd cpoint(2);
 
 	for(int i = 0; i < NX; i++)
 	{
@@ -55,9 +52,9 @@ Grid::Grid(ROSMap* map, double gridResolution): map(map),
 
 			grid.push_back(row);
 
-			grid[i][j] = (this->map)->isFree(cpoint) ? 1 : 0;			
+			grid[i][j] = map.isFree(cpoint) ? 1 : 0;			
 		}
-	}
+	}*/
 }
 
 
@@ -65,8 +62,8 @@ vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 {
 	//TODO eight-connected or line-of-sight?
 
-	int X = std::get<0>(s);
-	int Y = std::get<1>(s);
+	int X = s.first;
+	int Y = s.second;
 
 	vector<pair<int, int>> neighbors;
 
@@ -76,7 +73,9 @@ vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 		{
 			if(i == 0 && j == 0) continue;
 
-			if(grid[X+i][Y+j] == 1)
+			auto&& pos = toMapPose(X, Y);
+
+			if(map.isFree(pos))
 				neighbors.push_back(make_pair(X+i, Y+j));
 		}
 
@@ -153,8 +152,10 @@ bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 			cord1 = x;
 			cord2 = y;
 		}
+		
+		auto&& pos = toMapPose(cord1, cord2);
 
-		if(grid[cord1][cord2] == 0) return false;
+		if(!map.isFree(pos)) return false;
 
 		error -= Y2-Y1;
 		if(error < 0)
@@ -172,12 +173,25 @@ std::pair<int, int> Grid::convertPose(const geometry_msgs::PoseStamped& msg)
 {
     auto& t_ros = msg.pose.position;
 
-	Bounds bounds = map->getBounds();
+	Bounds bounds = map.getBounds();
 
 	int X_index = floor( (t_ros.x - bounds.minX) / gridResolution );
 	int Y_index = floor( (t_ros.y - bounds.minY) / gridResolution );
 
     return make_pair(X_index, Y_index);
+}
+
+
+Eigen::VectorXd Grid::toMapPose(int X, int Y)
+{
+	Bounds bounds = map.getBounds();
+
+	Eigen::VectorXd pos(2);
+
+	pos(0) = (0.5 + X) * gridResolution + bounds.minX;
+	pos(1) = (0.5 + Y) * gridResolution + bounds.minY;
+	
+    return pos;
 }
 
 }

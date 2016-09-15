@@ -48,11 +48,14 @@ ThetaStarPlanner::ThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* c
 
 void ThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-    ROSMap* map = new ROSMap(costmap_ros);
-    grid = new Grid(map, 0.1);
+	double discretization;
 
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
+	private_nh.param("discretization", discretization, 0.1);
+
+	map = new ROSMap(costmap_ros);
+    grid = new Grid(*map, discretization);
 }
 
 bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
@@ -65,14 +68,17 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     //Init variables
     g[s_start] = 0.0;
     parent[s_start] = s_start;
-    open.put(s_start, 0.0);
+	insertFrontierNode(s_start, 0.0);
     closed.clear();
 
     ROS_INFO("Planner started");
 
     while(!open.empty())
     {
-        auto s = open.get();
+		//Get the best frontier node
+		FrontierNode* f = *open.rbegin();	//or .rend()?
+        auto s = f->getNode();
+
         if(s == s_goal)
             break;
 
@@ -81,7 +87,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         for(auto s_next: grid->getNeighbors(s))
             if(closed.find(s_next) == closed.end())
             {
-                if(true)//open.find(s_next) == open.end())
+                if(openMap.find(s_next) == openMap.end())
                 {
                     g[s_next] = std::numeric_limits<double>::infinity();
                     //parent[s_next] = nullptr; // not necessary?
@@ -104,9 +110,11 @@ void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
 
     if(g[s_next] < g_old)
     {
-        //if(open.find(s_next) != open.end()) open.remove(s_next);
+        if(openMap.find(s_next) != openMap.end()) removeFrontierNode(s_next);
 
-        open.put(s_next, g[s_next] + grid->heuristic(s_next, s_goal));
+		int frontierCost =  g[s_next] + grid->heuristic(s_next, s_goal);
+
+        insertFrontierNode(s_next, frontierCost);
     }
 }
 
@@ -128,5 +136,39 @@ void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
                 parent[s_next] = s;
             }
 }
+
+
+void ThetaStarPlanner::insertFrontierNode(pair<int, int> s, double cost)
+{
+	FrontierNode *frontierNode = new FrontierNode(s, cost);
+    open.insert(frontierNode);
+	openMap[s] = frontierNode;
+}
+
+
+bool ThetaStarPlanner::removeFrontierNode(pair<int, int> s)
+{
+	FrontierNode* f = openMap[s];
+	open.erase(f);
+
+	auto it = openMap.find(s);
+	openMap.erase(it);
+
+	delete f;
+
+	return true;
+}
+
+
+ThetaStarPlanner::~ThetaStarPlanner()
+{
+	if(grid)
+		delete grid;
+
+	if(map)
+		delete map;
+
+}
+
 
 };

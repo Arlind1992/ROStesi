@@ -29,7 +29,7 @@
 #include <costmap_2d/costmap_2d_ros.h>
 #include <costmap_2d/costmap_2d.h>
 
-#include "rrt_planning/map/ROSMap.h"
+#include "rrt_planning/map/Map.h"
 
 namespace rrt_planning
 {
@@ -37,8 +37,7 @@ namespace rrt_planning
 class Grid
 {
 public:
-    Grid();
-	Grid(ROSMap* map, double gridResolution);
+	Grid(Map& map, double gridResolution);
 	double cost(std::pair<int, int> s, std::pair<int, int> s_next);
 	double heuristic(std::pair<int, int> s, std::pair<int, int> s_next);
 	bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);
@@ -46,7 +45,10 @@ public:
 	std::pair<int, int> convertPose(const geometry_msgs::PoseStamped& msg);
 
 private:
-	Map* map;
+	Eigen::VectorXd toMapPose(int X, int Y);
+
+private:
+	Map& map;
 	std::vector< std::vector<unsigned char> > grid;
 	
 	double gridResolution;	// Cell edges in meters
