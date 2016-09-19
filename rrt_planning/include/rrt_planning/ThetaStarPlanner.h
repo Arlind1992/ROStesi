@@ -29,6 +29,7 @@
 #include <costmap_2d/costmap_2d.h>
 #include <nav_core/base_global_planner.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <Eigen/Dense>
 
 #include "rrt_planning/map/ROSMap.h"
 #include "rrt_planning/grid/Grid.h"
@@ -58,6 +59,8 @@ private:
     void computeCost(std::pair<int, int> s, std::pair<int, int> s_next);
 	void insertFrontierNode(std::pair<int, int> s, double cost);
 	bool removeFrontierNode(std::pair<int, int> s);
+	void publishPlan(std::vector<Eigen::VectorXd>& path,
+                             std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp);
 
 private:
 
