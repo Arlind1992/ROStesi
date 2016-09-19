@@ -34,27 +34,6 @@ namespace rrt_planning
 Grid::Grid(Map& map, double gridResolution): map(map),
 	gridResolution(gridResolution)
 {
-	/*Bounds bounds = map.getBounds();
-
-	int NX = ceil( (bounds.maxX - bounds.minX) / gridResolution );
-	int NY = ceil( (bounds.maxY - bounds.minY) / gridResolution );
-
-	Eigen::VectorXd cpoint(2);
-
-	for(int i = 0; i < NX; i++)
-	{
-		vector<unsigned char> row(NY);
-
-		for(int j = 0; j < NY; j++)
-		{
-			cpoint(0) = (i + 0.5) * gridResolution;
-			cpoint(1) = (j + 0.5) * gridResolution;
-
-			grid.push_back(row);
-
-			grid[i][j] = map.isFree(cpoint) ? 1 : 0;			
-		}
-	}*/
 }
 
 
@@ -73,7 +52,7 @@ vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 		{
 			if(i == 0 && j == 0) continue;
 
-			auto&& pos = toMapPose(X, Y);
+			auto&& pos = toMapPose(X+i, Y+j);
 
 			if(map.isFree(pos))
 				neighbors.push_back(make_pair(X+i, Y+j));
@@ -127,7 +106,7 @@ bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 		swap(X2, Y2);
 	}
 
-	// Possibly swap start and end
+	//Possibly swap start and end
 	bool swapped = false;
 
 	if(X1 > X2)
@@ -136,34 +115,40 @@ bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 		swap(Y1, Y2);
 	}
 
-	int error = floor((X2-X1) / 2);
+	int error = (X2 - X1) / 2;
 	int ystep = Y1 < Y2 ? 1 : -1;
 
 	int y = Y1;
 
+	//cout << " > LINE ALG: ";
+
 	//Check for obstalces through the line
 	for(int x = X1; x <= X2; x++)
 	{
-		int cord1 = y;
-		int cord2 = x;
-
+		Eigen::VectorXd pos;
+	
 		if(is_steep)
-		{
-			cord1 = x;
-			cord2 = y;
-		}
+			pos = toMapPose(y, x);
+		else
+			pos = toMapPose(x, y);
 		
-		auto&& pos = toMapPose(cord1, cord2);
+		//cout << x << "-" << y << ", ";
 
-		if(!map.isFree(pos)) return false;
+		if(!map.isFree(pos))
+		{
+			//cout << endl;
+			return false;
+		}
 
-		error -= Y2-Y1;
+		error -= abs(Y2 - Y1);
 		if(error < 0)
 		{
 			y += ystep;
-			error += X2-X1;
+			error += (X2 - X1);
 		}
 	}
+
+	//cout << endl;
 
 	return true;
 }

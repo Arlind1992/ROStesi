@@ -90,17 +90,16 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 		FrontierNode* f = *open.begin();
         auto s = f->getNode();
 		removeFrontierNode(s);
+		closed.insert(s);
 
-		cout << "CELL " << s.first << ", " << s.second << endl;
+		//cout << "CELL " << s.first << ", " << s.second << endl;
 
         if(s == s_goal) break;
 
-        closed.insert(s);
-
         for(auto&& s_next: grid->getNeighbors(s))
-            if(closed.find(s_next) == closed.end())
+            if(closed.count(s_next) == 0)
             {
-                if(openMap.find(s_next) == openMap.end())
+                if(openMap.count(s_next) == 0)
                 {
                     g[s_next] = std::numeric_limits<double>::infinity();
                     //parent[s_next] = ;
@@ -109,6 +108,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
             }
     }
 
+	//Publish plan
 	vector<VectorXd> path;
 	path.push_back(grid->toMapPose(s_goal.first, s_goal.second));
 
@@ -122,9 +122,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 		path.push_back(grid->toMapPose(state.first, state.second));
 
 		t++;
-		if (t > 500) break;
-
-	}while(state != s_start);
+	}while(state != s_start && t < 200);
 
 	reverse(path.begin(), path.end());
 
@@ -142,9 +140,9 @@ void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
 
     if(g[s_next] < g_old)
     {
-        if(openMap.find(s_next) != openMap.end()) removeFrontierNode(s_next);
+        if(openMap.count(s_next) != 0) removeFrontierNode(s_next);
 
-		int frontierCost =  g[s_next] + grid->heuristic(s_next, s_goal);
+		double frontierCost =  g[s_next] + grid->heuristic(s_next, s_goal);
 
         insertFrontierNode(s_next, frontierCost);
     }
@@ -153,23 +151,32 @@ void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
 
 void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
 {
-    if(grid->lineOfSight(parent[s], s_next))
+	//cout << "Considero: " << s_next.first << "-" << s_next.second << " da " << s.first << "-" << s.second << endl;
+
+	if(grid->lineOfSight(parent[s], s_next))
 	{
-        /* Path 2 */
+		//cout << " > sono in line of sight con " << parent[s].first << "-" << parent[s].second << " (ls " << (g[parent[s]] + grid->cost(parent[s], s_next)) << " vs g[s_next] " << g[s_next] << ")" << endl;
+        //Path 2
         if(g[parent[s]] + grid->cost(parent[s], s_next) <= g[s_next])
         {
             g[s_next] = g[parent[s]] + grid->cost(parent[s], s_next);
             parent[s_next] = parent[s];
+			//cout << " > Parent di " << s_next.first << "-" << s_next.second << " aggiornato con " << parent[s].first << "-" << parent[s].second << endl;
         }
+		/*else
+			cout << " # Parent di " << s_next.first << "-" << s_next.second << " rimane " << parent[s_next].first << "-" << parent[s_next].second << endl;*/
 	}
     else
 	{
-    	/* Path 1 */
+		//cout << " > NON sono in lof con " << parent[s].first << "-" << parent[s].second << " (ls " << (g[parent[s]] + grid->cost(parent[s], s_next)) << " vs g[s_next] " << g[s_next] << ")";
+    	//Path 1
         if(g[s] + grid->cost(s, s_next) < g[s_next])
         {
+			//cout << " UPDATED";
 	        g[s_next] = g[s] + grid->cost(s, s_next);
             parent[s_next] = s;
         }
+		//cout <<endl;
 	}
 }
 
