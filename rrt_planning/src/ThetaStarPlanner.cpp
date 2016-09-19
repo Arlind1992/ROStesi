@@ -30,6 +30,7 @@
 PLUGINLIB_EXPORT_CLASS(rrt_planning::ThetaStarPlanner, nav_core::BaseGlobalPlanner)
 
 using namespace std;
+using namespace Eigen;
 
 //Default Constructor
 namespace rrt_planning
@@ -80,22 +81,17 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     g[s_start] = 0.0;
     parent[s_start] = s_start;
 	insertFrontierNode(s_start, 0.0);
-    
 
     ROS_INFO("Planner started");
 
-	int t = 0; 					//Debug
-
     while(!open.empty())
     {
-		//Get the best frontier node
+		//Pop the best frontier node
 		FrontierNode* f = *open.begin();
         auto s = f->getNode();
+		removeFrontierNode(s);
 
 		cout << "CELL " << s.first << ", " << s.second << endl;
-
-		t++;					//Debug
-		if(t>30) break;			//Debug
 
         if(s == s_goal) break;
 
@@ -113,22 +109,26 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
             }
     }
 
-	//Print path
-	/*auto state = s_goal;
-	cout << state.first << ", " << state.second << ", ";
+	vector<VectorXd> path;
+	path.push_back(grid->toMapPose(s_goal.first, s_goal.second));
 
+	auto state = s_goal;
+	cout << "### PLAN: "<< state.first << "-" << state.second << ", ";
+	int t = 0;
 	do
 	{
 		state = parent[state];
-		cout << state.first << ", " << state.second << ", ";
+		cout << state.first << "-" << state.second << ", ";
+		path.push_back(grid->toMapPose(state.first, state.second));
 
-	}while(state == s_start);*/
+		t++;
+		if (t > 500) break;
 
+	}while(state != s_start);
 
-    //TODO convert plan and publish
+	reverse(path.begin(), path.end());
 
-	plan.push_back(start);
-	plan.push_back(goal);
+	publishPlan(path, plan, start.header.stamp);
 
     return true;
 }
@@ -156,7 +156,7 @@ void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
     if(grid->lineOfSight(parent[s], s_next))
 	{
         /* Path 2 */
-        if(g[parent[s]] + grid->cost(parent[s], s_next) < g[s_next])
+        if(g[parent[s]] + grid->cost(parent[s], s_next) <= g[s_next])
         {
             g[s_next] = g[parent[s]] + grid->cost(parent[s], s_next);
             parent[s_next] = parent[s];
@@ -185,13 +185,37 @@ void ThetaStarPlanner::insertFrontierNode(pair<int, int> s, double cost)
 bool ThetaStarPlanner::removeFrontierNode(pair<int, int> s)
 {
 	FrontierNode* f = openMap[s];
-	open.erase(f);
 
+	open.erase(f);
 	openMap.erase(s);
 
 	delete f;
 
 	return true;
+}
+
+
+void ThetaStarPlanner::publishPlan(std::vector<VectorXd>& path,
+                             std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
+{
+    for(auto x : path)
+    {
+        geometry_msgs::PoseStamped msg;
+
+        msg.header.stamp = stamp;
+        msg.header.frame_id = "map";
+
+        msg.pose.position.x = x(0);
+        msg.pose.position.y = x(1);
+        msg.pose.position.z = 0;
+
+        msg.pose.orientation.x = 0;
+        msg.pose.orientation.y = 0;
+        msg.pose.orientation.z = 0;
+        msg.pose.orientation.w = 1;
+
+        plan.push_back(msg);
+    }
 }
 
 
