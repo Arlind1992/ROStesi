@@ -113,16 +113,11 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 	path.push_back(grid->toMapPose(s_goal.first, s_goal.second));
 
 	auto state = s_goal;
-	cout << "### PLAN: "<< state.first << "-" << state.second << ", ";
-	int t = 0;
 	do
 	{
 		state = parent[state];
-		cout << state.first << "-" << state.second << ", ";
 		path.push_back(grid->toMapPose(state.first, state.second));
-
-		t++;
-	}while(state != s_start && t < 200);
+	}while(state != s_start);
 
 	reverse(path.begin(), path.end());
 
@@ -163,8 +158,6 @@ void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
             parent[s_next] = parent[s];
 			//cout << " > Parent di " << s_next.first << "-" << s_next.second << " aggiornato con " << parent[s].first << "-" << parent[s].second << endl;
         }
-		/*else
-			cout << " # Parent di " << s_next.first << "-" << s_next.second << " rimane " << parent[s_next].first << "-" << parent[s_next].second << endl;*/
 	}
     else
 	{

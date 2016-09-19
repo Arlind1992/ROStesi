@@ -14,6 +14,7 @@
 		<rosparam file="$(find rrt_planning)/config/local_planner.yaml" command="load" />
 		
 		<param name="base_global_planner" value="rrt_planning/ThetaStarPlanner"/>
+		<rosparam file="$(find rrt_planning)/config/theta_star.yaml" command="load" ns="ThetaStarPlanner"/>
 	</node>
 	
 	<!-- node pkg="amcl" type="amcl" name="amcl">
