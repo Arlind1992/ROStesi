@@ -61,6 +61,7 @@ private:
 	bool removeFrontierNode(std::pair<int, int> s);
 	void publishPlan(std::vector<Eigen::VectorXd>& path,
                              std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp);
+	void clearInstance();
 
 private:
 
