@@ -92,8 +92,8 @@ void DifferentialDrive::operator()(const state_type& x, state_type& dx,
 
     double theta = x(2);
 
-    A << sin(theta), 0,
-    cos(theta), 0,
+    A << cos(theta), 0,
+    sin(theta), 0,
     0, 1;
 
     dx = A*u;
