@@ -120,8 +120,6 @@ bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 
 	int y = Y1;
 
-	//cout << " > LINE ALG: ";
-
 	//Check for obstalces through the line
 	for(int x = X1; x <= X2; x++)
 	{
@@ -131,14 +129,8 @@ bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 			pos = toMapPose(y, x);
 		else
 			pos = toMapPose(x, y);
-		
-		//cout << x << "-" << y << ", ";
 
-		if(!map.isFree(pos))
-		{
-			//cout << endl;
-			return false;
-		}
+		if(!map.isFree(pos)) return false;
 
 		error -= abs(Y2 - Y1);
 		if(error < 0)
@@ -147,8 +139,6 @@ bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 			error += (X2 - X1);
 		}
 	}
-
-	//cout << endl;
 
 	return true;
 }
@@ -177,6 +167,15 @@ Eigen::VectorXd Grid::toMapPose(int X, int Y)
 	pos(1) = (0.5 + Y) * gridResolution + bounds.minY;
 	
     return pos;
+}
+
+
+bool Grid::isFree(pair<int, int> s)
+{
+	Eigen::VectorXd pos;
+	pos = toMapPose(s.first, s.second);
+
+	return map.isFree(pos);
 }
 
 }

@@ -43,6 +43,7 @@ public:
 	bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);
 	std::vector<std::pair<int, int>> getNeighbors(std::pair<int, int> s);
 	std::pair<int, int> convertPose(const geometry_msgs::PoseStamped& msg);
+	bool isFree(std::pair<int, int> s);
 	Eigen::VectorXd toMapPose(int X, int Y);
 
 private:

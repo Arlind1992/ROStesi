@@ -65,17 +65,23 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                                 const geometry_msgs::PoseStamped& goal,
                                 std::vector<geometry_msgs::PoseStamped>& plan)
 {
-	open.clear();
-	openMap.clear(); 
-	closed.clear();
-	parent.clear();
-	g.clear();
+	clearInstance();
 
     s_start = grid->convertPose(start);
     s_goal = grid->convertPose(goal);
+	pair<int, int> s_null = make_pair(-1,-1);
 
-	cout << "START " << s_start.first << ", " << s_start.second << endl;
-	cout << "GOAL " << s_goal.first << ", " << s_goal.second << endl;	
+	if(!grid->isFree(s_start))
+	{
+		cout << "Invalid starting position" << endl;
+		return true;
+	}
+
+	if(!grid->isFree(s_goal))
+	{
+		cout << "Invalid target position" << endl;
+		return true;
+	}
 
     //Init variables
     g[s_start] = 0.0;
@@ -92,8 +98,6 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 		removeFrontierNode(s);
 		closed.insert(s);
 
-		//cout << "CELL " << s.first << ", " << s.second << endl;
-
         if(s == s_goal) break;
 
         for(auto&& s_next: grid->getNeighbors(s))
@@ -102,7 +106,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                 if(openMap.count(s_next) == 0)
                 {
                     g[s_next] = std::numeric_limits<double>::infinity();
-                    //parent[s_next] = ;
+                    parent[s_next] = s_null;
                 }
                 updateVertex(s, s_next);
             }
@@ -110,12 +114,18 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
 	//Publish plan
 	vector<VectorXd> path;
-	path.push_back(grid->toMapPose(s_goal.first, s_goal.second));
-
 	auto state = s_goal;
+	path.push_back(grid->toMapPose(state.first, state.second));
 	do
 	{
 		state = parent[state];
+
+		if(state == s_null)
+		{
+			cout << "Invalid plan";
+			return true;
+		}
+
 		path.push_back(grid->toMapPose(state.first, state.second));
 	}while(state != s_start);
 
@@ -216,6 +226,16 @@ void ThetaStarPlanner::publishPlan(std::vector<VectorXd>& path,
 
         plan.push_back(msg);
     }
+}
+
+
+void ThetaStarPlanner::clearInstance()
+{
+	open.clear();
+	openMap.clear(); 
+	closed.clear();
+	parent.clear();
+	g.clear();
 }
 
 
