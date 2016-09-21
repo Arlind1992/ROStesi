@@ -44,19 +44,19 @@
 namespace rrt_planning
 {
 
-class RRTThetaStarPlanner : public nav_core::BaseGlobalPlanner
+class ThetaStarRRTPlanner : public nav_core::BaseGlobalPlanner
 {
 public:
 
-    RRTThetaStarPlanner();
-    RRTThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
+    ThetaStarRRTPlanner();
+    ThetaStarRRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
 
     void initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros) override;
     bool makePlan(const geometry_msgs::PoseStamped& start,
                   const geometry_msgs::PoseStamped& goal,
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
 
-    virtual ~RRTThetaStarPlanner();
+    virtual ~ThetaStarRRTPlanner();
 
 private:
     bool newState(const Eigen::VectorXd& xRand,

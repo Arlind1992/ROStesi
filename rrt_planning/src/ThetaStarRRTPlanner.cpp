@@ -24,8 +24,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <visualization_msgs/Marker.h>
 
-#include "rrt_planning/RRTThetaStarPlanner.h"
-
+#include "rrt_planning/ThetaStarRRTPlanner.h"
 #include "rrt_planning/map/ROSMap.h"
 #include "rrt_planning/kinematics_models/DifferentialDrive.h"
 #include "rrt_planning/local_planner/MotionPrimitivesPlanner.h"
@@ -35,7 +34,7 @@
 using namespace Eigen;
 
 //register this planner as a BaseGlobalPlanner plugin
-PLUGINLIB_EXPORT_CLASS(rrt_planning::RRTThetaStarPlanner, nav_core::BaseGlobalPlanner)
+PLUGINLIB_EXPORT_CLASS(rrt_planning::ThetaStarRRTPlanner, nav_core::BaseGlobalPlanner)
 
 using namespace std;
 
@@ -43,19 +42,22 @@ using namespace std;
 namespace rrt_planning
 {
 
-RRTThetaStarPlanner::RRTThetaStarPlanner()
+ThetaStarRRTPlanner::ThetaStarRRTPlanner()
 {
     K = 0;
     deltaX = 0;
     greedy = 0;
+    laneWidth = 0;
 
     map = nullptr;
     kinematicModel = nullptr;
     distance = nullptr;
     localPlanner = nullptr;
+
+    thetaStarPlanner = new ThetaStarPlanner();
 }
 
-RRTThetaStarPlanner::RRTThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
+ThetaStarRRTPlanner::ThetaStarRRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
     initialize(name, costmap_ros);
 
@@ -63,8 +65,10 @@ RRTThetaStarPlanner::RRTThetaStarPlanner(std::string name, costmap_2d::Costmap2D
 }
 
 
-void RRTThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
+void ThetaStarRRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
+	thetaStarPlanner->initialize(name, costmap_ros);
+
     map = new ROSMap(costmap_ros);
 
     //Get parameters from ros parameter server
@@ -87,7 +91,7 @@ void RRTThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS*
     vis_pub = private_nh.advertise<visualization_msgs::Marker>("visualization_marker", 0);
 }
 
-bool RRTThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
+bool ThetaStarRRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                           const geometry_msgs::PoseStamped& goal,
                           std::vector<geometry_msgs::PoseStamped>& plan)
 {
@@ -146,14 +150,14 @@ bool RRTThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 }
 
 
-bool RRTThetaStarPlanner::newState(const VectorXd& xRand,
+bool ThetaStarRRTPlanner::newState(const VectorXd& xRand,
                           const VectorXd& xNear,
                           VectorXd& xNew)
 {
     return localPlanner->compute(xNear, xRand, xNew);
 }
 
-VectorXd RRTThetaStarPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
+VectorXd ThetaStarRRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
 {
     auto& q_ros = msg.pose.orientation;
     auto& t_ros = msg.pose.position;
@@ -168,7 +172,7 @@ VectorXd RRTThetaStarPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
     return x;
 }
 
-void RRTThetaStarPlanner::publishPlan(std::vector<VectorXd>& path,
+void ThetaStarRRTPlanner::publishPlan(std::vector<VectorXd>& path,
                              std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
 {
     for(auto x : path)
@@ -198,7 +202,7 @@ void RRTThetaStarPlanner::publishPlan(std::vector<VectorXd>& path,
     }
 }
 
-void RRTThetaStarPlanner::cleanSegments()
+void ThetaStarRRTPlanner::cleanSegments()
 {
     visualization_msgs::Marker marker;
     marker.header.frame_id = "map";
@@ -209,7 +213,7 @@ void RRTThetaStarPlanner::cleanSegments()
     vis_pub.publish(marker);
 }
 
-void RRTThetaStarPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
+void ThetaStarRRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
 {
     static int id = 0;
 
@@ -255,13 +259,13 @@ void RRTThetaStarPlanner::publishSegment(const VectorXd& xStart, const VectorXd&
 }
 
 
-VectorXd RRTThetaStarPlanner::anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan, double w)
+VectorXd ThetaStarRRTPlanner::anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan, double w)
 {
-	
+	return VectorXd(3);
 }
 
 
-RRTThetaStarPlanner::~RRTThetaStarPlanner()
+ThetaStarRRTPlanner::~ThetaStarRRTPlanner()
 {
 	if(kinematicModel)
 		delete kinematicModel;
@@ -274,6 +278,9 @@ RRTThetaStarPlanner::~RRTThetaStarPlanner()
 
 	if(map)
 		delete map;
+
+	if(thetaStarPlanner)
+		delete thetaStarPlanner;
 
 }
 
