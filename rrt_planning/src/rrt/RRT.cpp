@@ -26,15 +26,16 @@
 namespace rrt_planning
 {
 
-RRT::RRT(Distance& distance, Eigen::VectorXd& x0) : distance(distance)
+RRT::RRT(Distance& distance, Eigen::VectorXd& x0) : distance(distance), index(distance)
 {
     root = new RRTNode(nullptr, x0);
     nodes.push_back(root);
+    index.insert(root);
 }
 
 RRTNode* RRT::searchNearestNode(Eigen::VectorXd& x)
 {
-    RRTNode* nearest = root;
+    /*RRTNode* nearest = root;
     double dMin = distance(root->x, x);
 
     for(auto* node : nodes)
@@ -46,9 +47,9 @@ RRTNode* RRT::searchNearestNode(Eigen::VectorXd& x)
             dMin = newDist;
             nearest = node;
         }
-    }
+    }*/
 
-    return nearest;
+    return index.getNearestNeighbour(x);
 }
 
 void RRT::addNode(RRTNode* parent, Eigen::VectorXd& xNew)
@@ -56,6 +57,7 @@ void RRT::addNode(RRTNode* parent, Eigen::VectorXd& xNew)
     RRTNode* child = new RRTNode(parent, xNew);
     parent->childs.push_back(child);
     nodes.push_back(child);
+    index.insert(child);
 }
 
 std::vector<Eigen::VectorXd> RRT::getPathToLastNode()

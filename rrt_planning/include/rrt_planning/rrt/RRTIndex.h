@@ -32,42 +32,57 @@ namespace rrt_planning
 class RRTCoverWrapper
 {
 public:
-	RRTCoverWrapper(Distance& distance, const RRTNode* node) : dist(distance), node(node)
+	RRTCoverWrapper(Distance* distance, RRTNode* node) : dist(distance), node(node)
 	{
 
 	}
 
-	inline bool operator ==(const RRTCoverWrapper& obj)
+	inline bool operator ==(const RRTCoverWrapper& obj) const
 	{
 		return obj.node == this->node;
 	}
 
-	inline double distance(const RRTCoverWrapper& obj)
+	inline double distance(const RRTCoverWrapper& obj) const
 	{
-		return dist(obj, *this);
+		auto& dist = *this->dist;
+		return dist(obj.node->x, this->node->x);
+	}
+
+	inline RRTNode* getNode() const
+	{
+		return node;
 	}
 
 private:
 	RRTNode* node;
-	Distance& dist;
+	Distance* dist;
 };
 
-class RRTIndex : public CoverTree<RRTCoverWrapper>
+class RRTIndex : CoverTree<RRTCoverWrapper>
 {
 public:
-	RRTIndex(Distance& dist) : dist(dist)
+	RRTIndex(Distance& dist) : dist(dist), CoverTree<RRTCoverWrapper>(1e3)
 	{
 
 	}
 
-    inline void insert(const RRTNode* newPoint)
+    inline void insert(RRTNode* p)
     {
-    	this->insert(RRTCoverWrapper(dist, newPoint));
+    	CoverTree<RRTCoverWrapper>::insert(RRTCoverWrapper(&dist, p));
     }
 
-    inline void remove(const RRTNode*p)
+    inline void remove(RRTNode* p)
     {
-    	this->remove(RRTCoverWrapper(dist, newPoint));
+    	CoverTree<RRTCoverWrapper>::remove(RRTCoverWrapper(&dist, p));
+    }
+
+    inline RRTNode* getNearestNeighbour(const Eigen::VectorXd& x)
+    {
+    	RRTNode tmp(nullptr, x);
+    	RRTCoverWrapper tmpWrapped(&dist, &tmp);
+    	auto result = CoverTree<RRTCoverWrapper>::kNearestNeighbors(tmpWrapped, 1);
+
+    	return result.back().getNode();
     }
 
 private:

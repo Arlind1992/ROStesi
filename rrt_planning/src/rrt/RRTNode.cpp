@@ -31,7 +31,7 @@ RRTNode::RRTNode()
     father = nullptr;
 }
 
-RRTNode::RRTNode(RRTNode* father, Eigen::VectorXd& x)
+RRTNode::RRTNode(RRTNode* father, const Eigen::VectorXd& x)
 {
     this->father = father;
     this->x = x;

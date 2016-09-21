@@ -33,7 +33,7 @@ namespace rrt_planning
 struct RRTNode
 {
     RRTNode();
-    RRTNode(RRTNode* father, Eigen::VectorXd& x);
+    RRTNode(RRTNode* father, const Eigen::VectorXd& x);
 
     Eigen::VectorXd x;
     std::vector<RRTNode*> childs;

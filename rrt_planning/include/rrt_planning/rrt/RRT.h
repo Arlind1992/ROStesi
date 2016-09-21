@@ -26,6 +26,7 @@
 
 #include "rrt_planning/distance/Distance.h"
 #include "rrt_planning/rrt/RRTNode.h"
+#include "rrt_planning/rrt/RRTIndex.h"
 
 namespace rrt_planning
 {
@@ -46,7 +47,10 @@ public:
 private:
     RRTNode* root;
     std::vector<RRTNode*> nodes;
+    RRTIndex index;
     Distance& distance;
+
+
 };
 
 }
