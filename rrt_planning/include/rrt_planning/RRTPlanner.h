@@ -1,28 +1,28 @@
 /*
- * rtt_planning,
+ * rrt_planning,
  *
  *
  * Copyright (C) 2016 Davide Tateo
  * Versione 1.0
  *
- * This file is part of rtt_planning.
+ * This file is part of rrt_planning.
  *
- * rtt_planning is free software: you can redistribute it and/or modify
+ * rrt_planning is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * rtt_planning is distributed in the hope that it will be useful,
+ * rrt_planning is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with rtt_planning.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RTTPLANNER_H_
-#define INCLUDE_RTTPLANNER_H_
+#ifndef INCLUDE_RRTPLANNER_H_
+#define INCLUDE_RRTPLANNER_H_
 
 /** include the libraries you need in your planner here */
 /** for global path planner interface */
@@ -79,7 +79,7 @@ private:
     Distance* distance;
     LocalPlanner* localPlanner;
 
-    //Visualization of rtt
+    //Visualization of rrt
     ros::Publisher vis_pub;
 
 };
@@ -88,4 +88,4 @@ private:
 
 
 
-#endif /* INCLUDE_RTTPLANNER_H_ */
+#endif /* INCLUDE_RRTPLANNER_H_ */
