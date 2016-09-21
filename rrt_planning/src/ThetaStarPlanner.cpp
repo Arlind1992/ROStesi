@@ -54,7 +54,7 @@ void ThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* co
 
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
-	private_nh.param("discretization", discretization, 0.1);
+	private_nh.param("discretization", discretization, 0.2);
 
 	map = new ROSMap(costmap_ros);
     grid = new Grid(*map, discretization);
@@ -67,20 +67,23 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 {
 	clearInstance();
 
+	//Init the position of the special states
     s_start = grid->convertPose(start);
     s_goal = grid->convertPose(goal);
 	pair<int, int> s_null = make_pair(-1,-1);
 
+	//Test starting position
 	if(!grid->isFree(s_start))
 	{
 		cout << "Invalid starting position" << endl;
-		return true;
+		return false;
 	}
 
+	//Test target position
 	if(!grid->isFree(s_goal))
 	{
 		cout << "Invalid target position" << endl;
-		return true;
+		return false;
 	}
 
     //Init variables
@@ -90,6 +93,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
     ROS_INFO("Planner started");
 
+	//Compute plan
     while(!open.empty())
     {
 		//Pop the best frontier node
@@ -123,14 +127,13 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 		if(state == s_null)
 		{
 			cout << "Invalid plan";
-			return true;
+			return false;
 		}
 
 		path.push_back(grid->toMapPose(state.first, state.second));
 	}while(state != s_start);
 
 	reverse(path.begin(), path.end());
-
 	publishPlan(path, plan, start.header.stamp);
 
     return true;
@@ -246,7 +249,6 @@ ThetaStarPlanner::~ThetaStarPlanner()
 
 	if(map)
 		delete map;
-
 }
 
 
