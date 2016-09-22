@@ -21,8 +21,8 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRTTHETASTARPLANNER_H_
-#define INCLUDE_RRTTHETASTARPLANNER_H_
+#ifndef INCLUDE_THETASTARRRTPLANNER_H_
+#define INCLUDE_THETASTARRRTPLANNER_H_
 
 /** include the libraries you need in your planner here */
 /** for global path planner interface */
@@ -70,7 +70,8 @@ private:
 
     void cleanSegments();
     void publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd);
-	Eigen::VectorXd anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan, double w);
+	void publishThetaStar(std::vector<geometry_msgs::PoseStamped>& plan);
+	void addPoint(Eigen::VectorXd& xStart);
 
 
 private:
@@ -78,8 +79,9 @@ private:
 
     int K;
     double deltaX;
-    double greedy;
 	double laneWidth;
+	double greedy;
+	double deltaTheta;
 
     KinematicModel* kinematicModel;
     Distance* distance;
@@ -96,4 +98,4 @@ private:
 
 
 
-#endif /* INCLUDE_RRTTHETASTARPLANNER_H_ */
+#endif /* INCLUDE_THETASTARRRTPLANNER_H_ */

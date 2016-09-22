@@ -46,8 +46,8 @@ ThetaStarRRTPlanner::ThetaStarRRTPlanner()
 {
     K = 0;
     deltaX = 0;
-    greedy = 0;
     laneWidth = 0;
+	greedy = 0;
 
     map = nullptr;
     kinematicModel = nullptr;
@@ -60,7 +60,6 @@ ThetaStarRRTPlanner::ThetaStarRRTPlanner()
 ThetaStarRRTPlanner::ThetaStarRRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
     initialize(name, costmap_ros);
-
 	thetaStarPlanner = new ThetaStarPlanner(name, costmap_ros);
 }
 
@@ -76,8 +75,9 @@ void ThetaStarRRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS*
 
     private_nh.param("iterations", K, 30000);
     private_nh.param("deltaX", deltaX, 0.5);
-    private_nh.param("greedy", greedy, 0.1);
-	private_nh.param("greedy", laneWidth, 2.0);
+	private_nh.param("laneWidth", laneWidth, 2.0);
+	private_nh.param("greedy", greedy, 0.1);
+	private_nh.param("deltaTheta", deltaTheta, M_PI/4);
 
     // create kinematic, distance and local planner //TODO select from parameters
     kinematicModel = new DifferentialDrive();
@@ -95,14 +95,18 @@ bool ThetaStarRRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                           const geometry_msgs::PoseStamped& goal,
                           std::vector<geometry_msgs::PoseStamped>& plan)
 {
+	cleanSegments();
+
 	// Retrive Theta* plan
 	vector<geometry_msgs::PoseStamped> thetaStarPlan;
 
 	if(!thetaStarPlanner->makePlan(start, goal, thetaStarPlan)) 
 	{
-		cout << "Impossible to compute the Theta* plan";
+		ROS_INFO("Impossible to compute the Theta* plan");
 		return false;
 	}
+
+	publishThetaStar(thetaStarPlan);
 
 	// Compute RRT-Theta* plan
     Distance& distance = *this->distance;
@@ -112,14 +116,19 @@ bool ThetaStarRRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
     RRT rrt(distance, x0);
 
-    ROS_INFO("Planner started");
-
-    cleanSegments();
+    ROS_INFO("Theta*-RRT started");
 
     for(unsigned int i = 0; i < K; i++)
     {
 
-        VectorXd xRand = anyAngleSampling(thetaStarPlan, laneWidth);
+        VectorXd xRand;
+
+		if(RandomGenerator::sampleEvent(greedy))
+			xRand = xGoal;
+		else
+			xRand = kinematicModel->anyAngleSampling(thetaStarPlan, laneWidth, deltaTheta);
+
+		addPoint(xRand);
 
         auto* node = rrt.searchNearestNode(xRand);
 
@@ -211,6 +220,14 @@ void ThetaStarRRTPlanner::cleanSegments()
     marker.action = visualization_msgs::Marker::DELETEALL;
 
     vis_pub.publish(marker);
+
+	marker.ns = "thetastar";
+
+	vis_pub.publish(marker);
+
+	marker.ns = "point";
+
+	vis_pub.publish(marker);
 }
 
 void ThetaStarRRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
@@ -259,9 +276,86 @@ void ThetaStarRRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd&
 }
 
 
-VectorXd ThetaStarRRTPlanner::anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan, double w)
+void ThetaStarRRTPlanner::addPoint(VectorXd& xStart)
 {
-	return VectorXd(3);
+    static int id = 0;
+
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time();
+    marker.ns = "point";
+    marker.id = id++;
+    marker.type = visualization_msgs::Marker::POINTS;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    marker.scale.x = 0.05;
+    marker.scale.y = 0.05;
+    marker.scale.z = 0;
+    marker.color.a = 1.0;
+    marker.color.r = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 0.0;
+
+    geometry_msgs::Point p1;
+
+    p1.x = xStart(0);
+    p1.y = xStart(1);
+    p1.z = 0;
+
+    marker.points.push_back(p1);
+
+    vis_pub.publish(marker);
+
+    //ros::Duration(0.1).sleep();
+}
+
+
+void ThetaStarRRTPlanner::publishThetaStar(std::vector<geometry_msgs::PoseStamped>& plan)
+{
+    static int id = 0;
+
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time();
+    marker.ns = "thetastar";
+    marker.id = id++;
+    marker.type = visualization_msgs::Marker::LINE_STRIP;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    marker.scale.x = 0.05;
+    marker.scale.y = 0;
+    marker.scale.z = 0;
+    marker.color.a = 1.0;
+    marker.color.r = 0.0;
+    marker.color.g = 0.0;
+    marker.color.b = 1.0;
+
+	for(int i = 0; i < plan.size(); i++)
+	{
+		geometry_msgs::Point p;
+
+		p.x = plan[i].pose.position.x;
+		p.y = plan[i].pose.position.y;
+		p.z = plan[i].pose.position.z;
+
+	    marker.points.push_back(p);
+	}
+
+    vis_pub.publish(marker);
+
+    //ros::Duration(0.1).sleep();
 }
 
 

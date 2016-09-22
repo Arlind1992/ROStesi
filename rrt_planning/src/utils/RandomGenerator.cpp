@@ -36,4 +36,11 @@ bool RandomGenerator::sampleEvent(double p)
     return d(gen);
 }
 
+double RandomGenerator::sampleUniform(double a, double b)
+{
+	std::uniform_real_distribution<double> d(a, b);
+
+	return d(gen);
+}
+
 }

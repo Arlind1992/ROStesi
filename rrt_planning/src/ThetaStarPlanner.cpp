@@ -75,14 +75,14 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 	//Test starting position
 	if(!grid->isFree(s_start))
 	{
-		cout << "Invalid starting position" << endl;
+		ROS_INFO("Invalid starting position");
 		return false;
 	}
 
 	//Test target position
 	if(!grid->isFree(s_goal))
 	{
-		cout << "Invalid target position" << endl;
+		ROS_INFO("Invalid target position");
 		return false;
 	}
 
@@ -126,7 +126,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
 		if(state == s_null)
 		{
-			cout << "Invalid plan";
+			ROS_INFO("Invalid plan");
 			return false;
 		}
 
