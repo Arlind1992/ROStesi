@@ -1,6 +1,7 @@
 <launch>
 	<!-- arguments -->
 	<arg name="map_file" default="$(find rrt_planning)/maps/map.yaml"/>
+	<arg name="world_file" default="$(find rrt_planning)/maps/map.world"/>
 	
 	<!-- Nodes -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
@@ -19,6 +20,10 @@
 		<rosparam file="$(find rrt_planning)/config/differentialDrive.yaml" command="load" ns="ThetaStarRRTPlanner"/>
 	</node>
 	
+    <node pkg="stage_ros" type="stageros" name="stageros" args="$(arg world_file)" respawn="false">
+        <param name="base_watchdog_timeout" value="0.2"/>
+    </node>
+	
 	<!-- node pkg="amcl" type="amcl" name="amcl">
 		<param name="odom_frame_id"             value="odom"/> 
 		<param name="base_frame_id"             value="base_footprint"/> 
@@ -28,14 +33,14 @@
 		<param name="initial_pose_a"            value="0"/>
 	</node -->
 	
-	<node pkg="rrt_planning" 
+	<!-- node pkg="rrt_planning" 
 	type="test_node" 
 	name="false_odom" 
-	args="odom base_footprint 100" />
+	args="odom base_footprint 100" /-->
 	
-	<node pkg="tf" 
+	<!-- node pkg="tf" 
 	type="static_transform_publisher" 
 	name="false_localization" 
-	args="0 0 0 0 0 0 1 map odom 100" />
+	args="0 0 0 0 0 0 1 map odom 100" /-->
 	
 </launch> 
