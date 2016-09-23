@@ -25,6 +25,7 @@
 #include <boost/numeric/odeint.hpp>
 
 using namespace Eigen;
+using namespace std;
 using namespace boost::numeric::odeint;
 
 namespace rrt_planning
@@ -39,7 +40,7 @@ Bicycle::Bicycle()
     l = 0.2;
 }
 
-Eigen::VectorXd Bicycle::compute(const VectorXd& x0, const VectorXd& u, double delta)
+VectorXd Bicycle::compute(const VectorXd& x0, const VectorXd& u, double delta)
 {
     this->u = u;
 
@@ -55,12 +56,12 @@ Eigen::VectorXd Bicycle::compute(const VectorXd& x0, const VectorXd& u, double d
     VectorXd x = x0;
 
     if(deltaNormal > 0)
-    	integrate_const(stepper, *this, x, 0.0, delta, deltaNormal);
+    	integrate_const(stepper, *this, x, 0.0, deltaNormal, dt);
 
     this->u(1) = 0;
 
     if(deltaSaturation > 0)
-    	integrate_const(stepper, *this, x, 0.0, delta, deltaSaturation);
+    	integrate_const(stepper, *this, x, 0.0, deltaSaturation, dt);
 
     return x;
 }
@@ -79,12 +80,12 @@ VectorXd Bicycle::applyTransform(const VectorXd& x0, const VectorXd& T)
     return xf;
 }
 
-Eigen::VectorXd Bicycle::getInitialState()
+VectorXd Bicycle::getInitialState()
 {
     return VectorXd::Zero(4);
 }
 
-Eigen::VectorXd Bicycle::getRandomState(const Bounds& bounds)
+VectorXd Bicycle::getRandomState(const Bounds& bounds)
 {
     VectorXd xRand;
     xRand.setRandom(stateSize);
@@ -103,6 +104,14 @@ Eigen::VectorXd Bicycle::getRandomState(const Bounds& bounds)
     xRand(3) += -0.5*deltaPhi;
 
     return xRand;
+}
+
+
+VectorXd Bicycle::anyAngleSampling(vector<geometry_msgs::PoseStamped>& plan,
+	double width, double deltaTheta)
+{
+	//TODO implement!
+    return VectorXd::Zero(4);
 }
 
 
