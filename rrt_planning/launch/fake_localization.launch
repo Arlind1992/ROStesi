@@ -1,0 +1,11 @@
+<launch>
+	<node pkg="rrt_planning" 
+	type="test_node" 
+	name="false_odom" 
+	args="odom base_footprint 100" />
+	
+	<node pkg="tf" 
+	type="static_transform_publisher" 
+	name="false_localization" 
+	args="0 0 0 0 0 0 1 map odom 100" />
+</launch>	
