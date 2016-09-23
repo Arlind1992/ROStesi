@@ -3,6 +3,9 @@
 	<arg name="map_file" default="$(find rrt_planning)/maps/map.yaml"/>
 	<arg name="world_file" default="$(find rrt_planning)/maps/map.world"/>
 	
+	<!-- parameters -->
+	<param name="use_sim_time" value="true"/>
+	
 	<!-- Nodes -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 	
@@ -10,9 +13,17 @@
 	args="-d $(find rrt_planning)/rviz_config/rviz.rviz" />
 	
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<!-- basic configuration -->
+		<param name="controller_frequency" value="10.0" />
+		<rosparam file="$(find rrt_planning)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+		<rosparam file="$(find rrt_planning)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+		<rosparam file="$(find rrt_planning)/config/local_costmap_params.yaml" command="load" />
+		<rosparam file="$(find rrt_planning)/config/global_costmap_params.yaml" command="load" />
+		<rosparam file="$(find rrt_planning)/config/dwa_local_planner_params.yaml" command="load" />
+	
 		<!-- default configuration -->
-		<rosparam file="$(find rrt_planning)/config/global_planner.yaml" command="load" />
-		<rosparam file="$(find rrt_planning)/config/local_planner.yaml" command="load" />
+		<!-- rosparam file="$(find rrt_planning)/config/global_planner.yaml" command="load" />
+		<rosparam file="$(find rrt_planning)/config/local_planner.yaml" command="load" /-->
 		
 		<param name="base_global_planner" value="rrt_planning/ThetaStarRRTPlanner"/>
 		<rosparam file="$(find rrt_planning)/config/theta_star.yaml" command="load" ns="ThetaStarPlanner"/>
@@ -24,14 +35,14 @@
         <param name="base_watchdog_timeout" value="0.2"/>
     </node>
 	
-	<!-- node pkg="amcl" type="amcl" name="amcl">
-		<param name="odom_frame_id"             value="odom"/> 
-		<param name="base_frame_id"             value="base_footprint"/> 
-		<param name="global_frame_id"           value="map"/>
-		<param name="initial_pose_x"            value="0"/>
-		<param name="initial_pose_y"            value="0"/>
-		<param name="initial_pose_a"            value="0"/>
-	</node -->
+	<include file="$(find rrt_planning)/launch/amcl.launch">
+		<arg name="scan_topic" value="base_scan" />
+		<arg name="use_map_topic" value="true" />
+		<arg name="initial_pose_x" value="0" />
+		<arg name="initial_pose_y" value="0" />
+		<arg name="initial_pose_a" value="0" />
+		<arg name="global_frame_id" value="/map"/>
+	</include>
 	
 	<!-- node pkg="rrt_planning" 
 	type="test_node" 
