@@ -106,6 +106,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         else
             xRand = kinematicModel->getRandomState(map->getBounds());
 
+        visualizer.addPoint(xRand);
 
         auto* node = rrt.searchNearestNode(xRand);
 
