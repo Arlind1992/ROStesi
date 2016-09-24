@@ -56,19 +56,19 @@ VectorXd Bicycle::compute(const VectorXd& x0, const VectorXd& u, double delta)
     VectorXd x = x0;
 
     if(deltaNormal > 0)
-    	integrate_const(stepper, *this, x, 0.0, deltaNormal, dt);
+        integrate_const(stepper, *this, x, 0.0, deltaNormal, dt);
 
     this->u(1) = 0;
 
     if(deltaSaturation > 0)
-    	integrate_const(stepper, *this, x, 0.0, deltaSaturation, dt);
+        integrate_const(stepper, *this, x, 0.0, deltaSaturation, dt);
 
     return x;
 }
 
 VectorXd Bicycle::applyTransform(const VectorXd& x0, const VectorXd& T)
 {
-	//TODO Implement motion primitives for bicycles in a more complex way
+    //TODO Implement motion primitives for bicycles in a more complex way
     VectorXd xf = x0;
 
     double theta = x0(2);
@@ -108,15 +108,15 @@ VectorXd Bicycle::getRandomState(const Bounds& bounds)
 
 
 VectorXd Bicycle::anyAngleSampling(vector<geometry_msgs::PoseStamped>& plan,
-	double width, double deltaTheta)
+                                   double width, double deltaTheta)
 {
-	//TODO implement!
+    //TODO implement!
     return VectorXd::Zero(4);
 }
 
 
 void Bicycle::operator()(const state_type& x, state_type& dx,
-                                   const double /* t */)
+                         const double /* t */)
 {
     Matrix<double, 4, 2> A;
 
@@ -125,7 +125,7 @@ void Bicycle::operator()(const state_type& x, state_type& dx,
 
     A << cos(theta)*cos(phi), 0,
     sin(theta)*cos(phi), 0,
-	sin(phi)/l, 0,
+    sin(phi)/l, 0,
     0, 1;
 
     dx = A*u;

@@ -79,9 +79,6 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
 
 
     localPlanner->initialize(private_nh);
-
-    // Advertise the visualizer
-    vis_pub = private_nh.advertise<visualization_msgs::Marker>("visualization_marker", 0);
 }
 
 bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
@@ -97,7 +94,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 
     ROS_INFO("Planner started");
 
-    cleanSegments();
+    visualizer.clean();
 
     for(unsigned int i = 0; i < K; i++)
     {
@@ -118,12 +115,15 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         {
             rrt.addNode(node, xNew);
 
-            publishSegment(node->x, xNew);
+            visualizer.addSegment(node->x, xNew);
 
             if(distance(xNew, xGoal) < deltaX)
             {
                 auto&& path = rrt.getPathToLastNode();
                 publishPlan(path, plan, start.header.stamp);
+
+                visualizer.displayPlan(plan);
+                visualizer.flush();
 
                 ROS_INFO("Plan found");
 
@@ -132,6 +132,8 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         }
 
     }
+
+    visualizer.flush();
 
     ROS_WARN_STREAM("Failed to found a plan in " << K << " RRT iterations");
     return false;
@@ -191,75 +193,20 @@ void RRTPlanner::publishPlan(std::vector<VectorXd>& path,
     }
 }
 
-void RRTPlanner::cleanSegments()
-{
-    visualization_msgs::Marker marker;
-    marker.header.frame_id = "map";
-    marker.header.stamp = ros::Time();
-    marker.ns = "rrt";
-    marker.action = visualization_msgs::Marker::DELETEALL;
-
-    vis_pub.publish(marker);
-}
-
-void RRTPlanner::publishSegment(const VectorXd& xStart, const VectorXd& xEnd)
-{
-    static int id = 0;
-
-    visualization_msgs::Marker marker;
-    marker.header.frame_id = "map";
-    marker.header.stamp = ros::Time();
-    marker.ns = "rrt";
-    marker.id = id++;
-    marker.type = visualization_msgs::Marker::LINE_STRIP;
-    marker.action = visualization_msgs::Marker::ADD;
-    marker.pose.position.x = 0;
-    marker.pose.position.y = 0;
-    marker.pose.position.z = 0;
-    marker.pose.orientation.x = 0.0;
-    marker.pose.orientation.y = 0.0;
-    marker.pose.orientation.z = 0.0;
-    marker.pose.orientation.w = 1.0;
-    marker.scale.x = 0.05;
-    marker.scale.y = 0;
-    marker.scale.z = 0;
-    marker.color.a = 1.0;
-    marker.color.r = 1.0;
-    marker.color.g = 0.0;
-    marker.color.b = 1.0;
-
-    geometry_msgs::Point p1;
-    geometry_msgs::Point p2;
-
-    p1.x = xStart(0);
-    p1.y = xStart(1);
-    p1.z = xStart(2);
-
-    p2.x = xEnd(0);
-    p2.y = xEnd(1);
-    p2.z = xEnd(2);
-
-    marker.points.push_back(p1);
-    marker.points.push_back(p2);
-
-    vis_pub.publish(marker);
-
-    //ros::Duration(0.1).sleep();
-}
 
 RRTPlanner::~RRTPlanner()
 {
-	if(kinematicModel)
-		delete kinematicModel;
+    if(kinematicModel)
+        delete kinematicModel;
 
-	if(distance)
-		delete distance;
+    if(distance)
+        delete distance;
 
-	if(localPlanner)
-		delete localPlanner;
+    if(localPlanner)
+        delete localPlanner;
 
-	if(map)
-		delete map;
+    if(map)
+        delete map;
 
 }
 

@@ -30,15 +30,21 @@ namespace rrt_planning
 class FrontierNode
 {
 public:
-	inline FrontierNode(std::pair<int, int> node, double cost):
-		node(node), cost(cost) { }
+    inline FrontierNode(std::pair<int, int> node, double cost):
+        node(node), cost(cost) { }
 
-	inline std::pair<int, int> getNode() { return node; }
-	inline double getCost() { return cost; }
+    inline std::pair<int, int> getNode()
+    {
+        return node;
+    }
+    inline double getCost()
+    {
+        return cost;
+    }
 
 private:
-	std::pair<int, int> node;
-	double cost;
+    std::pair<int, int> node;
+    double cost;
 };
 
 }

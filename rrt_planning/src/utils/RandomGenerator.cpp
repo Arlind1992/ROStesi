@@ -38,9 +38,9 @@ bool RandomGenerator::sampleEvent(double p)
 
 double RandomGenerator::sampleUniform(double a, double b)
 {
-	std::uniform_real_distribution<double> d(a, b);
+    std::uniform_real_distribution<double> d(a, b);
 
-	return d(gen);
+    return d(gen);
 }
 
 }

@@ -32,115 +32,115 @@ namespace rrt_planning
 
 
 Grid::Grid(Map& map, double gridResolution): map(map),
-	gridResolution(gridResolution)
+    gridResolution(gridResolution)
 {
 }
 
 
 vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 {
-	//TODO eight-connected or line-of-sight?
+    //TODO eight-connected or line-of-sight?
 
-	int X = s.first;
-	int Y = s.second;
+    int X = s.first;
+    int Y = s.second;
 
-	vector<pair<int, int>> neighbors;
+    vector<pair<int, int>> neighbors;
 
-	//Given (X,Y), retrive all the eight-connected free cells
-	for(int i = -1; i <= 1; i++)
-		for(int j = -1; j <= 1; j++)
-		{
-			if(i == 0 && j == 0) continue;
+    //Given (X,Y), retrive all the eight-connected free cells
+    for(int i = -1; i <= 1; i++)
+        for(int j = -1; j <= 1; j++)
+        {
+            if(i == 0 && j == 0) continue;
 
-			auto&& pos = toMapPose(X+i, Y+j);
+            auto&& pos = toMapPose(X+i, Y+j);
 
-			if(map.isFree(pos))
-				neighbors.push_back(make_pair(X+i, Y+j));
-		}
+            if(map.isFree(pos))
+                neighbors.push_back(make_pair(X+i, Y+j));
+        }
 
-	return neighbors;
+    return neighbors;
 }
 
 
 double Grid::cost(pair<int, int> s, pair<int, int> s_next)
 {
-	//TODO no obstacles (8-connected)?
+    //TODO no obstacles (8-connected)?
 
-	int X1 = s.first;
-	int Y1 = s.second;
+    int X1 = s.first;
+    int Y1 = s.second;
 
-	int X2 = s_next.first;
-	int Y2 = s_next.second;
+    int X2 = s_next.first;
+    int Y2 = s_next.second;
 
-	return sqrt( (X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) );
+    return sqrt( (X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) );
 }
 
 
 double Grid::heuristic(pair<int, int> s, pair<int, int> s_next)
 {
-	int X1 = s.first;
-	int Y1 = s.second;
+    int X1 = s.first;
+    int Y1 = s.second;
 
-	int X2 = s_next.first;
-	int Y2 = s_next.second;
+    int X2 = s_next.first;
+    int Y2 = s_next.second;
 
-	return sqrt( (X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) );
+    return sqrt( (X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) );
 }
 
 
 bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 {
-	int X1 = s.first;
-	int Y1 = s.second;
+    int X1 = s.first;
+    int Y1 = s.second;
 
-	int X2 = s_next.first;
-	int Y2 = s_next.second;
+    int X2 = s_next.first;
+    int Y2 = s_next.second;
 
-	//Determine how steep the line is
-	bool is_steep = abs(Y2-Y1) > abs(X2-X1);
+    //Determine how steep the line is
+    bool is_steep = abs(Y2-Y1) > abs(X2-X1);
 
-	//Possibly rotate the line
-	if(is_steep)
-	{
-		swap(X1, Y1);
-		swap(X2, Y2);
-	}
+    //Possibly rotate the line
+    if(is_steep)
+    {
+        swap(X1, Y1);
+        swap(X2, Y2);
+    }
 
-	//Possibly swap start and end
-	bool swapped = false;
+    //Possibly swap start and end
+    bool swapped = false;
 
-	if(X1 > X2)
-	{
-		swap(X1, X2);
-		swap(Y1, Y2);
-	}
+    if(X1 > X2)
+    {
+        swap(X1, X2);
+        swap(Y1, Y2);
+    }
 
-	int error = (X2 - X1) / 2;
-	int ystep = Y1 < Y2 ? 1 : -1;
+    int error = (X2 - X1) / 2;
+    int ystep = Y1 < Y2 ? 1 : -1;
 
-	int y = Y1;
+    int y = Y1;
 
-	//Check for obstalces through the line
-	for(int x = X1; x <= X2; x++)
-	{
-		Eigen::VectorXd pos;
-	
-		if(is_steep)
-			pos = toMapPose(y, x);
-		else
-			pos = toMapPose(x, y);
+    //Check for obstalces through the line
+    for(int x = X1; x <= X2; x++)
+    {
+        Eigen::VectorXd pos;
 
-		if(!map.isFree(pos)) return false;
+        if(is_steep)
+            pos = toMapPose(y, x);
+        else
+            pos = toMapPose(x, y);
 
-		error -= abs(Y2 - Y1);
-		if(error < 0)
-		{
-			y += ystep;
-			error += (X2 - X1);
-		}
-	}
+        if(!map.isFree(pos)) return false;
 
-	return true;
+        error -= abs(Y2 - Y1);
+        if(error < 0)
+        {
+            y += ystep;
+            error += (X2 - X1);
+        }
+    }
+
+    return true;
 }
 
 
@@ -148,10 +148,10 @@ std::pair<int, int> Grid::convertPose(const geometry_msgs::PoseStamped& msg)
 {
     auto& t_ros = msg.pose.position;
 
-	Bounds bounds = map.getBounds();
+    Bounds bounds = map.getBounds();
 
-	int X_index = floor( (t_ros.x - bounds.minX) / gridResolution );
-	int Y_index = floor( (t_ros.y - bounds.minY) / gridResolution );
+    int X_index = floor( (t_ros.x - bounds.minX) / gridResolution );
+    int Y_index = floor( (t_ros.y - bounds.minY) / gridResolution );
 
     return make_pair(X_index, Y_index);
 }
@@ -159,23 +159,23 @@ std::pair<int, int> Grid::convertPose(const geometry_msgs::PoseStamped& msg)
 
 Eigen::VectorXd Grid::toMapPose(int X, int Y)
 {
-	Bounds bounds = map.getBounds();
+    Bounds bounds = map.getBounds();
 
-	Eigen::VectorXd pos(2);
+    Eigen::VectorXd pos(2);
 
-	pos(0) = (0.5 + X) * gridResolution + bounds.minX;
-	pos(1) = (0.5 + Y) * gridResolution + bounds.minY;
-	
+    pos(0) = (0.5 + X) * gridResolution + bounds.minX;
+    pos(1) = (0.5 + Y) * gridResolution + bounds.minY;
+
     return pos;
 }
 
 
 bool Grid::isFree(pair<int, int> s)
 {
-	Eigen::VectorXd pos;
-	pos = toMapPose(s.first, s.second);
+    Eigen::VectorXd pos;
+    pos = toMapPose(s.first, s.second);
 
-	return map.isFree(pos);
+    return map.isFree(pos);
 }
 
 }

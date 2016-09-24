@@ -24,8 +24,6 @@
 #ifndef INCLUDE_RRTPLANNER_H_
 #define INCLUDE_RRTPLANNER_H_
 
-/** include the libraries you need in your planner here */
-/** for global path planner interface */
 #include <ros/ros.h>
 #include <costmap_2d/costmap_2d_ros.h>
 #include <costmap_2d/costmap_2d.h>
@@ -37,6 +35,7 @@
 #include "rrt_planning/distance/Distance.h"
 #include "rrt_planning/kinematics_models/KinematicModel.h"
 #include "rrt_planning/local_planner/LocalPlanner.h"
+#include "rrt_planning/visualization/Visualizer.h"
 
 namespace rrt_planning
 {
@@ -54,6 +53,7 @@ public:
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
 
     virtual ~RRTPlanner();
+
 private:
     bool newState(const Eigen::VectorXd& xRand,
                   const Eigen::VectorXd& xNear,
@@ -63,9 +63,6 @@ private:
 
     void publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
                      const ros::Time& stamp);
-
-    void cleanSegments();
-    void publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd);
 
 
 private:
@@ -79,8 +76,7 @@ private:
     Distance* distance;
     LocalPlanner* localPlanner;
 
-    //Visualization of rrt
-    ros::Publisher vis_pub;
+    Visualizer visualizer;
 
 };
 

@@ -32,57 +32,57 @@ namespace rrt_planning
 class RRTCoverWrapper
 {
 public:
-	RRTCoverWrapper(Distance* distance, RRTNode* node) : dist(distance), node(node)
-	{
+    RRTCoverWrapper(Distance* distance, RRTNode* node) : dist(distance), node(node)
+    {
 
-	}
+    }
 
-	inline bool operator ==(const RRTCoverWrapper& obj) const
-	{
-		return obj.node == this->node;
-	}
+    inline bool operator ==(const RRTCoverWrapper& obj) const
+    {
+        return obj.node == this->node;
+    }
 
-	inline double distance(const RRTCoverWrapper& obj) const
-	{
-		auto& dist = *this->dist;
-		return dist(obj.node->x, this->node->x);
-	}
+    inline double distance(const RRTCoverWrapper& obj) const
+    {
+        auto& dist = *this->dist;
+        return dist(obj.node->x, this->node->x);
+    }
 
-	inline RRTNode* getNode() const
-	{
-		return node;
-	}
+    inline RRTNode* getNode() const
+    {
+        return node;
+    }
 
 private:
-	RRTNode* node;
-	Distance* dist;
+    RRTNode* node;
+    Distance* dist;
 };
 
 class RRTIndex : CoverTree<RRTCoverWrapper>
 {
 public:
-	RRTIndex(Distance& dist) : dist(dist), CoverTree<RRTCoverWrapper>(1e3)
-	{
+    RRTIndex(Distance& dist) : dist(dist), CoverTree<RRTCoverWrapper>(1e3)
+    {
 
-	}
+    }
 
     inline void insert(RRTNode* p)
     {
-    	CoverTree<RRTCoverWrapper>::insert(RRTCoverWrapper(&dist, p));
+        CoverTree<RRTCoverWrapper>::insert(RRTCoverWrapper(&dist, p));
     }
 
     inline void remove(RRTNode* p)
     {
-    	CoverTree<RRTCoverWrapper>::remove(RRTCoverWrapper(&dist, p));
+        CoverTree<RRTCoverWrapper>::remove(RRTCoverWrapper(&dist, p));
     }
 
     inline RRTNode* getNearestNeighbour(const Eigen::VectorXd& x)
     {
-    	RRTNode tmp(nullptr, x);
-    	RRTCoverWrapper tmpWrapped(&dist, &tmp);
-    	auto result = CoverTree<RRTCoverWrapper>::kNearestNeighbors(tmpWrapped, 1);
+        RRTNode tmp(nullptr, x);
+        RRTCoverWrapper tmpWrapped(&dist, &tmp);
+        auto result = CoverTree<RRTCoverWrapper>::kNearestNeighbors(tmpWrapped, 1);
 
-    	return result.back().getNode();
+        return result.back().getNode();
     }
 
 private:

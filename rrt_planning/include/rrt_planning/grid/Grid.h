@@ -37,25 +37,25 @@ namespace rrt_planning
 class Grid
 {
 public:
-	Grid(Map& map, double gridResolution);
-	double cost(std::pair<int, int> s, std::pair<int, int> s_next);
-	double heuristic(std::pair<int, int> s, std::pair<int, int> s_next);
-	bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);
-	std::vector<std::pair<int, int>> getNeighbors(std::pair<int, int> s);
-	std::pair<int, int> convertPose(const geometry_msgs::PoseStamped& msg);
-	bool isFree(std::pair<int, int> s);
-	Eigen::VectorXd toMapPose(int X, int Y);
+    Grid(Map& map, double gridResolution);
+    double cost(std::pair<int, int> s, std::pair<int, int> s_next);
+    double heuristic(std::pair<int, int> s, std::pair<int, int> s_next);
+    bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);
+    std::vector<std::pair<int, int>> getNeighbors(std::pair<int, int> s);
+    std::pair<int, int> convertPose(const geometry_msgs::PoseStamped& msg);
+    bool isFree(std::pair<int, int> s);
+    Eigen::VectorXd toMapPose(int X, int Y);
 
 private:
-	Map& map;
-	std::vector< std::vector<unsigned char> > grid;
-	
-	double gridResolution;	// Cell edges in meters
+    Map& map;
+    std::vector< std::vector<unsigned char> > grid;
 
-	double minX;
-	double minY;
-	double maxX;
-	double maxY;
+    double gridResolution;	// Cell edges in meters
+
+    double minX;
+    double minY;
+    double maxX;
+    double maxY;
 };
 
 }

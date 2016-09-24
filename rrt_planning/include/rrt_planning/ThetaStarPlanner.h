@@ -34,6 +34,7 @@
 #include "rrt_planning/map/ROSMap.h"
 #include "rrt_planning/grid/Grid.h"
 #include "rrt_planning/theta_star/FrontierNode.h"
+#include "rrt_planning/visualization/Visualizer.h"
 
 
 namespace rrt_planning
@@ -52,26 +53,28 @@ public:
                   const geometry_msgs::PoseStamped& goal,
                   std::vector<geometry_msgs::PoseStamped>& plan) override;
 
-	~ThetaStarPlanner();
+    ~ThetaStarPlanner();
 
 private:
     void updateVertex(std::pair<int, int> s, std::pair<int, int> s_next);
     void computeCost(std::pair<int, int> s, std::pair<int, int> s_next);
-	void insertFrontierNode(std::pair<int, int> s, double cost);
-	bool removeFrontierNode(std::pair<int, int> s);
-	void publishPlan(std::vector<Eigen::VectorXd>& path,
-                             std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp);
-	void clearInstance();
+    void insertFrontierNode(std::pair<int, int> s, double cost);
+    bool removeFrontierNode(std::pair<int, int> s);
+    void publishPlan(std::vector<Eigen::VectorXd>& path,
+                     std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp);
+    void clearInstance();
 
 private:
 
     struct Cmp
-	{
-		bool operator()(FrontierNode *a, FrontierNode *b) {
-		    return a->getCost() < b->getCost(); }
-	};
+    {
+        bool operator()(FrontierNode *a, FrontierNode *b)
+        {
+            return a->getCost() < b->getCost();
+        }
+    };
 
-	ROSMap* map;
+    ROSMap* map;
     Grid* grid;
 
     std::pair<int, int> s_start;
@@ -80,8 +83,10 @@ private:
     std::map<std::pair<int, int>, double> g;
     std::map<std::pair<int, int>, std::pair<int, int>> parent;
     std::set<FrontierNode*, Cmp> open;
-	std::map<std::pair<int, int>, FrontierNode*> openMap;
+    std::map<std::pair<int, int>, FrontierNode*> openMap;
     std::set<std::pair<int, int>> closed;
+
+    Visualizer visualizer;
 };
 
 }

@@ -39,7 +39,7 @@ namespace rrt_planning
 ThetaStarPlanner::ThetaStarPlanner()
 {
     grid = nullptr;
-	map = nullptr;
+    map = nullptr;
 }
 
 ThetaStarPlanner::ThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
@@ -50,57 +50,57 @@ ThetaStarPlanner::ThetaStarPlanner(std::string name, costmap_2d::Costmap2DROS* c
 
 void ThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-	double discretization;
+    double discretization;
 
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
-	private_nh.param("discretization", discretization, 0.2);
+    private_nh.param("discretization", discretization, 0.2);
 
-	map = new ROSMap(costmap_ros);
+    map = new ROSMap(costmap_ros);
     grid = new Grid(*map, discretization);
-	
+
 }
 
 bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                                 const geometry_msgs::PoseStamped& goal,
                                 std::vector<geometry_msgs::PoseStamped>& plan)
 {
-	clearInstance();
+    clearInstance();
 
-	//Init the position of the special states
+    //Init the position of the special states
     s_start = grid->convertPose(start);
     s_goal = grid->convertPose(goal);
-	pair<int, int> s_null = make_pair(-1,-1);
+    pair<int, int> s_null = make_pair(-1,-1);
 
-	//Test starting position
-	if(!grid->isFree(s_start))
-	{
-		ROS_INFO("Invalid starting position");
-		return false;
-	}
+    //Test starting position
+    if(!grid->isFree(s_start))
+    {
+        ROS_INFO("Invalid starting position");
+        return false;
+    }
 
-	//Test target position
-	if(!grid->isFree(s_goal))
-	{
-		ROS_INFO("Invalid target position");
-		return false;
-	}
+    //Test target position
+    if(!grid->isFree(s_goal))
+    {
+        ROS_INFO("Invalid target position");
+        return false;
+    }
 
     //Init variables
     g[s_start] = 0.0;
     parent[s_start] = s_start;
-	insertFrontierNode(s_start, 0.0);
+    insertFrontierNode(s_start, 0.0);
 
     ROS_INFO("Planner started");
 
-	//Compute plan
+    //Compute plan
     while(!open.empty())
     {
-		//Pop the best frontier node
-		FrontierNode* f = *open.begin();
+        //Pop the best frontier node
+        FrontierNode* f = *open.begin();
         auto s = f->getNode();
-		removeFrontierNode(s);
-		closed.insert(s);
+        removeFrontierNode(s);
+        closed.insert(s);
 
         if(s == s_goal) break;
 
@@ -116,25 +116,27 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
             }
     }
 
-	//Publish plan
-	vector<VectorXd> path;
-	auto state = s_goal;
-	path.push_back(grid->toMapPose(state.first, state.second));
-	do
-	{
-		state = parent[state];
+    //Publish plan
+    vector<VectorXd> path;
+    auto state = s_goal;
+    path.push_back(grid->toMapPose(state.first, state.second));
+    do
+    {
+        state = parent[state];
 
-		if(state == s_null)
-		{
-			ROS_INFO("Invalid plan");
-			return false;
-		}
+        if(state == s_null)
+        {
+            ROS_INFO("Invalid plan");
+            return false;
+        }
 
-		path.push_back(grid->toMapPose(state.first, state.second));
-	}while(state != s_start);
+        path.push_back(grid->toMapPose(state.first, state.second));
+    }
+    while(state != s_start);
 
-	reverse(path.begin(), path.end());
-	publishPlan(path, plan, start.header.stamp);
+    reverse(path.begin(), path.end());
+    publishPlan(path, plan, start.header.stamp);
+    visualizer.displayPlan(plan);
 
     return true;
 }
@@ -150,7 +152,7 @@ void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
     {
         if(openMap.count(s_next) != 0) removeFrontierNode(s_next);
 
-		double frontierCost =  g[s_next] + grid->heuristic(s_next, s_goal);
+        double frontierCost =  g[s_next] + grid->heuristic(s_next, s_goal);
 
         insertFrontierNode(s_next, frontierCost);
     }
@@ -159,57 +161,51 @@ void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
 
 void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
 {
-	//cout << "Considero: " << s_next.first << "-" << s_next.second << " da " << s.first << "-" << s.second << endl;
 
-	if(grid->lineOfSight(parent[s], s_next))
-	{
-		//cout << " > sono in line of sight con " << parent[s].first << "-" << parent[s].second << " (ls " << (g[parent[s]] + grid->cost(parent[s], s_next)) << " vs g[s_next] " << g[s_next] << ")" << endl;
+    if(grid->lineOfSight(parent[s], s_next))
+    {
         //Path 2
         if(g[parent[s]] + grid->cost(parent[s], s_next) <= g[s_next])
         {
             g[s_next] = g[parent[s]] + grid->cost(parent[s], s_next);
             parent[s_next] = parent[s];
-			//cout << " > Parent di " << s_next.first << "-" << s_next.second << " aggiornato con " << parent[s].first << "-" << parent[s].second << endl;
         }
-	}
+    }
     else
-	{
-		//cout << " > NON sono in lof con " << parent[s].first << "-" << parent[s].second << " (ls " << (g[parent[s]] + grid->cost(parent[s], s_next)) << " vs g[s_next] " << g[s_next] << ")";
-    	//Path 1
+    {
+        //Path 1
         if(g[s] + grid->cost(s, s_next) < g[s_next])
         {
-			//cout << " UPDATED";
-	        g[s_next] = g[s] + grid->cost(s, s_next);
+            g[s_next] = g[s] + grid->cost(s, s_next);
             parent[s_next] = s;
         }
-		//cout <<endl;
-	}
+    }
 }
 
 
 void ThetaStarPlanner::insertFrontierNode(pair<int, int> s, double cost)
 {
-	FrontierNode *frontierNode = new FrontierNode(s, cost);
+    FrontierNode *frontierNode = new FrontierNode(s, cost);
     open.insert(frontierNode);
-	openMap[s] = frontierNode;
+    openMap[s] = frontierNode;
 }
 
 
 bool ThetaStarPlanner::removeFrontierNode(pair<int, int> s)
 {
-	FrontierNode* f = openMap[s];
+    FrontierNode* f = openMap[s];
 
-	open.erase(f);
-	openMap.erase(s);
+    open.erase(f);
+    openMap.erase(s);
 
-	delete f;
+    delete f;
 
-	return true;
+    return true;
 }
 
 
 void ThetaStarPlanner::publishPlan(std::vector<VectorXd>& path,
-                             std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
+                                   std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
 {
     for(auto x : path)
     {
@@ -234,21 +230,21 @@ void ThetaStarPlanner::publishPlan(std::vector<VectorXd>& path,
 
 void ThetaStarPlanner::clearInstance()
 {
-	open.clear();
-	openMap.clear(); 
-	closed.clear();
-	parent.clear();
-	g.clear();
+    open.clear();
+    openMap.clear();
+    closed.clear();
+    parent.clear();
+    g.clear();
 }
 
 
 ThetaStarPlanner::~ThetaStarPlanner()
 {
-	if(grid)
-		delete grid;
+    if(grid)
+        delete grid;
 
-	if(map)
-		delete map;
+    if(map)
+        delete map;
 }
 
 

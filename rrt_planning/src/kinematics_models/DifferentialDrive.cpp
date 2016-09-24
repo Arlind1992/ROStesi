@@ -88,97 +88,97 @@ Eigen::VectorXd DifferentialDrive::getRandomState(const Bounds& bounds)
 
 
 VectorXd DifferentialDrive::anyAngleSampling(vector<geometry_msgs::PoseStamped>& plan,
-	double width, double deltaTheta)
+        double width, double deltaTheta)
 {
-	// Retrive the total plan length
-	double planLength = 0;
+    // Retrive the total plan length
+    double planLength = 0;
 
-	for(int i = 0; i < plan.size() - 1; i++)
-	{
-		auto&& p1 = plan[i].pose.position;
-		auto&& p2 = plan[i+1].pose.position;
-		planLength += sqrt( (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) );
-	}
+    for(int i = 0; i < plan.size() - 1; i++)
+    {
+        auto&& p1 = plan[i].pose.position;
+        auto&& p2 = plan[i+1].pose.position;
+        planLength += sqrt( (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) );
+    }
 
-	// Sample random params to get the point within the lane
-	double l = RandomGenerator::sampleUniform(0.0, planLength);
-	double r = RandomGenerator::sampleUniform(0.0, width);
-	double a = RandomGenerator::sampleUniform(0.0, 2*M_PI);
+    // Sample random params to get the point within the lane
+    double l = RandomGenerator::sampleUniform(0.0, planLength);
+    double r = RandomGenerator::sampleUniform(0.0, width);
+    double a = RandomGenerator::sampleUniform(0.0, 2*M_PI);
 
-	// Retrive the random point on the path
-	int pos;
-	double parLength = 0;
+    // Retrive the random point on the path
+    int pos;
+    double parLength = 0;
 
-	for(pos = 0; pos < plan.size() - 1; pos++)
-	{
-		auto&& p1 = plan[pos].pose.position;
-		auto&& p2 = plan[pos+1].pose.position;
-		parLength += sqrt( (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) );
+    for(pos = 0; pos < plan.size() - 1; pos++)
+    {
+        auto&& p1 = plan[pos].pose.position;
+        auto&& p2 = plan[pos+1].pose.position;
+        parLength += sqrt( (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) );
 
-		if(parLength >= l) break;
-	}
+        if(parLength >= l) break;
+    }
 
-	auto&& p1 = plan[pos].pose.position;
-	auto&& p2 = plan[pos+1].pose.position;
-	double segLength = sqrt( (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) );
-	parLength -= segLength;
+    auto&& p1 = plan[pos].pose.position;
+    auto&& p2 = plan[pos+1].pose.position;
+    double segLength = sqrt( (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) );
+    parLength -= segLength;
 
-	double x_c = p1.x + (l - parLength) / segLength * (p2.x - p1.x);
-	double y_c = p1.y + (l - parLength) / segLength * (p2.y - p1.y);
+    double x_c = p1.x + (l - parLength) / segLength * (p2.x - p1.x);
+    double y_c = p1.y + (l - parLength) / segLength * (p2.y - p1.y);
 
-	// Retrive the random point within the circle centered in (x_c, y_c)
-	VectorXd p(3);
-	p(0) = x_c + r * cos(a);
-	p(1) = y_c + r * sin(a);
+    // Retrive the random point within the circle centered in (x_c, y_c)
+    VectorXd p(3);
+    p(0) = x_c + r * cos(a);
+    p(1) = y_c + r * sin(a);
 
-	// Compute the angle for each segment
-	double a_segments[plan.size()];
+    // Compute the angle for each segment
+    double a_segments[plan.size()];
 
-	for(int i = 0; i < plan.size() - 1; i++)
-	{
-		auto&& p1 = plan[pos].pose.position;
-		auto&& p2 = plan[pos+1].pose.position;
-		a_segments[i] = atan2(p2.y - p1.y, p2.x - p1.x);
-	}
+    for(int i = 0; i < plan.size() - 1; i++)
+    {
+        auto&& p1 = plan[pos].pose.position;
+        auto&& p2 = plan[pos+1].pose.position;
+        a_segments[i] = atan2(p2.y - p1.y, p2.x - p1.x);
+    }
 
-	// Compute the weight for each segment
-	double weights[plan.size()];
+    // Compute the weight for each segment
+    double weights[plan.size()];
 
-	for(int i = 0; i < plan.size() - 1; i++)
-	{
-		auto&& p1 = plan[pos].pose.position;
-		auto&& p2 = plan[pos+1].pose.position;
-		Vector2d v1 = {p2.x - p1.x, p2.y - p1.y};
-		Vector2d v2 = {p(0) - p1.x, p(1) - p1.y};
-		
-		double projectionLength = v1.dot(v2) / v1.norm();
+    for(int i = 0; i < plan.size() - 1; i++)
+    {
+        auto&& p1 = plan[pos].pose.position;
+        auto&& p2 = plan[pos+1].pose.position;
+        Vector2d v1 = {p2.x - p1.x, p2.y - p1.y};
+        Vector2d v2 = {p(0) - p1.x, p(1) - p1.y};
 
-		// Trapezoidal membership function
-		if(projectionLength <= -width || projectionLength >= v1.norm() + width)
-			weights[i] = 0;
-		else if(projectionLength >= width && projectionLength <= v1.norm() - width)
-			weights[i] = 1;
-		else if(projectionLength > v1.norm() - width)
-			weights[i] = 1 + (v1.norm() - projectionLength) / (2 * width);
-		else
-			weights[i] = projectionLength / (2 * width);
-	}
+        double projectionLength = v1.dot(v2) / v1.norm();
 
-	// Compute the orientation a_bar
-	double a_bar = 0;
-	double w_norm = 0;
+        // Trapezoidal membership function
+        if(projectionLength <= -width || projectionLength >= v1.norm() + width)
+            weights[i] = 0;
+        else if(projectionLength >= width && projectionLength <= v1.norm() - width)
+            weights[i] = 1;
+        else if(projectionLength > v1.norm() - width)
+            weights[i] = 1 + (v1.norm() - projectionLength) / (2 * width);
+        else
+            weights[i] = projectionLength / (2 * width);
+    }
 
-	for(int i = 0; i < plan.size() - 1; i++)
-	{
-		a_bar += weights[i] * a_segments[i];
-		w_norm += weights[i];
-	}
-	a_bar /= w_norm;
+    // Compute the orientation a_bar
+    double a_bar = 0;
+    double w_norm = 0;
 
-	// Add a random angle
-	p(2) = a_bar + RandomGenerator::sampleUniform(-deltaTheta, deltaTheta);
+    for(int i = 0; i < plan.size() - 1; i++)
+    {
+        a_bar += weights[i] * a_segments[i];
+        w_norm += weights[i];
+    }
+    a_bar /= w_norm;
 
-	return p;
+    // Add a random angle
+    p(2) = a_bar + RandomGenerator::sampleUniform(-deltaTheta, deltaTheta);
+
+    return p;
 }
 
 

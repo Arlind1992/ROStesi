@@ -24,8 +24,6 @@
 #ifndef INCLUDE_THETASTARRRTPLANNER_H_
 #define INCLUDE_THETASTARRRTPLANNER_H_
 
-/** include the libraries you need in your planner here */
-/** for global path planner interface */
 #include <ros/ros.h>
 #include <costmap_2d/costmap_2d_ros.h>
 #include <costmap_2d/costmap_2d.h>
@@ -37,6 +35,7 @@
 #include "rrt_planning/distance/Distance.h"
 #include "rrt_planning/kinematics_models/KinematicModel.h"
 #include "rrt_planning/local_planner/LocalPlanner.h"
+#include "rrt_planning/visualization/Visualizer.h"
 
 #include "rrt_planning/ThetaStarPlanner.h"
 
@@ -68,29 +67,23 @@ private:
     void publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
                      const ros::Time& stamp);
 
-    void cleanSegments();
-    void publishSegment(const Eigen::VectorXd& xStart, const Eigen::VectorXd& xEnd);
-	void publishThetaStar(std::vector<geometry_msgs::PoseStamped>& plan);
-	void addPoint(Eigen::VectorXd& xStart);
-
 
 private:
     Map* map;
 
     int K;
     double deltaX;
-	double laneWidth;
-	double greedy;
-	double deltaTheta;
+    double laneWidth;
+    double greedy;
+    double deltaTheta;
 
     KinematicModel* kinematicModel;
     Distance* distance;
     LocalPlanner* localPlanner;
 
-	ThetaStarPlanner* thetaStarPlanner;
+    ThetaStarPlanner* thetaStarPlanner;
 
-    //Visualization of rrt
-    ros::Publisher vis_pub;
+    Visualizer visualizer;
 
 };
 

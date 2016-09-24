@@ -78,10 +78,10 @@ std::vector<Eigen::VectorXd> RRT::getPathToLastNode()
 
 RRT::~RRT()
 {
-	for(auto node : nodes)
-	{
-		delete node;
-	}
+    for(auto node : nodes)
+    {
+        delete node;
+    }
 }
 
 }
