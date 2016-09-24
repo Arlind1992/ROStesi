@@ -28,15 +28,19 @@
 namespace rrt_planning
 {
 
-Visualizer::Visualizer()
+void Visualizer::initialize(ros::NodeHandle& nh)
 {
-    ros::NodeHandle n;
+    nh.param("visualization/minPoints", minPoints, 100);
+    nh.param("visualization/minSegments", minSegments, 100);
+    nh.getParam("visualization/disable", disableVisualization);
 
-    pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+    pub = nh.advertise<visualization_msgs::Marker>("/visualization_marker", 1);
 }
 
 void Visualizer::addPoint(const Eigen::VectorXd& point)
 {
+	if(disableVisualization)
+		return;
 
     points.push_back(point);
 
@@ -49,6 +53,8 @@ void Visualizer::addPoint(const Eigen::VectorXd& point)
 
 void Visualizer::addSegment(const Eigen::VectorXd& start, const Eigen::VectorXd& end)
 {
+	if(disableVisualization)
+			return;
 
     segments.push_back(std::make_pair(start, end));
 
@@ -62,6 +68,9 @@ void Visualizer::addSegment(const Eigen::VectorXd& start, const Eigen::VectorXd&
 
 void Visualizer::displayPlan(const std::vector<geometry_msgs::PoseStamped>& plan)
 {
+	if(disableVisualization)
+			return;
+
     static int id = 0;
 
     visualization_msgs::Marker marker;

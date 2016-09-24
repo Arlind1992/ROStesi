@@ -1,9 +1,0 @@
-# local planner config
-local_costmap:
-  global_frame: /map
-  robot_base_frame: base_footprint
-  width: 100
-  height: 100
-
-DWAPlannerROS:
-  global_frame_id: odom

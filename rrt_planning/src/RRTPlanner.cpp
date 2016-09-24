@@ -79,6 +79,7 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
 
 
     localPlanner->initialize(private_nh);
+    visualizer.initialize(private_nh);
 }
 
 bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,

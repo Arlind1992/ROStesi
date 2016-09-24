@@ -1,0 +1,4 @@
+visualization:
+  minPoints: 100
+  minSegments: 100
+  disable: false

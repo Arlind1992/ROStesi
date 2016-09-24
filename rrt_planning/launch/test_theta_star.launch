@@ -25,6 +25,9 @@
 		<!-- Theta* configuration -->
 		<param name="base_global_planner" value="rrt_planning/ThetaStarPlanner"/>
 		<rosparam file="$(find rrt_planning)/config/theta_star.yaml" command="load" ns="ThetaStarPlanner"/>
+		
+		<!-- Visualization configuration -->
+		<rosparam file="$(find rrt_planning)/config/visualization.yaml" command="load" ns="ThetaStarPlanner"/>
 	</node>
 	
 	<include file="$(find rrt_planning)/launch/stage.launch" if="$(arg simulated)">

@@ -37,7 +37,7 @@ class Visualizer
     typedef std::pair<Eigen::VectorXd, Eigen::VectorXd> Segment;
 
 public:
-    Visualizer();
+    void initialize(ros::NodeHandle& nh);
 
     void addPoint(const Eigen::VectorXd& point);
     void addSegment(const Eigen::VectorXd& start, const Eigen::VectorXd& end);
@@ -56,9 +56,9 @@ private:
     std::vector<Eigen::VectorXd> points;
     std::vector<Segment> segments;
 
-private:
-    static const unsigned int minPoints = 100;
-    static const unsigned int minSegments = 100;
+    int minPoints;
+    int minSegments;
+    bool disableVisualization;
 
 };
 

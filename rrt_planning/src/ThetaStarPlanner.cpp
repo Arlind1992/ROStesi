@@ -59,6 +59,7 @@ void ThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* co
     map = new ROSMap(costmap_ros);
     grid = new Grid(*map, discretization);
 
+    visualizer.initialize(private_nh);
 }
 
 bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,

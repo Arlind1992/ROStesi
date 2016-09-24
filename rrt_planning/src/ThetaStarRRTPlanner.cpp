@@ -48,6 +48,7 @@ ThetaStarRRTPlanner::ThetaStarRRTPlanner()
     deltaX = 0;
     laneWidth = 0;
     greedy = 0;
+    deltaTheta = 0;
 
     map = nullptr;
     kinematicModel = nullptr;
@@ -86,7 +87,7 @@ void ThetaStarRRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS*
 
 
     localPlanner->initialize(private_nh);
-
+    visualizer.initialize(private_nh);
 }
 
 bool ThetaStarRRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,

@@ -25,7 +25,10 @@
 		<!-- RRT configuration -->
 		<param name="base_global_planner" value="rrt_planning/RRTPlanner"/>	
 		<rosparam file="$(find rrt_planning)/config/rrt.yaml" command="load" ns="RRTPlanner"/>
-		<rosparam file="$(find rrt_planning)/config/differentialDrive.yaml" command="load" ns="RRTPlanner"/>			
+		<rosparam file="$(find rrt_planning)/config/differentialDrive.yaml" command="load" ns="RRTPlanner"/>	
+		
+		<!-- Visualization configuration -->
+		<rosparam file="$(find rrt_planning)/config/visualization.yaml" command="load" ns="RRTPlanner"/>
 	</node>
 	
 	<include file="$(find rrt_planning)/launch/stage.launch" if="$(arg simulated)">
