@@ -66,6 +66,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
                                 std::vector<geometry_msgs::PoseStamped>& plan)
 {
     clearInstance();
+    visualizer.clean();
 
     //Init the position of the special states
     s_start = grid->convertPose(start);

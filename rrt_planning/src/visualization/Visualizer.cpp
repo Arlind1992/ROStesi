@@ -32,7 +32,7 @@ Visualizer::Visualizer()
 {
     ros::NodeHandle n;
 
-    pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 3);
+    pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 }
 
 void Visualizer::addPoint(const Eigen::VectorXd& point)
@@ -178,9 +178,9 @@ void Visualizer::displaySegments()
         p1.y = segment.first(1);
         p1.z = segment.first(2);
 
-        p2.x = segment.first(0);
-        p2.y = segment.first(1);
-        p2.z = segment.first(2);
+        p2.x = segment.second(0);
+        p2.y = segment.second(1);
+        p2.z = segment.second(2);
 
         marker.points.push_back(p1);
         marker.points.push_back(p2);
