@@ -44,6 +44,9 @@ public:
                     const double /* t */);
 
 private:
+    Eigen::VectorXd computeControl(const Eigen::VectorXd& x);
+
+private:
     double deltaPhi;
     double l;
 };

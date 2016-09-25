@@ -23,6 +23,7 @@
 
 #include "rrt_planning/kinematics_models/Bicycle.h"
 #include <boost/numeric/odeint.hpp>
+#include <angles/angles.h>
 
 using namespace Eigen;
 using namespace std;
@@ -95,6 +96,18 @@ VectorXd Bicycle::anyAngleSampling(vector<geometry_msgs::PoseStamped>& plan,
 {
     //TODO implement!
     return VectorXd::Zero(4);
+}
+
+Eigen::VectorXd Bicycle::computeControl(const Eigen::VectorXd& x)
+{
+	VectorXd u = controller(x);
+
+	// Saturation of the steering wheel
+	double maxOmega = angles::shortest_angular_distance(copysign(deltaPhi, u(1)), x(2))/dt;
+
+	u(1) = abs(u(1)) > abs(maxOmega) ? maxOmega : u(1);
+
+	return u;
 }
 
 
