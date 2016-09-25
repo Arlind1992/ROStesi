@@ -21,21 +21,21 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rrt_planning/local_planner/MotionPrimitivesPlanner.h"
+#include "rrt_planning/extenders/MotionPrimitivesExtender.h"
 
 using namespace Eigen;
 
 namespace rrt_planning
 {
 
-MotionPrimitivesPlanner::MotionPrimitivesPlanner(Map& map, Distance& distance, KinematicModel& model)
-    : LocalPlanner(map, distance), model(model), minU(model.getActionSize()), maxU(model.getActionSize())
+MotionPrimitivesExtender::MotionPrimitivesExtender(Map& map, Distance& distance, KinematicModel& model, CostantController& controller)
+    : Extender(map, distance), model(model), controller(controller), minU(model.getActionSize()), maxU(model.getActionSize())
 {
     deltaT = 0;
     discretization = 0;
 }
 
-bool MotionPrimitivesPlanner::compute(const VectorXd& x0, const VectorXd& xRand, VectorXd& xNew)
+bool MotionPrimitivesExtender::compute(const VectorXd& x0, const VectorXd& xRand, VectorXd& xNew)
 {
     double minDistance = std::numeric_limits<double>::infinity();
 
@@ -58,7 +58,7 @@ bool MotionPrimitivesPlanner::compute(const VectorXd& x0, const VectorXd& xRand,
     return minDistance < std::numeric_limits<double>::infinity();
 }
 
-void MotionPrimitivesPlanner::initialize(ros::NodeHandle& nh)
+void MotionPrimitivesExtender::initialize(ros::NodeHandle& nh)
 {
     nh.param("deltaT", deltaT, 0.5);
     nh.param("motion_primitives/discretization", discretization, 5);
@@ -82,18 +82,19 @@ void MotionPrimitivesPlanner::initialize(ros::NodeHandle& nh)
     generateMotionPrimitives();
 }
 
-void MotionPrimitivesPlanner::generateMotionPrimitives()
+void MotionPrimitivesExtender::generateMotionPrimitives()
 {
     VectorXd dU = (maxU - minU) / (discretization-1.0);
 
     generateMotionPrimitive(minU, dU, 0);
 }
 
-void MotionPrimitivesPlanner::generateMotionPrimitive(const Eigen::VectorXd& u, const Eigen::VectorXd& du, unsigned int index)
+void MotionPrimitivesExtender::generateMotionPrimitive(const Eigen::VectorXd& u, const Eigen::VectorXd& du, unsigned int index)
 {
     if(index == model.getActionSize())
     {
-        VectorXd&& mp = model.compute(model.getInitialState(), u, deltaT);
+    	controller.setControl(u);
+        VectorXd&& mp = model.compute(model.getInitialState(), deltaT);
         motionPrimitives.push_back(mp);
     }
     else
@@ -105,6 +106,11 @@ void MotionPrimitivesPlanner::generateMotionPrimitive(const Eigen::VectorXd& u, 
             uc(index) += du(index);
         }
     }
+}
+
+MotionPrimitivesExtender::~MotionPrimitivesExtender()
+{
+
 }
 
 

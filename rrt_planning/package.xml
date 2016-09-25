@@ -16,6 +16,7 @@
   <depend>costmap_2d</depend>
   <depend>nav_core</depend>
   <depend>geometry_msgs</depend>
+  <depend>angles</depend>
   
   <export>
   	<nav_core plugin="${prefix}/plugins/rrt_planner_plugin.xml" />

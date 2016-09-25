@@ -30,6 +30,7 @@
 #include <costmap_2d/cost_values.h>
 
 #include "rrt_planning/map/Bounds.h"
+#include "rrt_planning/kinematics_models/controllers/Controller.h"
 
 namespace rrt_planning
 {
@@ -37,15 +38,21 @@ namespace rrt_planning
 class KinematicModel
 {
 public:
+	KinematicModel(Controller& controller) : controller(controller)
+	{
+	    stateSize = 0;
+	    actionSize = 0;
+	}
+
     typedef Eigen::VectorXd state_type;
 
-    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) = 0;
+    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) = 0;
+
     virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) = 0;
     virtual Eigen::VectorXd getInitialState() = 0;
     virtual Eigen::VectorXd getRandomState(const Bounds& bounds) = 0;
     virtual Eigen::VectorXd anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan,
             double w, double deltaTheta) = 0;
-
 
     inline unsigned int getStateSize()
     {
@@ -64,6 +71,8 @@ public:
 
 
 protected:
+    Controller& controller;
+
     unsigned int stateSize;
     unsigned int actionSize;
 

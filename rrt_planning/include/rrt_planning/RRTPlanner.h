@@ -33,8 +33,7 @@
 #include <Eigen/Dense>
 
 #include "rrt_planning/distance/Distance.h"
-#include "rrt_planning/kinematics_models/KinematicModel.h"
-#include "rrt_planning/local_planner/LocalPlanner.h"
+#include "rrt_planning/extenders/ExtenderFactory.h"
 #include "rrt_planning/visualization/Visualizer.h"
 
 namespace rrt_planning
@@ -67,14 +66,13 @@ private:
 
 private:
     Map* map;
+    Distance* distance;
 
     int K;
     double deltaX;
     double greedy;
 
-    KinematicModel* kinematicModel;
-    Distance* distance;
-    LocalPlanner* localPlanner;
+    ExtenderFactory extenderFactory;
 
     Visualizer visualizer;
 

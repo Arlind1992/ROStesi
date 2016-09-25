@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-find_package(catkin REQUIRED COMPONENTS pluginlib costmap_2d)
+find_package(catkin REQUIRED COMPONENTS pluginlib costmap_2d angles)
 project(rrt_planning)
 
 catkin_package()

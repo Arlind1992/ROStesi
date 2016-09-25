@@ -32,8 +32,8 @@ namespace rrt_planning
 class DifferentialDrive : public KinematicModel
 {
 public:
-    DifferentialDrive();
-    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& u, double delta) override;
+    DifferentialDrive(Controller& controller);
+    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) override;
     virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) override;
     virtual Eigen::VectorXd getInitialState() override;
     virtual Eigen::VectorXd getRandomState(const Bounds& bounds) override;

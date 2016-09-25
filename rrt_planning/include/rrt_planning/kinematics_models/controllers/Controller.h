@@ -21,27 +21,38 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#ifndef INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_CONTROLLER_H_
+#define INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_CONTROLLER_H_
 
-#include "rrt_planning/kinematics_models/DifferentialDrive.h"
-#include "rrt_planning/kinematics_models/controllers/CostantController.h"
+#include <Eigen/Dense>
 
-using namespace rrt_planning;
-
-int main(int argc, char *argv[])
+namespace rrt_planning
 {
 
-	Eigen::VectorXd x0(3);
-	x0 << 0, 0, 0;
 
-	Eigen::VectorXd u(2);
-	u << 1.0, 0.01;
+class Controller
+{
+public:
+	virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const = 0;
 
-	CostantController controller;
-	controller.setControl(u);
-	DifferentialDrive model(controller);
 
-	Eigen::VectorXd xf = model.compute(x0, 5.0);
-	std::cout << xf << std::endl;
+	inline void setGoal(const Eigen::VectorXd& goal)
+	{
+		this->goal = goal;
+	}
+
+	virtual ~Controller()
+	{
+
+	}
+
+
+protected:
+	Eigen::VectorXd goal;
+
+};
 
 }
+
+
+#endif /* INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_CONTROLLER_H_ */

@@ -26,12 +26,11 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace boost::numeric::odeint;
 
 namespace rrt_planning
 {
 
-Bicycle::Bicycle()
+Bicycle::Bicycle(Controller& controller) : KinematicModel(controller)
 {
     stateSize = 4;
     actionSize = 2;
@@ -40,28 +39,12 @@ Bicycle::Bicycle()
     l = 0.2;
 }
 
-VectorXd Bicycle::compute(const VectorXd& x0, const VectorXd& u, double delta)
+VectorXd Bicycle::compute(const VectorXd& x0, double delta)
 {
-    this->u = u;
-
-    double omega = u(1);
-    double phi0 = x0(3);
-
-    double tSat = ((omega >0 ? deltaPhi : -deltaPhi) -phi0) / omega;
-
-    double deltaNormal = (tSat > delta) ? delta : tSat;
-    double deltaSaturation = (tSat > delta) ? 0 : (delta - deltaNormal);
-
-    runge_kutta4<state_type,double,state_type,double,vector_space_algebra> stepper;
-    VectorXd x = x0;
-
-    if(deltaNormal > 0)
-        integrate_const(stepper, *this, x, 0.0, deltaNormal, dt);
-
-    this->u(1) = 0;
-
-    if(deltaSaturation > 0)
-        integrate_const(stepper, *this, x, 0.0, deltaSaturation, dt);
+    boost::numeric::odeint::runge_kutta4<state_type,double,state_type,double,
+			boost::numeric::odeint::vector_space_algebra> stepper;
+    Eigen::VectorXd x = x0;
+    boost::numeric::odeint::integrate_const(stepper, *this, x, 0.0, delta, dt);
 
     return x;
 }
@@ -128,7 +111,8 @@ void Bicycle::operator()(const state_type& x, state_type& dx,
     sin(phi)/l, 0,
     0, 1;
 
-    dx = A*u;
+    //FIXME
+    //dx = A*u;
 
 }
 

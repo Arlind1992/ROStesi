@@ -28,7 +28,7 @@
 
 #include "rrt_planning/map/ROSMap.h"
 #include "rrt_planning/kinematics_models/DifferentialDrive.h"
-#include "rrt_planning/local_planner/MotionPrimitivesPlanner.h"
+#include "rrt_planning/extenders/MotionPrimitivesExtender.h"
 #include "rrt_planning/utils/RandomGenerator.h"
 #include "rrt_planning/rrt/RRT.h"
 
@@ -50,9 +50,7 @@ RRTPlanner::RRTPlanner ()
     greedy = 0;
 
     map = nullptr;
-    kinematicModel = nullptr;
     distance = nullptr;
-    localPlanner = nullptr;
 }
 
 RRTPlanner::RRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
@@ -64,6 +62,7 @@ RRTPlanner::RRTPlanner(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
     map = new ROSMap(costmap_ros);
+    distance = new L2ThetaDistance();
 
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
@@ -72,13 +71,8 @@ void RRTPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_
     private_nh.param("deltaX", deltaX, 0.5);
     private_nh.param("greedy", greedy, 0.1);
 
-    // create kinematic, distance and local planner //TODO select from parameters
-    kinematicModel = new DifferentialDrive();
-    distance = new L2ThetaDistance();
-    localPlanner = new MotionPrimitivesPlanner(*map, *distance, *kinematicModel);
 
-
-    localPlanner->initialize(private_nh);
+    extenderFactory.initialize(private_nh, *map, *distance);
     visualizer.initialize(private_nh);
 }
 
@@ -105,7 +99,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         if(RandomGenerator::sampleEvent(greedy))
             xRand = xGoal;
         else
-            xRand = kinematicModel->getRandomState(map->getBounds());
+            xRand = extenderFactory.getKinematicModel().getRandomState(map->getBounds());
 
         visualizer.addPoint(xRand);
 
@@ -147,7 +141,7 @@ bool RRTPlanner::newState(const VectorXd& xRand,
                           const VectorXd& xNear,
                           VectorXd& xNew)
 {
-    return localPlanner->compute(xNear, xRand, xNew);
+    return extenderFactory.getExtender().compute(xNear, xRand, xNew);
 }
 
 VectorXd RRTPlanner::convertPose(const geometry_msgs::PoseStamped& msg)
@@ -198,14 +192,8 @@ void RRTPlanner::publishPlan(std::vector<VectorXd>& path,
 
 RRTPlanner::~RRTPlanner()
 {
-    if(kinematicModel)
-        delete kinematicModel;
-
     if(distance)
         delete distance;
-
-    if(localPlanner)
-        delete localPlanner;
 
     if(map)
         delete map;

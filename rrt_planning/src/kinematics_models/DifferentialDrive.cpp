@@ -25,26 +25,25 @@
 #include "rrt_planning/utils/RandomGenerator.h"
 #include <boost/numeric/odeint.hpp>
 
+
 using namespace Eigen;
 using namespace std;
-using namespace boost::numeric::odeint;
 
 namespace rrt_planning
 {
 
-DifferentialDrive::DifferentialDrive()
+DifferentialDrive::DifferentialDrive(Controller& controller) : KinematicModel(controller)
 {
     stateSize = 3;
     actionSize = 2;
 }
 
-Eigen::VectorXd DifferentialDrive::compute(const VectorXd& x0, const VectorXd& u, double delta)
+VectorXd DifferentialDrive::compute(const VectorXd& x0, double delta)
 {
-    this->u = u;
-
-    runge_kutta4<state_type,double,state_type,double,vector_space_algebra> stepper;
-    VectorXd x = x0;
-    integrate_const(stepper, *this, x, 0.0, delta, dt);
+    boost::numeric::odeint::runge_kutta4<state_type,double,state_type,double,
+			boost::numeric::odeint::vector_space_algebra> stepper;
+    Eigen::VectorXd x = x0;
+    boost::numeric::odeint::integrate_const(stepper, *this, x, 0.0, delta, dt);
 
     return x;
 }
@@ -193,7 +192,7 @@ void DifferentialDrive::operator()(const state_type& x, state_type& dx,
     sin(theta), 0,
     0, 1;
 
-    dx = A*u;
+    dx = A*controller(x);
 
 }
 

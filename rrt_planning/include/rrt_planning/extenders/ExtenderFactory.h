@@ -21,35 +21,51 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_BICYCLE_H_
-#define INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_BICYCLE_H_
+#ifndef INCLUDE_RRT_PLANNING_EXTENDERS_EXTENDERFACTORY_H_
+#define INCLUDE_RRT_PLANNING_EXTENDERS_EXTENDERFACTORY_H_
 
+#include "rrt_planning/extenders/Extender.h"
 #include "rrt_planning/kinematics_models/KinematicModel.h"
+#include "rrt_planning/kinematics_models/controllers/Controller.h"
+
+#include "rrt_planning/distance/Distance.h"
+#include "rrt_planning/map/Map.h"
+
+#include <ros/ros.h>
 
 namespace rrt_planning
 {
 
-class Bicycle : public KinematicModel
+class ExtenderFactory
 {
 public:
-    Bicycle(Controller& controller);
-    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) override;
-    virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) override;
-    virtual Eigen::VectorXd getInitialState() override;
-    virtual Eigen::VectorXd getRandomState(const Bounds& bounds) override;
-    virtual Eigen::VectorXd anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan,
-            double w, double deltaTheta) override;
+	void initialize(ros::NodeHandle& nh, Map& map, Distance& distance);
 
-    void operator()(const state_type& x, state_type& dx,
-                    const double /* t */);
+	void initializeKinematic(const std::string& kinematicModelName);
+
+	inline Extender& getExtender()
+	{
+		return *extender;
+	}
+
+	inline KinematicModel& getKinematicModel()
+	{
+		return *kinematicModel;
+	}
+
+	~ExtenderFactory();
+
 
 private:
-    double deltaPhi;
-    double l;
+	Extender* extender;
+	KinematicModel* kinematicModel;
+	Controller* controller;
+
+
+
 };
 
 }
 
+#endif /* INCLUDE_RRT_PLANNING_EXTENDERS_EXTENDERFACTORY_H_ */
 
-
-#endif /* INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_BICYCLE_H_ */

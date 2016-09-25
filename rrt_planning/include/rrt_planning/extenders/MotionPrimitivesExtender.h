@@ -21,35 +21,40 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_BICYCLE_H_
-#define INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_BICYCLE_H_
-
+#include "rrt_planning/extenders/Extender.h"
 #include "rrt_planning/kinematics_models/KinematicModel.h"
+#include "rrt_planning/kinematics_models/controllers/CostantController.h"
+
 
 namespace rrt_planning
 {
 
-class Bicycle : public KinematicModel
+class MotionPrimitivesExtender : public Extender
 {
 public:
-    Bicycle(Controller& controller);
-    virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) override;
-    virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) override;
-    virtual Eigen::VectorXd getInitialState() override;
-    virtual Eigen::VectorXd getRandomState(const Bounds& bounds) override;
-    virtual Eigen::VectorXd anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan,
-            double w, double deltaTheta) override;
+    MotionPrimitivesExtender(Map& map, Distance& distance, KinematicModel& model, CostantController& controller);
 
-    void operator()(const state_type& x, state_type& dx,
-                    const double /* t */);
+    virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
+    virtual void initialize(ros::NodeHandle& nh) override;
+
+    virtual ~MotionPrimitivesExtender();
+
 
 private:
-    double deltaPhi;
-    double l;
+    void generateMotionPrimitives();
+    void generateMotionPrimitive(const Eigen::VectorXd& u, const Eigen::VectorXd& du, unsigned int index);
+
+private:
+    std::vector<Eigen::VectorXd> motionPrimitives;
+    KinematicModel& model;
+    CostantController& controller;
+
+    Eigen::VectorXd maxU;
+    Eigen::VectorXd minU;
+    int discretization;
+    double deltaT;
+
 };
 
+
 }
-
-
-
-#endif /* INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_BICYCLE_H_ */

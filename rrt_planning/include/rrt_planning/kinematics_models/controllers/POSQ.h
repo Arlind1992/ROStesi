@@ -21,35 +21,28 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rrt_planning/local_planner/LocalPlanner.h"
-#include "rrt_planning/kinematics_models/KinematicModel.h"
+#ifndef INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_POSQ_H_
+#define INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_POSQ_H_
+
+#include "rrt_planning/kinematics_models/controllers/Controller.h"
 
 namespace rrt_planning
 {
 
-class MotionPrimitivesPlanner : public LocalPlanner
+class POSQ : public Controller
 {
 public:
-    MotionPrimitivesPlanner(Map& map, Distance& distance, KinematicModel& model);
-
-    virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
-    virtual void initialize(ros::NodeHandle& nh) override;
-
+	POSQ(double Krho, double Kv, double Kalpha, double Kphi);
+	virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const override;
+	virtual ~POSQ();
 
 private:
-    void generateMotionPrimitives();
-    void generateMotionPrimitive(const Eigen::VectorXd& u, const Eigen::VectorXd& du, unsigned int index);
-
-private:
-    std::vector<Eigen::VectorXd> motionPrimitives;
-    KinematicModel& model;
-
-    Eigen::VectorXd maxU;
-    Eigen::VectorXd minU;
-    int discretization;
-    double deltaT;
-
+	const double Krho;
+	const double Kv;
+	const double Kalpha;
+	const double Kphi;
 };
 
-
 }
+
+#endif /* INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_POSQ_H_ */

@@ -21,27 +21,41 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#ifndef INCLUDE_RRT_PLANNING_EXTENDERS_EXTENDER_H_
+#define INCLUDE_RRT_PLANNING_EXTENDERS_EXTENDER_H_
 
-#include "rrt_planning/kinematics_models/DifferentialDrive.h"
-#include "rrt_planning/kinematics_models/controllers/CostantController.h"
+#include "rrt_planning/map/Map.h"
+#include "rrt_planning/distance/Distance.h"
 
-using namespace rrt_planning;
+#include <ros/ros.h>
 
-int main(int argc, char *argv[])
+namespace rrt_planning
 {
 
-	Eigen::VectorXd x0(3);
-	x0 << 0, 0, 0;
+class Extender
+{
+public:
+    Extender(Map& map, Distance& distance) : map(map), distance(distance)
+    {
 
-	Eigen::VectorXd u(2);
-	u << 1.0, 0.01;
+    }
 
-	CostantController controller;
-	controller.setControl(u);
-	DifferentialDrive model(controller);
+    virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) = 0;
+    virtual void initialize(ros::NodeHandle& nh) = 0;
 
-	Eigen::VectorXd xf = model.compute(x0, 5.0);
-	std::cout << xf << std::endl;
+    virtual ~Extender()
+    {
+
+    }
+
+protected:
+    Map& map;
+    Distance& distance;
+};
+
 
 }
+
+
+
+#endif /* INCLUDE_RRT_PLANNING_EXTENDERS_EXTENDER_H_ */

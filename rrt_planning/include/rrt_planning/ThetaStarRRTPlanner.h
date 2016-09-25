@@ -33,8 +33,7 @@
 #include <Eigen/Dense>
 
 #include "rrt_planning/distance/Distance.h"
-#include "rrt_planning/kinematics_models/KinematicModel.h"
-#include "rrt_planning/local_planner/LocalPlanner.h"
+#include "rrt_planning/extenders/ExtenderFactory.h"
 #include "rrt_planning/visualization/Visualizer.h"
 
 #include "rrt_planning/ThetaStarPlanner.h"
@@ -70,6 +69,7 @@ private:
 
 private:
     Map* map;
+    Distance* distance;
 
     int K;
     double deltaX;
@@ -77,11 +77,9 @@ private:
     double greedy;
     double deltaTheta;
 
-    KinematicModel* kinematicModel;
-    Distance* distance;
-    LocalPlanner* localPlanner;
-
     ThetaStarPlanner* thetaStarPlanner;
+
+    ExtenderFactory extenderFactory;
 
     Visualizer visualizer;
 

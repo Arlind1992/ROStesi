@@ -21,27 +21,40 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#include "rrt_planning/kinematics_models/controllers/POSQ.h"
 
-#include "rrt_planning/kinematics_models/DifferentialDrive.h"
-#include "rrt_planning/kinematics_models/controllers/CostantController.h"
+#include <cmath>
+#include <angles/angles.h>
 
-using namespace rrt_planning;
+using namespace Eigen;
+using namespace std;
 
-int main(int argc, char *argv[])
+namespace rrt_planning
 {
 
-	Eigen::VectorXd x0(3);
-	x0 << 0, 0, 0;
+POSQ::POSQ(double Krho, double Kv, double Kalpha, double Kphi) :
+		Krho(Krho), Kv(Kv), Kalpha(Kalpha), Kphi(Kphi)
+{
 
-	Eigen::VectorXd u(2);
-	u << 1.0, 0.01;
+}
 
-	CostantController controller;
-	controller.setControl(u);
-	DifferentialDrive model(controller);
+VectorXd POSQ::operator()(const Eigen::VectorXd& x0) const
+{
+	VectorXd u(2);
 
-	Eigen::VectorXd xf = model.compute(x0, 5.0);
-	std::cout << xf << std::endl;
+	double rho = (x0.head(2) - goal.head(2)).norm();
+	double alpha = angles::normalize_angle(atan2(goal(1) - x0(1), goal(0) - x0(0)) - x0(2));
+	double phi = angles::normalize_angle(M_PI - x0(2));
+
+	u(0) = Krho*tanh(Kv*rho);
+	u(1) = Kalpha+Kphi*phi;
+
+	return u;
+}
+
+POSQ::~POSQ()
+{
+
+}
 
 }

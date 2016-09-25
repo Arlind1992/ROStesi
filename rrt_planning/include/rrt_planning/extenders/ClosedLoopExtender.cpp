@@ -21,41 +21,30 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRT_PLANNING_LOCAL_PLANNER_LOCALPLANNER_H_
-#define INCLUDE_RRT_PLANNING_LOCAL_PLANNER_LOCALPLANNER_H_
+#ifndef INCLUDE_RRT_PLANNING_EXTENDERS_CLOSEDLOOPEXTENDER_CPP_
+#define INCLUDE_RRT_PLANNING_EXTENDERS_CLOSEDLOOPEXTENDER_CPP_
 
-#include "rrt_planning/map/Map.h"
-#include "rrt_planning/distance/Distance.h"
-
-#include <ros/ros.h>
+#include "rrt_planning/extenders/Extender.h"
 
 namespace rrt_planning
 {
 
-class LocalPlanner
+class ClosedLoopExtender
 {
 public:
-    LocalPlanner(Map& map, Distance& distance) : map(map), distance(distance)
-    {
+	ClosedLoopExtender(Controller& controller, Map& map, Distance& distance);
 
-    }
+    virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
+    virtual void initialize(ros::NodeHandle& nh) override;
 
-    virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) = 0;
-    virtual void initialize(ros::NodeHandle& nh) = 0;
+    virtual ~ClosedLoopExtender();
 
-    virtual ~LocalPlanner()
-    {
+private:
+    Controller& controller;
 
-    }
-
-protected:
-    Map& map;
-    Distance& distance;
 };
-
 
 }
 
 
-
-#endif /* INCLUDE_RRT_PLANNING_LOCAL_PLANNER_LOCALPLANNER_H_ */
+#endif /* INCLUDE_RRT_PLANNING_EXTENDERS_CLOSEDLOOPEXTENDER_CPP_ */
