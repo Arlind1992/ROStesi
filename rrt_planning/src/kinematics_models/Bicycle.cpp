@@ -124,8 +124,8 @@ void Bicycle::operator()(const state_type& x, state_type& dx,
     sin(phi)/l, 0,
     0, 1;
 
-    //FIXME
-    //dx = A*u;
+    VectorXd&& u = computeControl(x);
+    dx = A*u;
 
 }
 
