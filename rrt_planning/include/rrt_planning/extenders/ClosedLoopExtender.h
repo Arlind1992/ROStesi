@@ -25,14 +25,16 @@
 #define INCLUDE_RRT_PLANNING_EXTENDERS_CLOSEDLOOPEXTENDER_CPP_
 
 #include "rrt_planning/extenders/Extender.h"
+#include "rrt_planning/kinematics_models/KinematicModel.h"
+#include "rrt_planning/kinematics_models/controllers/Controller.h"
 
 namespace rrt_planning
 {
 
-class ClosedLoopExtender
+class ClosedLoopExtender : public Extender
 {
 public:
-	ClosedLoopExtender(Controller& controller, Map& map, Distance& distance);
+	ClosedLoopExtender(Controller& controller, KinematicModel& model, Map& map, Distance& distance);
 
     virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
     virtual void initialize(ros::NodeHandle& nh) override;
@@ -41,6 +43,9 @@ public:
 
 private:
     Controller& controller;
+    KinematicModel& model;
+
+    double deltaT;
 
 };
 
