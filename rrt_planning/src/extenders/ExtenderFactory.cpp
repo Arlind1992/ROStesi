@@ -40,10 +40,7 @@ namespace rrt_planning
 void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distance)
 {
 	std::string extenderName;
-	std::string kinematicModelName;
-
 	nh.param("extender", extenderName, std::string("MotionPrimitives"));
-	nh.param("kinematicModel", kinematicModelName, std::string("DifferentialDrive"));
 
 	if(extenderName == "MotionPrimitives")
 	{
@@ -51,11 +48,11 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 
 		this->controller = controller;
 
-		initializeKinematic(kinematicModelName);
+		initializeKinematic(nh);
 
 		extender = new MotionPrimitivesExtender(*kinematicModel, *controller, map, distance);
 	}
-	else
+	else if(extenderName == "ClosedLoop")
 	{
 		std::string controllerName;
 
@@ -71,6 +68,8 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 			controller = new ConstantController();
 		}
 
+		initializeKinematic(nh);
+
 		extender = new ClosedLoopExtender(*kinematicModel, *controller, map, distance);
 	}
 
@@ -81,8 +80,11 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 
 }
 
-void ExtenderFactory::initializeKinematic(const std::string& kinematicModelName)
+void ExtenderFactory::initializeKinematic(ros::NodeHandle& nh)
 {
+	std::string kinematicModelName;
+	nh.param("kinematicModel", kinematicModelName, std::string("DifferentialDrive"));
+
 	if(kinematicModelName == "DifferentialDrive")
 	{
 		kinematicModel = new DifferentialDrive(*controller);

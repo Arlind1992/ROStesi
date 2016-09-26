@@ -1,4 +1,5 @@
 # Configuration for differential drive kinematic planning
+kinematicModel: DifferentialDrive
 motion_primitives:
   minU: [0, -0.78539816339]
   maxU: [1, 0.78539816339]

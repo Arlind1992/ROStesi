@@ -41,7 +41,7 @@ class ExtenderFactory
 public:
 	void initialize(ros::NodeHandle& nh, Map& map, Distance& distance);
 
-	void initializeKinematic(const std::string& kinematicModelName);
+	void initializeKinematic(ros::NodeHandle& nh);
 
 	inline Extender& getExtender()
 	{
