@@ -137,7 +137,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     while(state != s_start);
 
     reverse(path.begin(), path.end());
-    publishPlan(path, plan, start.header.stamp);
+    publishPlan(path, plan, start.header.stamp, start, goal);
     visualizer.displayPlan(plan);
 
     return true;
@@ -206,27 +206,43 @@ bool ThetaStarPlanner::removeFrontierNode(pair<int, int> s)
 }
 
 
-void ThetaStarPlanner::publishPlan(std::vector<VectorXd>& path,
-                                   std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp)
+void ThetaStarPlanner::publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
+		const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal)
 {
-    for(auto x : path)
+	plan.push_back(start);
+
+    for(int i = 1; i < path.size() - 1; i++)
     {
+		auto&& p1 = path[i];
+		auto&& p2 = path[i+1];
+
         geometry_msgs::PoseStamped msg;
 
         msg.header.stamp = stamp;
         msg.header.frame_id = "map";
 
-        msg.pose.position.x = x(0);
-        msg.pose.position.y = x(1);
+        msg.pose.position.x = p1(0);
+        msg.pose.position.y = p1(1);
         msg.pose.position.z = 0;
 
-        msg.pose.orientation.x = 0;
-        msg.pose.orientation.y = 0;
-        msg.pose.orientation.z = 0;
-        msg.pose.orientation.w = 1;
+		double angle = atan2(p2(1) - p1(1), p2(0) - p1(0));
+
+		Matrix3d m;
+        m = AngleAxisd(angle, Vector3d::UnitZ())
+            * AngleAxisd(0, Vector3d::UnitY())
+            * AngleAxisd(0, Vector3d::UnitX());
+
+        Quaterniond q(m);
+
+        msg.pose.orientation.x = q.x();
+        msg.pose.orientation.y = q.y();
+        msg.pose.orientation.z = q.z();
+        msg.pose.orientation.w = q.w();
 
         plan.push_back(msg);
     }
+	
+	plan.push_back(goal);
 }
 
 

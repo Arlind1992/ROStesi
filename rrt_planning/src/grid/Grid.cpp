@@ -34,6 +34,10 @@ namespace rrt_planning
 Grid::Grid(Map& map, double gridResolution): map(map),
     gridResolution(gridResolution)
 {
+	Bounds bounds = map.getBounds();
+
+	maxX = floor((bounds.maxX - bounds.minX) / gridResolution);
+	maxY = floor((bounds.maxY - bounds.minY) / gridResolution);
 }
 
 
@@ -43,6 +47,7 @@ vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 
     int X = s.first;
     int Y = s.second;
+	
 
     vector<pair<int, int>> neighbors;
 
@@ -51,6 +56,9 @@ vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
         for(int j = -1; j <= 1; j++)
         {
             if(i == 0 && j == 0) continue;
+			if(X+i < 0 || Y+j < 0 ||
+				X+i > maxX || Y+j > maxY)
+				continue;
 
             auto&& pos = toMapPose(X+i, Y+j);
 

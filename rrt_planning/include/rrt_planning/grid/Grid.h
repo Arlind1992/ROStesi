@@ -48,14 +48,10 @@ public:
 
 private:
     Map& map;
-    std::vector< std::vector<unsigned char> > grid;
 
     double gridResolution;	// Cell edges in meters
-
-    double minX;
-    double minY;
-    double maxX;
-    double maxY;
+    unsigned int maxX;
+   	unsigned int maxY;
 };
 
 }
