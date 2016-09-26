@@ -60,8 +60,8 @@ private:
     void computeCost(std::pair<int, int> s, std::pair<int, int> s_next);
     void insertFrontierNode(std::pair<int, int> s, double cost);
     bool removeFrontierNode(std::pair<int, int> s);
-    void publishPlan(std::vector<Eigen::VectorXd>& path,
-                     std::vector<geometry_msgs::PoseStamped>& plan, const ros::Time& stamp);
+    void publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
+		const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal);
     void clearInstance();
 
 private:
