@@ -33,25 +33,40 @@ ClosedLoopExtender::ClosedLoopExtender(KinematicModel& model, Controller& contro
 		Extender(map, distance), model(model), controller(controller)
 {
 	deltaT = 0;
+	loopN = 0;
 }
 
 bool ClosedLoopExtender::compute(const VectorXd& x0, const VectorXd& xRand, VectorXd& xNew)
 {
 	controller.setGoal(xRand);
-	VectorXd x = model.compute(x0, deltaT);
 
-	if(map.isFree(x))
+	VectorXd xStart = x0;
+
+	bool valid = false;
+
+	for(unsigned i = 0; i < loopN; i++)
 	{
-		xNew = x;
-		return true;
+		VectorXd x = model.compute(xStart, deltaT);
+
+		if(map.isFree(x))
+		{
+			xNew = x;
+			valid = true;
+			xStart = x;
+		}
+		else
+		{
+			break;
+		}
 	}
 
-	return false;
+	return valid;
 }
 
 void ClosedLoopExtender::initialize(ros::NodeHandle& nh)
 {
-	nh.param("deltaT", deltaT, 1.0);
+	nh.param("deltaT", deltaT, 0.5);
+	nh.param("loopN", loopN, 3);
 }
 
 

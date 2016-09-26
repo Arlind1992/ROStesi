@@ -67,14 +67,19 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 		{
 			controller = new ConstantController();
 		}
+		else
+		{
+			throw std::runtime_error("Unknown controller " + controllerName);
+		}
 
 		initializeKinematic(nh);
 
 		extender = new ClosedLoopExtender(*kinematicModel, *controller, map, distance);
 	}
-
-	if(!extender)
-		throw std::runtime_error("Wrong parameters specified");
+	else
+	{
+		throw std::runtime_error("Unknown extender " + extenderName);
+	}
 
 	extender->initialize(nh);
 

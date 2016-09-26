@@ -46,6 +46,7 @@ private:
     KinematicModel& model;
 
     double deltaT;
+    int loopN;
 
 };
 

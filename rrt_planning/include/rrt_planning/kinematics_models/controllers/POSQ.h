@@ -33,7 +33,7 @@ class POSQ : public Controller
 {
 public:
 	POSQ(double Krho, double Kv, double Kalpha, double Kphi);
-	virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const override;
+	virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) const override;
 	virtual ~POSQ();
 
 private:

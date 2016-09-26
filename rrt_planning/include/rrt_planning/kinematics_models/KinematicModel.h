@@ -76,7 +76,7 @@ protected:
     unsigned int stateSize;
     unsigned int actionSize;
 
-    const double dt = 1e-3;
+    const double dt = 0.1;
 
 };
 
