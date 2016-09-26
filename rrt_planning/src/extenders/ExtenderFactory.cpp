@@ -53,7 +53,7 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 
 		initializeKinematic(kinematicModelName);
 
-		extender = new MotionPrimitivesExtender(map, distance, *kinematicModel, *controller);
+		extender = new MotionPrimitivesExtender(*kinematicModel, *controller, map, distance);
 	}
 	else
 	{
@@ -71,7 +71,7 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 			controller = new ConstantController();
 		}
 
-		extender = new ClosedLoopExtender(*controller, *kinematicModel, map, distance);
+		extender = new ClosedLoopExtender(*kinematicModel, *controller, map, distance);
 	}
 
 	if(!extender)

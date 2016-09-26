@@ -32,7 +32,8 @@ namespace rrt_planning
 class MotionPrimitivesExtender : public Extender
 {
 public:
-    MotionPrimitivesExtender(Map& map, Distance& distance, KinematicModel& model, ConstantController& controller);
+    MotionPrimitivesExtender(KinematicModel& model, ConstantController& controller,
+    			Map& map, Distance& distance);
 
     virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
     virtual void initialize(ros::NodeHandle& nh) override;

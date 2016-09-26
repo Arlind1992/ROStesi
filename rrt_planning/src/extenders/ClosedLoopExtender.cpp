@@ -28,9 +28,9 @@ using namespace Eigen;
 namespace rrt_planning
 {
 
-ClosedLoopExtender::ClosedLoopExtender(Controller& controller, KinematicModel& model,
+ClosedLoopExtender::ClosedLoopExtender(KinematicModel& model, Controller& controller,
 		Map& map, Distance& distance) :
-		Extender(map, distance), controller(controller), model(model)
+		Extender(map, distance), model(model), controller(controller)
 {
 	deltaT = 0;
 }
