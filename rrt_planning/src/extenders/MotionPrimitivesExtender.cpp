@@ -28,7 +28,7 @@ using namespace Eigen;
 namespace rrt_planning
 {
 
-MotionPrimitivesExtender::MotionPrimitivesExtender(Map& map, Distance& distance, KinematicModel& model, CostantController& controller)
+MotionPrimitivesExtender::MotionPrimitivesExtender(Map& map, Distance& distance, KinematicModel& model, ConstantController& controller)
     : Extender(map, distance), model(model), controller(controller), minU(model.getActionSize()), maxU(model.getActionSize())
 {
     deltaT = 0;

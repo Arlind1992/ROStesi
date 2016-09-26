@@ -23,7 +23,7 @@
 
 #include "rrt_planning/extenders/Extender.h"
 #include "rrt_planning/kinematics_models/KinematicModel.h"
-#include "rrt_planning/kinematics_models/controllers/CostantController.h"
+#include "rrt_planning/kinematics_models/controllers/ConstantController.h"
 
 
 namespace rrt_planning
@@ -32,7 +32,7 @@ namespace rrt_planning
 class MotionPrimitivesExtender : public Extender
 {
 public:
-    MotionPrimitivesExtender(Map& map, Distance& distance, KinematicModel& model, CostantController& controller);
+    MotionPrimitivesExtender(Map& map, Distance& distance, KinematicModel& model, ConstantController& controller);
 
     virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
     virtual void initialize(ros::NodeHandle& nh) override;
@@ -47,7 +47,7 @@ private:
 private:
     std::vector<Eigen::VectorXd> motionPrimitives;
     KinematicModel& model;
-    CostantController& controller;
+    ConstantController& controller;
 
     Eigen::VectorXd maxU;
     Eigen::VectorXd minU;

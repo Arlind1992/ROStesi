@@ -26,11 +26,11 @@
 #include "rrt_planning/kinematics_models/DifferentialDrive.h"
 #include "rrt_planning/kinematics_models/Bicycle.h"
 
-#include "rrt_planning/kinematics_models/controllers/CostantController.h"
+#include "rrt_planning/kinematics_models/controllers/ConstantController.h"
 #include "rrt_planning/kinematics_models/controllers/POSQ.h"
 
 #include "rrt_planning/extenders/MotionPrimitivesExtender.h"
-//#include "rrt_planning/extenders/MotionPrimitivesExtender.h"
+#include "rrt_planning/extenders/ClosedLoopExtender.h"
 
 #include <stdexcept>
 
@@ -47,7 +47,7 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 
 	if(extenderName == "MotionPrimitives")
 	{
-		CostantController* controller = new CostantController();
+		ConstantController* controller = new ConstantController();
 
 		this->controller = controller;
 
@@ -68,10 +68,10 @@ void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distan
 		}
 		else if(controllerName == "Costant")
 		{
-			controller = new CostantController();
+			controller = new ConstantController();
 		}
 
-		//TODO create extender
+		extender = new ClosedLoopExtender(*controller, *kinematicModel, map, distance);
 	}
 
 	if(!extender)

@@ -24,7 +24,7 @@
 #include <iostream>
 
 #include "rrt_planning/kinematics_models/DifferentialDrive.h"
-#include "rrt_planning/kinematics_models/controllers/CostantController.h"
+#include "rrt_planning/kinematics_models/controllers/ConstantController.h"
 
 using namespace rrt_planning;
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	Eigen::VectorXd u(2);
 	u << 1.0, 0.01;
 
-	CostantController controller;
+	ConstantController controller;
 	controller.setControl(u);
 	DifferentialDrive model(controller);
 

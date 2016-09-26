@@ -21,13 +21,13 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_COSTANTCONTROLLER_H_
-#define INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_COSTANTCONTROLLER_H_
+#ifndef INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_CONSTANTCONTROLLER_H_
+#define INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_CONSTANTCONTROLLER_H_
 
 namespace rrt_planning
 {
 
-class CostantController : public Controller
+class ConstantController : public Controller
 {
 public:
 	virtual inline Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const override
@@ -41,7 +41,7 @@ public:
 		this->u = u;
 	}
 
-	virtual ~CostantController()
+	virtual ~ConstantController()
 	{
 
 	}
@@ -55,4 +55,4 @@ private:
 }
 
 
-#endif /* INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_COSTANTCONTROLLER_H_ */
+#endif /* INCLUDE_RRT_PLANNING_KINEMATICS_MODELS_CONTROLLERS_CONSTANTCONTROLLER_H_ */
