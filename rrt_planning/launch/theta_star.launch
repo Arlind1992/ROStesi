@@ -34,6 +34,6 @@
 		<arg name="world_file" value="$(arg world_file)"/>
 	</include>
 	
-	<include file="$(find rrt_planning)/launch/fake_localization.launch" unless="$(arg simulated)"/>
+	<include file="$(find rrt_planning)/launch/include/fake_localization.launch" unless="$(arg simulated)"/>
 	include/
 </launch> 
