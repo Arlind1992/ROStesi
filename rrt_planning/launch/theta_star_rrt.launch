@@ -32,10 +32,10 @@
 		<rosparam file="$(find rrt_planning)/config/visualization.yaml" command="load" ns="ThetaStarRRTPlanner"/>
 	</node>
 	
-	<include file="$(find rrt_planning)/launch/stage.launch" if="$(arg simulated)">
+	<include file="$(find rrt_planning)/launch/include/stage.launch" if="$(arg simulated)">
 		<arg name="world_file" value="$(arg world_file)"/>
 	</include>
 	
-	<include file="$(find rrt_planning)/launch/fake_localization.launch" unless="$(arg simulated)"/>
+	<include file="$(find rrt_planning)/launch/include/fake_localization.launch" unless="$(arg simulated)"/>
 	
 </launch> 
