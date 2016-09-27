@@ -35,5 +35,4 @@
 	</include>
 	
 	<include file="$(find rrt_planning)/launch/include/fake_localization.launch" unless="$(arg simulated)"/>
-	include/
 </launch> 
