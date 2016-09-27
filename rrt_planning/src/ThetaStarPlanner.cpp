@@ -104,6 +104,9 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         removeFrontierNode(s);
         closed.insert(s);
 
+		VectorXd p2Display = grid->toMapPose(s.first, s.second);
+		visualizer.addPoint(p2Display);
+
         if(s == s_goal) break;
 
         for(auto&& s_next: grid->getNeighbors(s))
