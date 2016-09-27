@@ -99,7 +99,7 @@ bool RRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         if(RandomGenerator::sampleEvent(greedy))
             xRand = xGoal;
         else
-            xRand = extenderFactory.getKinematicModel().getRandomState(map->getBounds());
+            xRand = extenderFactory.getKinematicModel().sampleOnBox(map->getBounds());
 
         visualizer.addPoint(xRand);
 

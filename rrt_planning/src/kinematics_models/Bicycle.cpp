@@ -55,7 +55,7 @@ VectorXd Bicycle::getInitialState()
     return VectorXd::Zero(4);
 }
 
-VectorXd Bicycle::getRandomState(const Bounds& bounds)
+VectorXd Bicycle::sampleOnBox(const Bounds& bounds)
 {
     VectorXd xRand;
     xRand.setRandom(stateSize);

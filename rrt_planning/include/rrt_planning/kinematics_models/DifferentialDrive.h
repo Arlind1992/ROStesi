@@ -35,7 +35,7 @@ public:
     DifferentialDrive(Controller& controller);
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) override;
     virtual Eigen::VectorXd getInitialState() override;
-    virtual Eigen::VectorXd getRandomState(const Bounds& bounds) override;
+    virtual Eigen::VectorXd sampleOnBox(const Bounds& bounds) override;
 
 
     void operator()(const state_type& x, state_type& dx,

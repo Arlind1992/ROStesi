@@ -44,7 +44,7 @@ VectorXd KinematicModel::applyTransform(const VectorXd& x0, const VectorXd& T)
     return xf;
 }
 
-VectorXd KinematicModel::anyAngleSampling(vector<geometry_msgs::PoseStamped>& plan,
+VectorXd KinematicModel::sampleOnLane(vector<geometry_msgs::PoseStamped>& plan,
 			double width, double deltaTheta)
 {
     // Retrive the total plan length

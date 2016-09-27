@@ -117,7 +117,7 @@ bool ThetaStarRRTPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         if(RandomGenerator::sampleEvent(greedy))
             xRand = xGoal;
         else
-            xRand = extenderFactory.getKinematicModel().anyAngleSampling(thetaStarPlan, laneWidth, deltaTheta);
+            xRand = extenderFactory.getKinematicModel().sampleOnLane(thetaStarPlan, laneWidth, deltaTheta);
 
         visualizer.addPoint(xRand);
 

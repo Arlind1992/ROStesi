@@ -53,7 +53,7 @@ Eigen::VectorXd DifferentialDrive::getInitialState()
     return VectorXd::Zero(3);
 }
 
-Eigen::VectorXd DifferentialDrive::getRandomState(const Bounds& bounds)
+Eigen::VectorXd DifferentialDrive::sampleOnBox(const Bounds& bounds)
 {
     VectorXd xRand;
     xRand.setRandom(3);
