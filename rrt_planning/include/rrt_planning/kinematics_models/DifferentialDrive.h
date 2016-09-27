@@ -38,7 +38,7 @@ public:
     virtual Eigen::VectorXd sampleOnBox(const Bounds& bounds) override;
 
 
-    void operator()(const state_type& x, state_type& dx,
+    void operator()(const Eigen::VectorXd& x, Eigen::VectorXd& dx,
                     const double /* t */);
 
 private:

@@ -24,6 +24,7 @@
 #ifndef INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_
 #define INCLUDE_KINEMATICS_MODELS_KINEMATICMODEL_H_
 
+
 #include <Eigen/Dense>
 
 #include <costmap_2d/costmap_2d_ros.h>
@@ -38,13 +39,16 @@ namespace rrt_planning
 class KinematicModel
 {
 public:
+    /*typedef Eigen::VectorXd state_type;
+    typedef boost::numeric::odeint::runge_kutta_dopri5<state_type> error_stepper_type;
+    typedef boost::numeric::odeint::controlled_runge_kutta< error_stepper_type > controlled_stepper_type;*/
+
+public:
 	KinematicModel(Controller& controller) : controller(controller)
 	{
 	    stateSize = 0;
 	    actionSize = 0;
 	}
-
-    typedef Eigen::VectorXd state_type;
 
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) = 0;
     virtual Eigen::VectorXd getInitialState() = 0;

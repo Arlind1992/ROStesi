@@ -23,8 +23,9 @@
 
 #include "rrt_planning/kinematics_models/DifferentialDrive.h"
 #include "rrt_planning/utils/RandomGenerator.h"
-#include <boost/numeric/odeint.hpp>
 
+#include <boost/numeric/odeint.hpp>
+#include "eigen_odeint/eigen.hpp"
 
 using namespace Eigen;
 using namespace std;
@@ -40,10 +41,9 @@ DifferentialDrive::DifferentialDrive(Controller& controller) : KinematicModel(co
 
 VectorXd DifferentialDrive::compute(const VectorXd& x0, double delta)
 {
-    boost::numeric::odeint::runge_kutta4<state_type,double,state_type,double,
-			boost::numeric::odeint::vector_space_algebra> stepper;
     Eigen::VectorXd x = x0;
-    boost::numeric::odeint::integrate_const(stepper, *this, x, 0.0, delta, dt);
+	boost::numeric::odeint::runge_kutta_dopri5<VectorXd, double, VectorXd, double, boost::numeric::odeint::vector_space_algebra> stepper;
+	boost::numeric::odeint::integrate_adaptive(stepper, *this, x, 0.0, delta, dt);
 
     return x;
 }
@@ -73,7 +73,7 @@ Eigen::VectorXd DifferentialDrive::sampleOnBox(const Bounds& bounds)
 }
 
 
-void DifferentialDrive::operator()(const state_type& x, state_type& dx,
+void DifferentialDrive::operator()(const VectorXd& x, VectorXd& dx,
                                    const double /* t */)
 {
     Matrix<double, 3, 2> A;
