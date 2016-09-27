@@ -258,6 +258,9 @@ void ThetaStarPlanner::clearInstance()
 
 ThetaStarPlanner::~ThetaStarPlanner()
 {
+	for(auto f: open)
+		removeFrontierNode(f->getNode());
+
     if(grid)
         delete grid;
 

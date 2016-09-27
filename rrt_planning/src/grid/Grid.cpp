@@ -180,8 +180,7 @@ Eigen::VectorXd Grid::toMapPose(int X, int Y)
 
 bool Grid::isFree(pair<int, int> s)
 {
-    Eigen::VectorXd pos;
-    pos = toMapPose(s.first, s.second);
+    Eigen::VectorXd pos = toMapPose(s.first, s.second);
 
     return map.isFree(pos);
 }
