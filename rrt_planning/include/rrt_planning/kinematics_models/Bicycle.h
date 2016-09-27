@@ -34,11 +34,8 @@ class Bicycle : public KinematicModel
 public:
     Bicycle(Controller& controller);
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) override;
-    virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) override;
     virtual Eigen::VectorXd getInitialState() override;
     virtual Eigen::VectorXd getRandomState(const Bounds& bounds) override;
-    virtual Eigen::VectorXd anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan,
-            double w, double deltaTheta) override;
 
     void operator()(const state_type& x, state_type& dx,
                     const double /* t */);

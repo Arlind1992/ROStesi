@@ -50,20 +50,6 @@ VectorXd Bicycle::compute(const VectorXd& x0, double delta)
     return x;
 }
 
-VectorXd Bicycle::applyTransform(const VectorXd& x0, const VectorXd& T)
-{
-    //TODO Implement motion primitives for bicycles in a more complex way
-    VectorXd xf = x0;
-
-    double theta = x0(2);
-
-    xf(0) += cos(theta)*T(0) - sin(theta)*T(1);
-    xf(1) += sin(theta)*T(0) + cos(theta)*T(1);
-    xf(2) += T(2);
-
-    return xf;
-}
-
 VectorXd Bicycle::getInitialState()
 {
     return VectorXd::Zero(4);
@@ -88,14 +74,6 @@ VectorXd Bicycle::getRandomState(const Bounds& bounds)
     xRand(3) += -0.5*deltaPhi;
 
     return xRand;
-}
-
-
-VectorXd Bicycle::anyAngleSampling(vector<geometry_msgs::PoseStamped>& plan,
-                                   double width, double deltaTheta)
-{
-    //TODO implement!
-    return VectorXd::Zero(4);
 }
 
 Eigen::VectorXd Bicycle::computeControl(const Eigen::VectorXd& x)

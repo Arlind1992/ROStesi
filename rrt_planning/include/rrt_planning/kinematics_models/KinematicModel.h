@@ -47,12 +47,12 @@ public:
     typedef Eigen::VectorXd state_type;
 
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) = 0;
-
-    virtual Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T) = 0;
     virtual Eigen::VectorXd getInitialState() = 0;
     virtual Eigen::VectorXd getRandomState(const Bounds& bounds) = 0;
-    virtual Eigen::VectorXd anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan,
-            double w, double deltaTheta) = 0;
+
+    Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T);
+    Eigen::VectorXd anyAngleSampling(std::vector<geometry_msgs::PoseStamped>& plan,
+            double width, double deltaTheta);
 
     inline unsigned int getStateSize()
     {
