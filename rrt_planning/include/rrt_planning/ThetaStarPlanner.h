@@ -33,7 +33,7 @@
 
 #include "rrt_planning/map/ROSMap.h"
 #include "rrt_planning/grid/Grid.h"
-#include "rrt_planning/theta_star/FrontierNode.h"
+#include "rrt_planning/theta_star/PriorityQueue.h"
 #include "rrt_planning/visualization/Visualizer.h"
 
 
@@ -55,10 +55,8 @@ public:
     ~ThetaStarPlanner();
 
 private:
-    void updateVertex(std::pair<int, int> s, std::pair<int, int> s_next);
-    void computeCost(std::pair<int, int> s, std::pair<int, int> s_next);
-    void insertFrontierNode(std::pair<int, int> s, double cost);
-    bool removeFrontierNode(std::pair<int, int> s);
+    void updateVertex(Cell s, Cell s_next);
+    void computeCost(Cell s, Cell s_next);
     void publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
 		const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal);
     void clearInstance();
@@ -69,27 +67,19 @@ private:
 
 	ros::Publisher pub;
 
-    struct Cmp
-    {
-        bool operator()(FrontierNode *a, FrontierNode *b)
-        {
-            return a->getCost() < b->getCost();
-        }
-    };
 
-	static const std::pair<int, int> S_NULL;
+	static const Cell S_NULL;
 
     ROSMap* map;
     Grid* grid;
 
-    std::pair<int, int> s_start;
-    std::pair<int, int> s_goal;
+    Cell s_start;
+    Cell s_goal;
 
-    std::map<std::pair<int, int>, double> g;
-    std::map<std::pair<int, int>, std::pair<int, int>> parent;
-    std::set<FrontierNode*, Cmp> open;
-    std::map<std::pair<int, int>, FrontierNode*> openMap;
-    std::set<std::pair<int, int>> closed;
+    std::map<Cell, double> g;
+    PriorityQueue open;
+    std::map<Cell, Cell> parent;
+    std::set<Cell> closed;
 
     Visualizer visualizer;
 };

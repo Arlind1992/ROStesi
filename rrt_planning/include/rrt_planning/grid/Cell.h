@@ -2,7 +2,7 @@
  * rrt_planning,
  *
  *
- * Copyright (C) 2016 Alessandro Riva
+ * Copyright (C) 2016 Davide Tateo
  * Versione 1.0
  *
  * This file is part of rrt_planning.
@@ -21,33 +21,21 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRT_PLANNING_THETASTAR_FRONTIERNODE_H_
-#define INCLUDE_RRT_PLANNING_THETASTAR_FRONTIERNODE_H_
+#ifndef INCLUDE_RRT_PLANNING_GRID_CELL_H_
+#define INCLUDE_RRT_PLANNING_GRID_CELL_H_
 
-#include "rrt_planning/grid/Cell.h"
+#include <set>
+#include <map>
 
 namespace rrt_planning
 {
-class FrontierNode
-{
-public:
-    inline FrontierNode(Cell node, double cost):
-        node(node), cost(cost) { }
 
-    inline Cell getNode()
-    {
-        return node;
-    }
-    inline double getCost()
-    {
-        return cost;
-    }
-
-private:
-    Cell node;
-    double cost;
-};
+typedef std::pair<int, int> Cell;
 
 }
 
-#endif /* INCLUDE_RRT_PLANNING_THETASTAR_FRONTIERNODE_H_ */
+
+
+
+
+#endif /* INCLUDE_RRT_PLANNING_GRID_CELL_H_ */

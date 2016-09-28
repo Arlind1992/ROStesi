@@ -30,20 +30,22 @@
 #include <costmap_2d/costmap_2d.h>
 
 #include "rrt_planning/map/Map.h"
+#include "rrt_planning/grid/Cell.h"
 
 namespace rrt_planning
 {
 
 class Grid
 {
+
 public:
     Grid(Map& map, double gridResolution);
-    double cost(std::pair<int, int> s, std::pair<int, int> s_next);
-    double heuristic(std::pair<int, int> s, std::pair<int, int> s_next);
-    bool lineOfSight(std::pair<int, int> s, std::pair<int, int> s_next);
-    std::vector<std::pair<int, int>> getNeighbors(std::pair<int, int> s);
-    std::pair<int, int> convertPose(const geometry_msgs::PoseStamped& msg);
-    bool isFree(std::pair<int, int> s);
+    double cost(Cell s, Cell s_next);
+    double heuristic(Cell s, Cell s_next);
+    bool lineOfSight(Cell s, Cell s_next);
+    std::vector<Cell> getNeighbors(Cell s);
+    Cell convertPose(const geometry_msgs::PoseStamped& msg);
+    bool isFree(Cell s);
     Eigen::VectorXd toMapPose(int X, int Y);
 
 private:

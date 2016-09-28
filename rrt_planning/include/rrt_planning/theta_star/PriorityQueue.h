@@ -2,7 +2,7 @@
  * rrt_planning,
  *
  *
- * Copyright (C) 2016 Alessandro Riva
+ * Copyright (C) 2016 Davide Tateo
  * Versione 1.0
  *
  * This file is part of rrt_planning.
@@ -21,33 +21,39 @@
  *  along with rrt_planning.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_RRT_PLANNING_THETASTAR_FRONTIERNODE_H_
-#define INCLUDE_RRT_PLANNING_THETASTAR_FRONTIERNODE_H_
+#ifndef INCLUDE_RRT_PLANNING_GRID_PRIORITYQUEUE_H_
+#define INCLUDE_RRT_PLANNING_GRID_PRIORITYQUEUE_H_
 
-#include "rrt_planning/grid/Cell.h"
+#include "rrt_planning/theta_star/FrontierNode.h"
 
 namespace rrt_planning
 {
-class FrontierNode
+
+class PriorityQueue
 {
 public:
-    inline FrontierNode(Cell node, double cost):
-        node(node), cost(cost) { }
+	void insert(Cell cell, double cost);
+	void remove(Cell cell);
+	bool contains(Cell cell);
+	bool empty();
+	Cell pop();
+	void clear();
 
-    inline Cell getNode()
-    {
-        return node;
-    }
-    inline double getCost()
-    {
-        return cost;
-    }
 
 private:
-    Cell node;
-    double cost;
+    struct Cmp
+    {
+        bool operator()(FrontierNode* a, FrontierNode* b)
+        {
+            return a->getCost() < b->getCost();
+        }
+    };
+
+    std::set<FrontierNode*, Cmp> open;
+    std::map<std::pair<int, int>, FrontierNode*> openMap;
 };
 
 }
 
-#endif /* INCLUDE_RRT_PLANNING_THETASTAR_FRONTIERNODE_H_ */
+
+#endif /* INCLUDE_RRT_PLANNING_GRID_PRIORITYQUEUE_H_ */

@@ -37,7 +37,7 @@ using namespace Eigen;
 namespace rrt_planning
 {
 
-const pair<int, int> ThetaStarPlanner::S_NULL = make_pair(-1, -1);
+const Cell ThetaStarPlanner::S_NULL = make_pair(-1, -1);
 
 ThetaStarPlanner::ThetaStarPlanner()
 {
@@ -94,7 +94,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     //Init variables
     g[s_start] = 0.0;
     parent[s_start] = s_start;
-    insertFrontierNode(s_start, grid->heuristic(s_start, s_goal));
+    open.insert(s_start, grid->heuristic(s_start, s_goal));
 	parent[s_goal] = S_NULL;
 
     ROS_INFO("Planner started");
@@ -103,10 +103,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     while(!open.empty())
     {
         //Pop the best frontier node
-        FrontierNode* f = *open.begin();
-        auto s = f->getNode();
-
-        removeFrontierNode(s);
+        Cell s = open.pop();
 
         closed.insert(s);
 
@@ -118,11 +115,12 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         for(auto s_next: grid->getNeighbors(s))
             if(closed.count(s_next) == 0)
             {
-                if(openMap.count(s_next) == 0)
+                if(!open.contains(s_next))
                 {
                     g[s_next] = std::numeric_limits<double>::infinity();
                     parent[s_next] = S_NULL;
                 }
+
                 updateVertex(s, s_next);
             }
     }
@@ -153,7 +151,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
 }
 
 
-void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
+void ThetaStarPlanner::updateVertex(Cell s, Cell s_next)
 {
     double g_old = g.at(s_next);
 
@@ -161,16 +159,17 @@ void ThetaStarPlanner::updateVertex(pair<int, int> s, pair<int, int> s_next)
 
     if(g.at(s_next) < g_old)
     {
-        if(openMap.count(s_next) != 0) removeFrontierNode(s_next);
+        if(open.contains(s_next))
+        	open.remove(s_next);
 
         double frontierCost = g.at(s_next) + grid->heuristic(s_next, s_goal);
 
-        insertFrontierNode(s_next, frontierCost);
+        open.insert(s_next, frontierCost);
     }
 }
 
 
-void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
+void ThetaStarPlanner::computeCost(Cell s, Cell s_next)
 {
 
     if(grid->lineOfSight(parent.at(s), s_next))
@@ -192,27 +191,6 @@ void ThetaStarPlanner::computeCost(pair<int, int> s, pair<int, int> s_next)
         }
     }
 }
-
-
-void ThetaStarPlanner::insertFrontierNode(pair<int, int> s, double cost)
-{
-    FrontierNode *frontierNode = new FrontierNode(s, cost);
-    open.insert(frontierNode);
-    openMap[s] = frontierNode;
-}
-
-
-bool ThetaStarPlanner::removeFrontierNode(pair<int, int> s)
-{
-    FrontierNode* f = openMap.at(s);
-    open.erase(f);
-    openMap.erase(s);
-
-    delete f;
-
-    return true;
-}
-
 
 void ThetaStarPlanner::publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
 		const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal)
@@ -256,11 +234,7 @@ void ThetaStarPlanner::publishPlan(std::vector<Eigen::VectorXd>& path, std::vect
 
 void ThetaStarPlanner::clearInstance()
 {
-	for(auto f: open)
-		removeFrontierNode(f->getNode());
-
     open.clear();
-    openMap.clear();
     closed.clear();
     parent.clear();
     g.clear();
@@ -292,7 +266,7 @@ void ThetaStarPlanner::displayOpen()
     marker.color.g = 0.0;
     marker.color.b = 1.0;
 
-    for(auto& s : open)
+    /*for(auto& s : open)
     {
         geometry_msgs::Point p;
 
@@ -303,7 +277,7 @@ void ThetaStarPlanner::displayOpen()
         p.z = 0;
 
         marker.points.push_back(p);
-    }
+    }*/
 
     pub.publish(marker);
 }
@@ -353,9 +327,6 @@ void ThetaStarPlanner::displayClosed()
 
 ThetaStarPlanner::~ThetaStarPlanner()
 {
-	for(auto f: open)
-		removeFrontierNode(f->getNode());
-
     if(grid)
         delete grid;
 
