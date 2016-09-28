@@ -26,14 +26,14 @@
 namespace rrt_planning
 {
 
-void PriorityQueue::insert(Cell cell, double cost)
+void PriorityQueue::insert(const Cell& cell, double cost)
 {
     FrontierNode *frontierNode = new FrontierNode(cell, cost);
     open.insert(frontierNode);
     openMap[cell] = frontierNode;
 }
 
-void PriorityQueue::remove(Cell cell)
+void PriorityQueue::remove(const Cell& cell)
 {
     FrontierNode* f = openMap.at(cell);
     open.erase(f);
@@ -42,12 +42,12 @@ void PriorityQueue::remove(Cell cell)
     delete f;
 }
 
-bool PriorityQueue::contains(Cell cell)
+bool PriorityQueue::contains(const Cell& cell) const
 {
 	return openMap.count(cell) == 1;
 }
 
-bool PriorityQueue::empty()
+bool PriorityQueue::empty() const
 {
 	return open.empty();
 }
@@ -73,6 +73,16 @@ void PriorityQueue::clear()
 	open.clear();
 	openMap.clear();
 
+}
+
+std::set<FrontierNode*, PriorityQueue::Cmp>::iterator PriorityQueue::begin()
+{
+	return open.begin();
+}
+
+std::set<FrontierNode*, PriorityQueue::Cmp>::iterator PriorityQueue::end()
+{
+	return open.end();
 }
 
 

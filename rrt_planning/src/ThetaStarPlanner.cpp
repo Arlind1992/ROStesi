@@ -266,7 +266,7 @@ void ThetaStarPlanner::displayOpen()
     marker.color.g = 0.0;
     marker.color.b = 1.0;
 
-    /*for(auto& s : open)
+    for(auto& s : open)
     {
         geometry_msgs::Point p;
 
@@ -277,7 +277,7 @@ void ThetaStarPlanner::displayOpen()
         p.z = 0;
 
         marker.points.push_back(p);
-    }*/
+    }
 
     pub.publish(marker);
 }

@@ -31,16 +31,6 @@ namespace rrt_planning
 
 class PriorityQueue
 {
-public:
-	void insert(Cell cell, double cost);
-	void remove(Cell cell);
-	bool contains(Cell cell);
-	bool empty();
-	Cell pop();
-	void clear();
-
-
-private:
     struct Cmp
     {
         bool operator()(FrontierNode* a, FrontierNode* b)
@@ -49,11 +39,27 @@ private:
         }
     };
 
+
+public:
+	void insert(const Cell& cell, double cost);
+	void remove(const Cell& cell);
+	bool contains(const Cell& cell) const;
+	bool empty() const;
+	Cell pop();
+	void clear();
+
+	std::set<FrontierNode*, Cmp>::iterator begin();
+	std::set<FrontierNode*, Cmp>::iterator end();
+
+
+private:
     std::set<FrontierNode*, Cmp> open;
     std::map<std::pair<int, int>, FrontierNode*> openMap;
+
 };
 
 }
 
 
 #endif /* INCLUDE_RRT_PLANNING_GRID_PRIORITYQUEUE_H_ */
+
