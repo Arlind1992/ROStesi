@@ -177,8 +177,8 @@ void ThetaStarPlanner::computeCost(Cell s, Cell s_next)
         //Path 2
         if(g.at(parent.at(s)) + grid->cost(parent.at(s), s_next) < g.at(s_next))
         {
+        	parent.at(s_next) = parent.at(s);
             g.at(s_next) = g.at(parent.at(s)) + grid->cost(parent.at(s), s_next);
-            parent.at(s_next) = parent.at(s);
         }
     }
     else
@@ -186,8 +186,8 @@ void ThetaStarPlanner::computeCost(Cell s, Cell s_next)
         //Path 1
         if(g.at(s) + grid->cost(s, s_next) < g.at(s_next))
         {
-            g.at(s_next) = g.at(s) + grid->cost(s, s_next);
             parent.at(s_next) = s;
+            g.at(s_next) = g.at(s) + grid->cost(s, s_next);
         }
     }
 }

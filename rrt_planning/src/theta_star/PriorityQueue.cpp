@@ -85,5 +85,10 @@ std::set<FrontierNode*, PriorityQueue::Cmp>::iterator PriorityQueue::end()
 	return open.end();
 }
 
+PriorityQueue::~PriorityQueue()
+{
+	clear();
+}
+
 
 }

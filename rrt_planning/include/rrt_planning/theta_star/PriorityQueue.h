@@ -51,6 +51,8 @@ public:
 	std::set<FrontierNode*, Cmp>::iterator begin();
 	std::set<FrontierNode*, Cmp>::iterator end();
 
+	~PriorityQueue();
+
 
 private:
     std::set<FrontierNode*, Cmp> open;
