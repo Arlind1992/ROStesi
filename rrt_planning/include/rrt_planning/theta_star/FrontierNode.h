@@ -31,7 +31,7 @@ namespace rrt_planning
 class FrontierNode
 {
 public:
-    inline FrontierNode(Cell node, double cost):
+    inline FrontierNode(const Cell& node, double cost):
         node(node), cost(cost) { }
 
     inline Cell getNode()
