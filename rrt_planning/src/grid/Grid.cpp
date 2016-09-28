@@ -43,11 +43,8 @@ Grid::Grid(Map& map, double gridResolution): map(map),
 
 vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
 {
-    //TODO eight-connected or line-of-sight?
-
     int X = s.first;
     int Y = s.second;
-	
 
     vector<pair<int, int>> neighbors;
 
