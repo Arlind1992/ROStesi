@@ -94,7 +94,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     //Init variables
     g[s_start] = 0.0;
     parent[s_start] = s_start;
-    insertFrontierNode(s_start, 0.0);
+    insertFrontierNode(s_start, grid->heuristic(s_start, s_goal));
 	parent[s_goal] = S_NULL;
 
     ROS_INFO("Planner started");
