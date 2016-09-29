@@ -45,7 +45,7 @@ VectorXd KinematicModel::applyTransform(const VectorXd& x0, const VectorXd& T)
 }
 
 VectorXd KinematicModel::sampleOnLane(vector<geometry_msgs::PoseStamped>& plan,
-			double width, double deltaTheta)
+                                      double width, double deltaTheta)
 {
     // Retrive the total plan length
     double planLength = 0;

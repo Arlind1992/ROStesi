@@ -23,14 +23,20 @@
 
 #include "rrt_planning/theta_star/PriorityQueue.h"
 
+#include <cassert>
+
 namespace rrt_planning
 {
 
 void PriorityQueue::insert(const Cell& cell, double cost)
 {
     FrontierNode *frontierNode = new FrontierNode(cell, cost);
-    open.insert(frontierNode);
+    auto res = open.insert(frontierNode);
     openMap[cell] = frontierNode;
+
+    assert(res.second);
+
+    assert(open.size() == openMap.size());
 }
 
 void PriorityQueue::remove(const Cell& cell)
@@ -40,56 +46,65 @@ void PriorityQueue::remove(const Cell& cell)
     openMap.erase(cell);
 
     delete f;
+
+    assert(open.size() == openMap.size());
 }
 
 bool PriorityQueue::contains(const Cell& cell) const
 {
-	return openMap.count(cell) == 1;
+    assert(open.size() == openMap.size());
+    return openMap.count(cell) == 1;
 }
 
 bool PriorityQueue::empty() const
 {
-	return open.empty();
+    assert(open.size() == openMap.size());
+    return open.empty();
 }
 
 Cell PriorityQueue::pop()
 {
-	auto it = open.begin();
-	auto ptr = *it;
+    auto it = open.begin();
+    auto ptr = *it;
 
-	open.erase(it);
+    open.erase(it);
 
-	Cell cell = ptr->getNode();
-	openMap.erase(cell);
+    Cell cell = ptr->getNode();
+    openMap.erase(cell);
 
-	delete ptr;
+    delete ptr;
 
-	return cell;
+    assert(open.size() == openMap.size());
+
+    return cell;
 }
 
 void PriorityQueue::clear()
 {
-	for(auto f: open)
-		delete f;
+    for(auto f: open)
+        delete f;
 
-	open.clear();
-	openMap.clear();
+    open.clear();
+    openMap.clear();
 
 }
 
 std::set<FrontierNode*, PriorityQueue::Cmp>::iterator PriorityQueue::begin()
 {
-	return open.begin();
+    assert(open.size() == openMap.size());
+    return open.begin();
 }
 
 std::set<FrontierNode*, PriorityQueue::Cmp>::iterator PriorityQueue::end()
 {
-	return open.end();
+    assert(open.size() == openMap.size());
+    return open.end();
 }
 
 PriorityQueue::~PriorityQueue()
 {
-	clear();
+    assert(open.size() == openMap.size());
+    clear();
 }
 
 

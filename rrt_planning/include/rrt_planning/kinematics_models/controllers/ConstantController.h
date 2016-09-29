@@ -30,24 +30,24 @@ namespace rrt_planning
 class ConstantController : public Controller
 {
 public:
-	virtual inline Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const override
-	{
-		return u;
-	}
+    virtual inline Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const override
+    {
+        return u;
+    }
 
 
-	inline void setControl(const Eigen::VectorXd& u)
-	{
-		this->u = u;
-	}
+    inline void setControl(const Eigen::VectorXd& u)
+    {
+        this->u = u;
+    }
 
-	virtual ~ConstantController()
-	{
+    virtual ~ConstantController()
+    {
 
-	}
+    }
 
 private:
-	Eigen::VectorXd u;
+    Eigen::VectorXd u;
 
 };
 

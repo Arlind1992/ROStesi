@@ -58,17 +58,20 @@ private:
     void updateVertex(Cell s, Cell s_next);
     void computeCost(Cell s, Cell s_next);
     void publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
-		const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal);
+                     const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal);
     void clearInstance();
-	void displayClosed();
-	void displayOpen();
+    void displayClosed();
+    void displayOpen();
+    void displayNeighbours(const Cell& cell);
+    void displayObstacles(const Cell& cell);
+    void displayCost(const Cell& cell, double g_old);
 
 private:
 
-	ros::Publisher pub;
+    ros::Publisher pub;
 
 
-	static const Cell S_NULL;
+    static const Cell S_NULL;
 
     ROSMap* map;
     Grid* grid;

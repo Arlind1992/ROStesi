@@ -33,25 +33,26 @@ class PriorityQueue
 {
     struct Cmp
     {
-        bool operator()(FrontierNode* a, FrontierNode* b)
+        bool operator()(const FrontierNode* a, const FrontierNode* b) const
         {
-            return a->getCost() < b->getCost();
+            return (a->getCost() < b->getCost()) ||
+                   ((a->getCost() == b->getCost()) && (a->getNode() < b->getNode()));
         }
     };
 
 
 public:
-	void insert(const Cell& cell, double cost);
-	void remove(const Cell& cell);
-	bool contains(const Cell& cell) const;
-	bool empty() const;
-	Cell pop();
-	void clear();
+    void insert(const Cell& cell, double cost);
+    void remove(const Cell& cell);
+    bool contains(const Cell& cell) const;
+    bool empty() const;
+    Cell pop();
+    void clear();
 
-	std::set<FrontierNode*, Cmp>::iterator begin();
-	std::set<FrontierNode*, Cmp>::iterator end();
+    std::set<FrontierNode*, Cmp>::iterator begin();
+    std::set<FrontierNode*, Cmp>::iterator end();
 
-	~PriorityQueue();
+    ~PriorityQueue();
 
 
 private:

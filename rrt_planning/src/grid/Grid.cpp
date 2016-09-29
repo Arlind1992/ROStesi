@@ -34,28 +34,28 @@ namespace rrt_planning
 Grid::Grid(Map& map, double gridResolution): map(map),
     gridResolution(gridResolution)
 {
-	Bounds bounds = map.getBounds();
+    Bounds bounds = map.getBounds();
 
-	maxX = floor((bounds.maxX - bounds.minX) / gridResolution);
-	maxY = floor((bounds.maxY - bounds.minY) / gridResolution);
+    maxX = floor((bounds.maxX - bounds.minX) / gridResolution);
+    maxY = floor((bounds.maxY - bounds.minY) / gridResolution);
 }
 
 
-vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
+vector<Cell> Grid::getNeighbors(const Cell& s)
 {
     int X = s.first;
     int Y = s.second;
 
-    vector<pair<int, int>> neighbors;
+    vector<Cell> neighbors;
 
     //Given (X,Y), retrive all the eight-connected free cells
     for(int i = -1; i <= 1; i++)
         for(int j = -1; j <= 1; j++)
         {
             if(i == 0 && j == 0) continue;
-			if(X+i < 0 || Y+j < 0 ||
-				X+i > maxX || Y+j > maxY)
-				continue;
+            if(X+i < 0 || Y+j < 0 ||
+                    X+i > maxX || Y+j > maxY)
+                continue;
 
             auto&& pos = toMapPose(X+i, Y+j);
 
@@ -66,8 +66,33 @@ vector<pair<int, int>> Grid::getNeighbors(pair<int, int> s)
     return neighbors;
 }
 
+std::vector<Cell> Grid::getObstacles(const Cell& s)
+{
+    int X = s.first;
+    int Y = s.second;
 
-double Grid::cost(pair<int, int> s, pair<int, int> s_next)
+    vector<Cell> obstacles;
+
+    //Given (X,Y), retrive all the eight-connected free cells
+    for(int i = -1; i <= 1; i++)
+        for(int j = -1; j <= 1; j++)
+        {
+            if(i == 0 && j == 0) continue;
+            if(X+i < 0 || Y+j < 0 ||
+                    X+i > maxX || Y+j > maxY)
+                continue;
+
+            auto&& pos = toMapPose(X+i, Y+j);
+
+            if(!map.isFree(pos))
+                obstacles.push_back(make_pair(X+i, Y+j));
+        }
+
+    return obstacles;
+}
+
+
+double Grid::cost(const Cell& s, const Cell& s_next)
 {
     //TODO no obstacles (8-connected)?
 
@@ -81,7 +106,7 @@ double Grid::cost(pair<int, int> s, pair<int, int> s_next)
 }
 
 
-double Grid::heuristic(pair<int, int> s, pair<int, int> s_next)
+double Grid::heuristic(const Cell& s, const Cell& s_next)
 {
     int X1 = s.first;
     int Y1 = s.second;
@@ -93,7 +118,7 @@ double Grid::heuristic(pair<int, int> s, pair<int, int> s_next)
 }
 
 
-bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
+bool Grid::lineOfSight(const Cell& s, const Cell& s_next)
 {
     int X1 = s.first;
     int Y1 = s.second;
@@ -149,7 +174,7 @@ bool Grid::lineOfSight(pair<int, int> s, pair<int, int> s_next)
 }
 
 
-std::pair<int, int> Grid::convertPose(const geometry_msgs::PoseStamped& msg)
+Cell Grid::convertPose(const geometry_msgs::PoseStamped& msg)
 {
     auto& t_ros = msg.pose.position;
 
@@ -175,7 +200,7 @@ Eigen::VectorXd Grid::toMapPose(int X, int Y)
 }
 
 
-bool Grid::isFree(pair<int, int> s)
+bool Grid::isFree(const Cell& s)
 {
     Eigen::VectorXd pos = toMapPose(s.first, s.second);
 

@@ -39,8 +39,8 @@ void Visualizer::initialize(ros::NodeHandle& nh)
 
 void Visualizer::addPoint(const Eigen::VectorXd& point)
 {
-	if(disableVisualization)
-		return;
+    if(disableVisualization)
+        return;
 
     points.push_back(point);
 
@@ -53,8 +53,8 @@ void Visualizer::addPoint(const Eigen::VectorXd& point)
 
 void Visualizer::addSegment(const Eigen::VectorXd& start, const Eigen::VectorXd& end)
 {
-	if(disableVisualization)
-			return;
+    if(disableVisualization)
+        return;
 
     segments.push_back(std::make_pair(start, end));
 
@@ -68,8 +68,8 @@ void Visualizer::addSegment(const Eigen::VectorXd& start, const Eigen::VectorXd&
 
 void Visualizer::displayPlan(const std::vector<geometry_msgs::PoseStamped>& plan)
 {
-	if(disableVisualization)
-			return;
+    if(disableVisualization)
+        return;
 
     static int id = 0;
 

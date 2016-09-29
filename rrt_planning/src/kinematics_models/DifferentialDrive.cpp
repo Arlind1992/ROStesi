@@ -42,8 +42,8 @@ DifferentialDrive::DifferentialDrive(Controller& controller) : KinematicModel(co
 VectorXd DifferentialDrive::compute(const VectorXd& x0, double delta)
 {
     Eigen::VectorXd x = x0;
-	boost::numeric::odeint::runge_kutta_dopri5<VectorXd, double, VectorXd, double, boost::numeric::odeint::vector_space_algebra> stepper;
-	boost::numeric::odeint::integrate_adaptive(stepper, *this, x, 0.0, delta, dt);
+    boost::numeric::odeint::runge_kutta_dopri5<VectorXd, double, VectorXd, double, boost::numeric::odeint::vector_space_algebra> stepper;
+    boost::numeric::odeint::integrate_adaptive(stepper, *this, x, 0.0, delta, dt);
 
     return x;
 }

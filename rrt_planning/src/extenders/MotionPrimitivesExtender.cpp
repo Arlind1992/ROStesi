@@ -29,7 +29,7 @@ namespace rrt_planning
 {
 
 MotionPrimitivesExtender::MotionPrimitivesExtender(KinematicModel& model, ConstantController& controller,
-			Map& map, Distance& distance)
+        Map& map, Distance& distance)
     : Extender(map, distance), model(model), controller(controller), minU(model.getActionSize()), maxU(model.getActionSize())
 {
     deltaT = 0;
@@ -94,7 +94,7 @@ void MotionPrimitivesExtender::generateMotionPrimitive(const Eigen::VectorXd& u,
 {
     if(index == model.getActionSize())
     {
-    	controller.setControl(u);
+        controller.setControl(u);
         VectorXd&& mp = model.compute(model.getInitialState(), deltaT);
         motionPrimitives.push_back(mp);
     }

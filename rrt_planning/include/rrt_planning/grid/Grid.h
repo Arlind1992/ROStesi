@@ -40,12 +40,13 @@ class Grid
 
 public:
     Grid(Map& map, double gridResolution);
-    double cost(Cell s, Cell s_next);
-    double heuristic(Cell s, Cell s_next);
-    bool lineOfSight(Cell s, Cell s_next);
-    std::vector<Cell> getNeighbors(Cell s);
+    double cost(const Cell& s, const Cell& s_next);
+    double heuristic(const Cell& s, const Cell& s_next);
+    bool lineOfSight(const Cell& s, const Cell& s_next);
+    std::vector<Cell> getNeighbors(const Cell& s);
+    std::vector<Cell> getObstacles(const Cell& s);
     Cell convertPose(const geometry_msgs::PoseStamped& msg);
-    bool isFree(Cell s);
+    bool isFree(const Cell& s);
     Eigen::VectorXd toMapPose(int X, int Y);
 
 private:
@@ -53,7 +54,7 @@ private:
 
     double gridResolution;	// Cell edges in meters
     unsigned int maxX;
-   	unsigned int maxY;
+    unsigned int maxY;
 };
 
 }

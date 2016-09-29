@@ -32,15 +32,15 @@ namespace rrt_planning
 class POSQ : public Controller
 {
 public:
-	POSQ(double Krho, double Kv, double Kalpha, double Kphi);
-	virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) const override;
-	virtual ~POSQ();
+    POSQ(double Krho, double Kv, double Kalpha, double Kphi);
+    virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) const override;
+    virtual ~POSQ();
 
 private:
-	const double Krho;
-	const double Kv;
-	const double Kalpha;
-	const double Kphi;
+    const double Krho;
+    const double Kv;
+    const double Kalpha;
+    const double Kphi;
 };
 
 }

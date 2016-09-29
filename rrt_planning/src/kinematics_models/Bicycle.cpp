@@ -47,8 +47,8 @@ Bicycle::Bicycle(Controller& controller) : KinematicModel(controller)
 VectorXd Bicycle::compute(const VectorXd& x0, double delta)
 {
     Eigen::VectorXd x = x0;
-	boost::numeric::odeint::runge_kutta_dopri5<VectorXd, double, VectorXd, double, boost::numeric::odeint::vector_space_algebra> stepper;
-	boost::numeric::odeint::integrate_adaptive(stepper, *this, x, 0.0, delta, dt);
+    boost::numeric::odeint::runge_kutta_dopri5<VectorXd, double, VectorXd, double, boost::numeric::odeint::vector_space_algebra> stepper;
+    boost::numeric::odeint::integrate_adaptive(stepper, *this, x, 0.0, delta, dt);
 
     return x;
 }
@@ -81,14 +81,14 @@ VectorXd Bicycle::sampleOnBox(const Bounds& bounds)
 
 Eigen::VectorXd Bicycle::computeControl(const Eigen::VectorXd& x)
 {
-	VectorXd u = controller(x);
+    VectorXd u = controller(x);
 
-	// Saturation of the steering wheel
-	double maxOmega = angles::shortest_angular_distance(copysign(deltaPhi, u(1)), x(2))/dt;
+    // Saturation of the steering wheel
+    double maxOmega = angles::shortest_angular_distance(copysign(deltaPhi, u(1)), x(2))/dt;
 
-	u(1) = abs(u(1)) > abs(maxOmega) ? maxOmega : u(1);
+    u(1) = abs(u(1)) > abs(maxOmega) ? maxOmega : u(1);
 
-	return u;
+    return u;
 }
 
 

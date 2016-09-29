@@ -39,78 +39,78 @@ namespace rrt_planning
 
 void ExtenderFactory::initialize(ros::NodeHandle& nh, Map& map, Distance& distance)
 {
-	std::string extenderName;
-	nh.param("extender", extenderName, std::string("MotionPrimitives"));
+    std::string extenderName;
+    nh.param("extender", extenderName, std::string("MotionPrimitives"));
 
-	if(extenderName == "MotionPrimitives")
-	{
-		ConstantController* controller = new ConstantController();
+    if(extenderName == "MotionPrimitives")
+    {
+        ConstantController* controller = new ConstantController();
 
-		this->controller = controller;
+        this->controller = controller;
 
-		initializeKinematic(nh);
+        initializeKinematic(nh);
 
-		extender = new MotionPrimitivesExtender(*kinematicModel, *controller, map, distance);
-	}
-	else if(extenderName == "ClosedLoop")
-	{
-		std::string controllerName;
+        extender = new MotionPrimitivesExtender(*kinematicModel, *controller, map, distance);
+    }
+    else if(extenderName == "ClosedLoop")
+    {
+        std::string controllerName;
 
-		nh.param("controller", controllerName, std::string("POSQ"));
+        nh.param("controller", controllerName, std::string("POSQ"));
 
-		if(controllerName == "POSQ")
-		{
-			//FIXME use parameters
-			controller = new POSQ(1.0, 1.0, 1.0, 1.0);
-		}
-		else if(controllerName == "Costant")
-		{
-			controller = new ConstantController();
-		}
-		else
-		{
-			throw std::runtime_error("Unknown controller " + controllerName);
-		}
+        if(controllerName == "POSQ")
+        {
+            //FIXME use parameters
+            controller = new POSQ(1.0, 1.0, 1.0, 1.0);
+        }
+        else if(controllerName == "Costant")
+        {
+            controller = new ConstantController();
+        }
+        else
+        {
+            throw std::runtime_error("Unknown controller " + controllerName);
+        }
 
-		initializeKinematic(nh);
+        initializeKinematic(nh);
 
-		extender = new ClosedLoopExtender(*kinematicModel, *controller, map, distance);
-	}
-	else
-	{
-		throw std::runtime_error("Unknown extender " + extenderName);
-	}
+        extender = new ClosedLoopExtender(*kinematicModel, *controller, map, distance);
+    }
+    else
+    {
+        throw std::runtime_error("Unknown extender " + extenderName);
+    }
 
-	extender->initialize(nh);
+    extender->initialize(nh);
 
 }
 
 void ExtenderFactory::initializeKinematic(ros::NodeHandle& nh)
 {
-	std::string kinematicModelName;
-	nh.param("kinematicModel", kinematicModelName, std::string("DifferentialDrive"));
+    std::string kinematicModelName;
+    nh.param("kinematicModel", kinematicModelName, std::string("DifferentialDrive"));
 
-	if(kinematicModelName == "DifferentialDrive")
-	{
-		kinematicModel = new DifferentialDrive(*controller);
-	}
-	else if(kinematicModelName == "Bicycle")
-	{
-		kinematicModel = new Bicycle(*controller);
-	}
+    if(kinematicModelName == "DifferentialDrive")
+    {
+        kinematicModel = new DifferentialDrive(*controller);
+    }
+    else if(kinematicModelName == "Bicycle")
+    {
+        kinematicModel = new Bicycle(*controller);
+    }
 
 }
 
 ExtenderFactory::~ExtenderFactory()
 {
-	if(extender)
-		delete extender;
+    if(extender)
+        delete extender;
 
-	if(kinematicModel)
-		delete kinematicModel;
+    if(kinematicModel)
+        delete kinematicModel;
 
-	if(controller)
-		delete controller;
+    if(controller)
+        delete controller;
 }
 
 

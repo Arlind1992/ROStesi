@@ -34,7 +34,7 @@ namespace rrt_planning
 class ClosedLoopExtender : public Extender
 {
 public:
-	ClosedLoopExtender(KinematicModel& model, Controller& controller, Map& map, Distance& distance);
+    ClosedLoopExtender(KinematicModel& model, Controller& controller, Map& map, Distance& distance);
 
     virtual bool compute(const Eigen::VectorXd& x0, const Eigen::VectorXd& xRand, Eigen::VectorXd& xNew) override;
     virtual void initialize(ros::NodeHandle& nh) override;

@@ -58,7 +58,7 @@ void ThetaStarPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* co
     //Get parameters from ros parameter server
     ros::NodeHandle private_nh("~/" + name);
     private_nh.param("discretization", discretization, 0.2);
-	pub = private_nh.advertise<visualization_msgs::Marker>("/visualization_marker", 1);
+    pub = private_nh.advertise<visualization_msgs::Marker>("/visualization_marker", 1);
 
     map = new ROSMap(costmap_ros);
     grid = new Grid(*map, discretization);
@@ -95,7 +95,7 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     g[s_start] = 0.0;
     parent[s_start] = s_start;
     open.insert(s_start, grid->heuristic(s_start, s_goal));
-	parent[s_goal] = S_NULL;
+    parent[s_goal] = S_NULL;
 
     ROS_INFO("Planner started");
 
@@ -106,9 +106,6 @@ bool ThetaStarPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         Cell s = open.pop();
 
         closed.insert(s);
-
-		//displayClosed();
-		//displayOpen();
 
         if(s == s_goal) break;
 
@@ -160,7 +157,7 @@ void ThetaStarPlanner::updateVertex(Cell s, Cell s_next)
     if(g.at(s_next) < g_old)
     {
         if(open.contains(s_next))
-        	open.remove(s_next);
+            open.remove(s_next);
 
         double frontierCost = g.at(s_next) + grid->heuristic(s_next, s_goal);
 
@@ -175,16 +172,16 @@ void ThetaStarPlanner::computeCost(Cell s, Cell s_next)
     if(grid->lineOfSight(parent.at(s), s_next))
     {
         //Path 2
-        if(g.at(parent.at(s)) + grid->cost(parent.at(s), s_next) < g.at(s_next))
+        if(g.at(parent.at(s)) + grid->cost(parent.at(s), s_next) <= g.at(s_next))
         {
-        	parent.at(s_next) = parent.at(s);
+            parent.at(s_next) = parent.at(s);
             g.at(s_next) = g.at(parent.at(s)) + grid->cost(parent.at(s), s_next);
         }
     }
     else
     {
         //Path 1
-        if(g.at(s) + grid->cost(s, s_next) < g.at(s_next))
+        if(g.at(s) + grid->cost(s, s_next) <= g.at(s_next))
         {
             parent.at(s_next) = s;
             g.at(s_next) = g.at(s) + grid->cost(s, s_next);
@@ -193,14 +190,14 @@ void ThetaStarPlanner::computeCost(Cell s, Cell s_next)
 }
 
 void ThetaStarPlanner::publishPlan(std::vector<Eigen::VectorXd>& path, std::vector<geometry_msgs::PoseStamped>& plan,
-		const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal)
+                                   const ros::Time& stamp, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal)
 {
-	plan.push_back(start);
+    plan.push_back(start);
 
     for(int i = 1; i < path.size() - 1; i++)
     {
-		auto&& p1 = path[i];
-		auto&& p2 = path[i+1];
+        auto&& p1 = path[i];
+        auto&& p2 = path[i+1];
 
         geometry_msgs::PoseStamped msg;
 
@@ -211,9 +208,9 @@ void ThetaStarPlanner::publishPlan(std::vector<Eigen::VectorXd>& path, std::vect
         msg.pose.position.y = p1(1);
         msg.pose.position.z = 0;
 
-		double angle = atan2(p2(1) - p1(1), p2(0) - p1(0));
+        double angle = atan2(p2(1) - p1(1), p2(0) - p1(0));
 
-		Matrix3d m;
+        Matrix3d m;
         m = AngleAxisd(angle, Vector3d::UnitZ())
             * AngleAxisd(0, Vector3d::UnitY())
             * AngleAxisd(0, Vector3d::UnitX());
@@ -227,8 +224,8 @@ void ThetaStarPlanner::publishPlan(std::vector<Eigen::VectorXd>& path, std::vect
 
         plan.push_back(msg);
     }
-	
-	plan.push_back(goal);
+
+    plan.push_back(goal);
 }
 
 
@@ -270,7 +267,7 @@ void ThetaStarPlanner::displayOpen()
     {
         geometry_msgs::Point p;
 
-		VectorXd pos = grid->toMapPose(s->getNode().first, s->getNode().second);
+        VectorXd pos = grid->toMapPose(s->getNode().first, s->getNode().second);
 
         p.x = pos(0);
         p.y = pos(1);
@@ -281,6 +278,89 @@ void ThetaStarPlanner::displayOpen()
 
     pub.publish(marker);
 }
+
+void ThetaStarPlanner::displayNeighbours(const Cell& cell)
+{
+
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time();
+    marker.ns = "thetastar";
+    marker.id = 2;
+    marker.type = visualization_msgs::Marker::POINTS;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    marker.scale.x = 0.05;
+    marker.scale.y = 0.05;
+    marker.scale.z = 0;
+    marker.color.a = 1.0;
+    marker.color.r = 0.0;
+    marker.color.g = 1.0;
+    marker.color.b = 0.0;
+
+    for(auto& s : grid->getNeighbors(cell))
+    {
+        geometry_msgs::Point p;
+
+        VectorXd pos = grid->toMapPose(s.first, s.second);
+
+        p.x = pos(0);
+        p.y = pos(1);
+        p.z = 0;
+
+        marker.points.push_back(p);
+    }
+
+    pub.publish(marker);
+}
+
+void ThetaStarPlanner::displayObstacles(const Cell& cell)
+{
+
+    static visualization_msgs::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time();
+    marker.ns = "thetastar";
+    marker.id = 3;
+    marker.type = visualization_msgs::Marker::POINTS;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = 0;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    marker.scale.x = 0.05;
+    marker.scale.y = 0.05;
+    marker.scale.z = 0;
+    marker.color.a = 1.0;
+    marker.color.r = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 0.0;
+
+    for(auto& s : grid->getObstacles(cell))
+    {
+        geometry_msgs::Point p;
+
+        VectorXd pos = grid->toMapPose(s.first, s.second);
+
+        p.x = pos(0);
+        p.y = pos(1);
+        p.z = 0;
+
+        marker.points.push_back(p);
+    }
+
+    pub.publish(marker);
+}
+
 
 
 void ThetaStarPlanner::displayClosed()
@@ -312,7 +392,7 @@ void ThetaStarPlanner::displayClosed()
     {
         geometry_msgs::Point p;
 
-		VectorXd pos = grid->toMapPose(s.first, s.second);
+        VectorXd pos = grid->toMapPose(s.first, s.second);
 
         p.x = pos(0);
         p.y = pos(1);
@@ -320,6 +400,38 @@ void ThetaStarPlanner::displayClosed()
 
         marker.points.push_back(p);
     }
+
+    pub.publish(marker);
+}
+
+void ThetaStarPlanner::displayCost(const Cell& cell, double g_old)
+{
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time();
+    marker.ns = "thetastar";
+    marker.id = 4;
+    marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    marker.scale.x = 0;
+    marker.scale.y = 0;
+    marker.scale.z = 0.1;
+    marker.color.a = 1.0;
+    marker.color.r = 1.0;
+    marker.color.g = 1.0;
+    marker.color.b = 1.0;
+    marker.text = "g: " + std::to_string(g.at(cell)) + " g_old: " + std::to_string(g_old);
+
+
+    VectorXd pos = grid->toMapPose(cell.first, cell.second);
+
+    marker.pose.position.x = pos(0);
+    marker.pose.position.y = pos(1);
+    marker.pose.position.z = 0;
 
     pub.publish(marker);
 }

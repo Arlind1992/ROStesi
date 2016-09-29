@@ -44,18 +44,18 @@ public:
     typedef boost::numeric::odeint::controlled_runge_kutta< error_stepper_type > controlled_stepper_type;*/
 
 public:
-	KinematicModel(Controller& controller) : controller(controller)
-	{
-	    stateSize = 0;
-	    actionSize = 0;
-	}
+    KinematicModel(Controller& controller) : controller(controller)
+    {
+        stateSize = 0;
+        actionSize = 0;
+    }
 
     virtual Eigen::VectorXd compute(const Eigen::VectorXd& x0, double delta) = 0;
     virtual Eigen::VectorXd getInitialState() = 0;
 
     virtual Eigen::VectorXd sampleOnBox(const Bounds& bounds) = 0;
     Eigen::VectorXd sampleOnLane(std::vector<geometry_msgs::PoseStamped>& plan,
-            double width, double deltaTheta);
+                                 double width, double deltaTheta);
 
     Eigen::VectorXd applyTransform(const Eigen::VectorXd& x0, const Eigen::VectorXd& T);
 

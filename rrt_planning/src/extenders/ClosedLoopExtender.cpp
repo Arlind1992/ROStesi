@@ -29,44 +29,44 @@ namespace rrt_planning
 {
 
 ClosedLoopExtender::ClosedLoopExtender(KinematicModel& model, Controller& controller,
-		Map& map, Distance& distance) :
-		Extender(map, distance), model(model), controller(controller)
+                                       Map& map, Distance& distance) :
+    Extender(map, distance), model(model), controller(controller)
 {
-	deltaT = 0;
-	loopN = 0;
+    deltaT = 0;
+    loopN = 0;
 }
 
 bool ClosedLoopExtender::compute(const VectorXd& x0, const VectorXd& xRand, VectorXd& xNew)
 {
-	controller.setGoal(xRand);
+    controller.setGoal(xRand);
 
-	VectorXd xStart = x0;
+    VectorXd xStart = x0;
 
-	bool valid = false;
+    bool valid = false;
 
-	for(unsigned i = 0; i < loopN; i++)
-	{
-		VectorXd x = model.compute(xStart, deltaT);
+    for(unsigned i = 0; i < loopN; i++)
+    {
+        VectorXd x = model.compute(xStart, deltaT);
 
-		if(map.isFree(x))
-		{
-			xNew = x;
-			valid = true;
-			xStart = x;
-		}
-		else
-		{
-			break;
-		}
-	}
+        if(map.isFree(x))
+        {
+            xNew = x;
+            valid = true;
+            xStart = x;
+        }
+        else
+        {
+            break;
+        }
+    }
 
-	return valid;
+    return valid;
 }
 
 void ClosedLoopExtender::initialize(ros::NodeHandle& nh)
 {
-	nh.param("deltaT", deltaT, 0.5);
-	nh.param("loopN", loopN, 3);
+    nh.param("deltaT", deltaT, 0.5);
+    nh.param("loopN", loopN, 3);
 }
 
 

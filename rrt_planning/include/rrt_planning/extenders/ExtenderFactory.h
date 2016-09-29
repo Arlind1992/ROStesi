@@ -39,27 +39,27 @@ namespace rrt_planning
 class ExtenderFactory
 {
 public:
-	void initialize(ros::NodeHandle& nh, Map& map, Distance& distance);
+    void initialize(ros::NodeHandle& nh, Map& map, Distance& distance);
 
-	void initializeKinematic(ros::NodeHandle& nh);
+    void initializeKinematic(ros::NodeHandle& nh);
 
-	inline Extender& getExtender()
-	{
-		return *extender;
-	}
+    inline Extender& getExtender()
+    {
+        return *extender;
+    }
 
-	inline KinematicModel& getKinematicModel()
-	{
-		return *kinematicModel;
-	}
+    inline KinematicModel& getKinematicModel()
+    {
+        return *kinematicModel;
+    }
 
-	~ExtenderFactory();
+    ~ExtenderFactory();
 
 
 private:
-	Extender* extender;
-	KinematicModel* kinematicModel;
-	Controller* controller;
+    Extender* extender;
+    KinematicModel* kinematicModel;
+    Controller* controller;
 
 
 

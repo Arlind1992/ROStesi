@@ -33,22 +33,22 @@ namespace rrt_planning
 class Controller
 {
 public:
-	virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const = 0;
+    virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x0) const = 0;
 
 
-	inline void setGoal(const Eigen::VectorXd& goal)
-	{
-		this->goal = goal;
-	}
+    inline void setGoal(const Eigen::VectorXd& goal)
+    {
+        this->goal = goal;
+    }
 
-	virtual ~Controller()
-	{
+    virtual ~Controller()
+    {
 
-	}
+    }
 
 
 protected:
-	Eigen::VectorXd goal;
+    Eigen::VectorXd goal;
 
 };
 

@@ -34,11 +34,12 @@ public:
     inline FrontierNode(const Cell& node, double cost):
         node(node), cost(cost) { }
 
-    inline Cell getNode()
+    inline Cell getNode() const
     {
         return node;
     }
-    inline double getCost()
+
+    inline double getCost() const
     {
         return cost;
     }
