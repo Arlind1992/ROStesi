@@ -62,6 +62,8 @@ Cell PriorityQueue::pop()
 	Cell cell = ptr->getNode();
 	openMap.erase(cell);
 
+	delete ptr;
+
 	return cell;
 }
 
