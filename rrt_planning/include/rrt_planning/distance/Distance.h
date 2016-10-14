@@ -60,7 +60,7 @@ public:
 
     inline virtual double operator()(const Eigen::VectorXd& x1, const Eigen::VectorXd& x2) override
     {
-        double poseDistance = (x1.head(2)-x2.head(2)).norm();
+        double poseDistance = (x1.head(2)-x2.head(2)).squaredNorm();
 
         double angleDistance = std::pow(1.0 - std::cos(x1(2) - x2(2)), 2);
 

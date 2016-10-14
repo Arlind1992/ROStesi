@@ -24,6 +24,8 @@
 #include "rrt_planning/kinematics_models/KinematicModel.h"
 #include "rrt_planning/utils/RandomGenerator.h"
 
+#include <angles/angles.h>
+
 
 using namespace Eigen;
 using namespace std;
@@ -133,7 +135,7 @@ VectorXd KinematicModel::sampleOnLane(vector<geometry_msgs::PoseStamped>& plan,
     a_bar /= w_norm;
 
     // Add a random angle
-    p(2) = a_bar + RandomGenerator::sampleUniform(-deltaTheta, deltaTheta);
+    p(2) = angles::normalize_angle(a_bar + RandomGenerator::sampleUniform(-deltaTheta, deltaTheta));
 
     return p;
 }
