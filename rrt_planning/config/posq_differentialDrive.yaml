@@ -1,4 +1,0 @@
-# differential drive with POSQ extend function
-extender: ClosedLoop
-controller: POSQ
-kinematicModel: DifferentialDrive

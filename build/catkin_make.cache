@@ -1,0 +1,2 @@
+Planning/rrt_planning
+-DCATKIN_DEVEL_PREFIX=/home/arlind/Desktop/Workspace/RosProj/Planning/devel -DCMAKE_INSTALL_PREFIX=/home/arlind/Desktop/Workspace/RosProj/Planning/install -G Unix Makefiles

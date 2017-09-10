@@ -1,0 +1,8 @@
+prefix=/home/arlind/Desktop/Workspace/RosProj/Planning/install
+
+Name: rrt_planning
+Description: Description of rrt_planning
+Version: 2.0.0
+Cflags: -I/home/arlind/Desktop/Workspace/RosProj/Planning/install/include
+Libs: -L/home/arlind/Desktop/Workspace/RosProj/Planning/install/lib 
+Requires: message_runtime
