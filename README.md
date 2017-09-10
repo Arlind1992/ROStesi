@@ -1,5 +1,5 @@
 # Planning
-Repository for the project of the course UAV.
+Repository for the project of my thesis
 
 
 Installation
@@ -7,7 +7,7 @@ Installation
 ```
 mkdir -p Planning/src
 cd Planning/src
-git clone git@github.com:boris-il-forte/Planning.git .
+git clone https://github.com/Arlind1992/ROStesi.git
 cd ..
 catkin_make
 ```
